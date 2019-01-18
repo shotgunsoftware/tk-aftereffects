@@ -28,6 +28,9 @@ from sgtk.util.filesystem import (
 logger = sgtk.LogManager.get_logger(__name__)
 
 
+class EngineConfigurationError(Exception): pass
+
+
 def bootstrap(engine_name, context, app_path, app_args, **kwargs):
     """
     Interface for older versions of tk-multi-launchapp.
@@ -56,43 +59,34 @@ def bootstrap(engine_name, context, app_path, app_args, **kwargs):
     return (app_path, app_args)
 
 
-def _get_adobe_framework_location(tank, descriptor):
+def _get_adobe_framework_location():
     """ This helper method will query the current environment for the configured
         location on disk where the tk-adobe-framework is to be found.
 
         This is necessary, as the the framework relies on an environment variable
         to be set by the parent engine.
 
-        Args:
-        tank (tank.api.Tank): the current sgtk connection
-        descriptor (tank.descriptor.descriptor_bundle.EngineDescriptor): 
-
         Returns (str): The folder path to the latest framework. Empty string if no match.
     """
-    environment = tank.pipeline_configuration.get_environment('project')
-    required_frameworks = ['{name}_{version}'.format(**v) for v in descriptor.required_frameworks]
-
-    # the following will retrieve position (file and keys) in the current config
-    # where the tk-framework-adobe is configured
-    framework_location_description = None
-    for each_framework in environment.get_frameworks():
-        if each_framework.startswith('tk-framework-adobe') and required_frameworks.count(each_framework):
-            framework_location_description = environment.find_location_for_framework(each_framework)
-            break
-    else:
+    engine = sgtk.platform.current_engine()
+    if engine is None:
+        logger.warn('No engine is currently running.')
         return ''
 
-    # this will get the framework configuration from the config file
-    f = codecs.open(framework_location_description[1], 'r')
-    full_config = yaml.load(f.read())
-    f.close()
-    while framework_location_description[0]:
-        full_config = full_config.get(framework_location_description[0].pop(0), {})
+    launch_app = engine.apps.get('tk-multi-launchapp')
+    if launch_app is None:
+        logger.warn('The engine {!r} must have tk-multi-launchapp configured in order to launch tk-aftereffectscc.'.format(engine.name))
+        return ''
 
-    return tank.pipeline_configuration.get_framework_descriptor(full_config.get('location', {})).get_path()
-    
+    adobe_framework = launch_app.frameworks.get('tk-framework-adobe')
+    if adobe_framework is None:
+        logger.warn('The app {!r} must have tk-framework-adobe configured in order to launch tk-aftereffectscc.'.format(launch_app.name))
+        return ''
 
-def compute_environment(tank, descriptor):
+    return adobe_framework.disk_location
+
+
+def compute_environment():
     """
     Return the env vars needed to launch the After Effects plugin.
 
@@ -103,9 +97,13 @@ def compute_environment(tank, descriptor):
     """
     env = {}
 
+    framework_location = _get_adobe_framework_location()
+    if not os.path.exists(framework_location):
+        raise EngineConfigurationError('The tk-adobe-framework could not be found in the current environment. Please check the log for more information.')
+
     # set the interpreter with which to launch the CC integration
     env["SHOTGUN_ADOBE_PYTHON"] = sys.executable
-    env["SHOTGUN_ADOBE_FRAMEWORK_LOCATION"] = _get_adobe_framework_location(tank, descriptor)
+    env["SHOTGUN_ADOBE_FRAMEWORK_LOCATION"] = framework_location
     env["SHOTGUN_ENGINE"] = "tk-aftereffectscc"
 
     # We're going to append all of this Python process's sys.path to the

@@ -69,15 +69,13 @@ class AfterEffectsLauncher(SoftwareLauncher):
         # note: all the business logic for how to launch is
         #       located in the python/startup folder to be compatible
         #       with older versions of the launch workflow
-
-
         bootstrap_python_path = os.path.join(self.disk_location, "python", "startup", "bootstrap.py")
         mod_file = open(bootstrap_python_path, "r")
         bootstrap = imp.load_module('bootstrap', mod_file, 'tk-aftereffectscc.bootstrap', ('.py', 'U', 1))
         mod_file.close()
 
         # determine all environment variables
-        required_env = bootstrap.compute_environment(self.sgtk, self.descriptor)
+        required_env = bootstrap.compute_environment()
 
         # Add std context and site info to the env
         std_env = self.get_standard_plugin_environment()

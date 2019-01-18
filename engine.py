@@ -144,9 +144,6 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         Sets up the engine into an operational state. This method called before
         any apps are loaded.
         """
-        try: sys.path.insert(0, r"R:\tools\bin\eclipse\4.6.2_all_x64\plugins\org.python.pydev_5.5.0.201701191708\pysrc"); import pydevd, _pydevd_bundle.pydevd_comm; _pydevd_bundle.pydevd_comm.MAX_IO_MSG_SIZE=50000; pydevd.settrace(stdoutToServer=True, stderrToServer=True, suspend=True); sys.path.pop(0)
-        except Exception as e: self.log_debug("%s: ERROROROROOROOR" % e)
-
         # import and keep a handle on the bundled python module
         self.__tk_aftereffectscc = self.import_module("tk_aftereffectscc")
 

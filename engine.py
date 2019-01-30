@@ -979,13 +979,16 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         handle (HWND)
         """
         if not self._WIN32_AFTEREFFECTS_MAIN_HWND:
-            found_hwnds = self.__tk_aftereffectscc.win_32_api.find_windows(
-                class_name="AfterFX",
-                stop_if_found=True,
-            )
+            for major in sorted(self.__CC_VERSION_MAPPING.keys()):
+                for minor in range(10):
+                    found_hwnds = self.__tk_aftereffectscc.win_32_api.find_windows(
+                        class_name="AE_CApplication_{}.{}".format(major, minor),
+                        stop_if_found=True,
+                    )
 
-            if found_hwnds:
-                self._WIN32_AFTEREFFECTS_MAIN_HWND = found_hwnds[0]
+                    if found_hwnds:
+                        self._WIN32_AFTEREFFECTS_MAIN_HWND = found_hwnds[0]
+                        return self._WIN32_AFTEREFFECTS_MAIN_HWND
 
         return self._WIN32_AFTEREFFECTS_MAIN_HWND
 

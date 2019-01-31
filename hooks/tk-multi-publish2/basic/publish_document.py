@@ -8,13 +8,14 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
+import sys
 import os
 import sgtk
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
+class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
     """
     Plugin for publishing an open nuke studio project.
 
@@ -42,7 +43,7 @@ class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
         the <b><a href='%s'>Loader</a></b> so long as they have access to
         the file's location on disk.
 
-        If the document has not been saved, validation will fail and a button
+        If the project has not been saved, validation will fail and a button
         will be provided in the logging output to save the file.
 
         <h3>File versioning</h3>
@@ -66,7 +67,7 @@ class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
 
         If the next incremental version of the file already exists on disk, the
         validation step will produce a warning, and a button will be provided in
-        the logging output which will allow saving the document to the next
+        the logging output which will allow saving the project to the next
         available version number prior to publishing.
 
         <br><br><i>NOTE: any amount of version number padding is supported.</i>
@@ -76,7 +77,6 @@ class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
         publish will be available to other users. Warnings will be provided
         during validation if there are previous publishes.
         """ % (loader_url,)
-        # TODO: add link to workflow docs
 
     @property
     def settings(self):
@@ -100,7 +100,7 @@ class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
 
         # inherit the settings from the base publish plugin
         base_settings = \
-            super(AfterEffectsCCDocumentPublishPlugin, self).settings or {}
+            super(AfterEffectsCCProjectPublishPlugin, self).settings or {}
 
         # settings specific to this class
         aftereffects_publish_settings = {
@@ -127,8 +127,8 @@ class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["aftereffects.document"]
-
+        return ["aftereffects.project"]
+
     def accept(self, settings, item):
         """
         Method called by the publisher to determine if an item is of any
@@ -154,33 +154,24 @@ class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
 
         :returns: dictionary with boolean keys accepted, required and enabled
         """
+        path = self.parent.engine.get_project_path()
 
-        document = item.properties.get("document")
-        if not document:
-            self.logger.warn("Could not determine the document for item")
-            return {"accepted": False}
-
-        # if a publish template is configured, disable context change. This
-        # is a temporary measure until the publisher handles context switching
-        # natively.
+        # if a publish template is configured, disable context change. 
         if settings.get("Publish Template").value:
             item.context_change_allowed = False
 
-        path = _document_path(document)
-
         if not path:
-            # the document has not been saved before (no path determined).
-            # provide a save button. the document will need to be saved before
+            # the project has not been saved before (no path determined).
+            # provide a save button. the project will need to be saved before
             # validation will succeed.
             self.logger.warn(
-                "The After Effects document '%s' has not been saved." %
-                (document.name,),
-                extra=_get_save_as_action(document)
+                "The After Effects project has not been saved.",
+                extra=self.__get_save_as_action()
             )
 
         self.logger.info(
-            "After Effects '%s' plugin accepted document: %s." %
-            (self.name, document.name)
+            "After Effects '%s' plugin accepted." %
+            (self.name,)
         )
         return {
             "accepted": True,
@@ -203,51 +194,50 @@ class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
 
         publisher = self.parent
         engine = publisher.engine
-        document = item.properties["document"]
-        path = _document_path(document)
+        path = engine.get_project_path()
 
-        # ---- ensure the document has been saved
+        # ---- ensure the project has been saved
 
         if not path:
-            # the document still requires saving. provide a save button.
+            # the project still requires saving. provide a save button.
             # validation fails.
-            error_msg = "The After Effects document '%s' has not been saved." % \
-                        (document.name,)
+            error_msg = "The After Effects project '%s' has not been saved." % \
+                        (item.name,)
             self.logger.error(
                 error_msg,
-                extra=_get_save_as_action(document)
+                extra=self.__get_save_as_action()
             )
             raise Exception(error_msg)
 
-        # ---- check the document against any attached work template
+        # ---- check the project against any attached work template
 
         # get the path in a normalized state. no trailing separator,
         # separators are appropriate for current os, no double separators,
         # etc.
         path = sgtk.util.ShotgunPath.normalize(path)
 
-        # if the document item has a known work template, see if the path
+        # if the project item has a known work template, see if the path
         # matches. if not, warn the user and provide a way to save the file to
         # a different path
         work_template = item.properties.get("work_template")
         if work_template:
             if not work_template.validate(path):
                 self.logger.warning(
-                    "The current document does not match the configured work "
+                    "The current project does not match the configured work "
                     "template.",
                     extra={
                         "action_button": {
                             "label": "Save File",
-                            "tooltip": "Save the current After Effects document"
+                            "tooltip": "Save the current After Effects project"
                                        "to a different file name",
                             # will launch wf2 if configured
-                            "callback": _get_save_as_action(document)
+                            "callback": self.__get_save_as_action()
                         }
                     }
                 )
             else:
                 self.logger.debug(
-                    "Work template configured and matches document path.")
+                    "Work template configured and matches project path.")
         else:
             self.logger.debug("No work template configured.")
 
@@ -274,8 +264,7 @@ class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
                         "label": "Save to v%s" % (version,),
                         "tooltip": "Save to the next available version number, "
                                    "v%s" % (version,),
-                        "callback": lambda: engine.save_to_path(
-                            document, next_version_path)
+                        "callback": lambda: engine.save_to_path(next_version_path)
                     }
                 }
             )
@@ -290,13 +279,14 @@ class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
         if publish_template:
             item.properties["publish_template"] = publish_template
 
-        # set the document path on the item for use by the base plugin
+        # set the project path on the item for use by the base plugin
         # validation step. NOTE: this path could change prior to the publish
         # phase.
+        item.name = os.path.basename(path)
         item.properties["path"] = path
 
         # run the base class validation
-        return super(AfterEffectsCCDocumentPublishPlugin, self).validate(
+        return super(AfterEffectsCCProjectPublishPlugin, self).validate(
             settings, item)
 
     def publish(self, settings, item):
@@ -311,21 +301,20 @@ class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
 
         publisher = self.parent
         engine = publisher.engine
-        document = item.properties["document"]
-        path = _document_path(document)
+        path = engine.get_project_path()
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
         path = sgtk.util.ShotgunPath.normalize(path)
 
-        # ensure the document is saved
-        engine.save(document)
+        engine.save()
 
-        # update the item with the saved document path
+        # update the item with the saved project path
         item.properties["path"] = path
+        item.properties["publish_type"] = "After Effects Project"
 
         # let the base class register the publish
-        super(AfterEffectsCCDocumentPublishPlugin, self).publish(settings, item)
+        super(AfterEffectsCCProjectPublishPlugin, self).publish(settings, item)
 
     def finalize(self, settings, item):
         """
@@ -342,53 +331,38 @@ class AfterEffectsCCDocumentPublishPlugin(HookBaseClass):
         engine = publisher.engine
 
         # do the base class finalization
-        super(AfterEffectsCCDocumentPublishPlugin, self).finalize(settings, item)
+        super(AfterEffectsCCProjectPublishPlugin, self).finalize(settings, item)
 
-        document = item.properties.get("document")
         path = item.properties["path"]
 
-        # we need the path to be saved for this document. ensure the document
-        # is provided and allow the base method to supply the new path
-        save_callback = lambda path, d=document: engine.save_to_path(d, path)
+        # we need the path to be saved for this project.
+        save_callback = lambda path: engine.save_to_path(path)
 
-        # bump the document path to the next version
+        # bump the project path to the next version
         self._save_to_next_version(path, item, save_callback)
 
 
-def _get_save_as_action(document):
-    """
-    Simple helper for returning a log action dict for saving the document
-    """
+    def __get_save_as_action(self):
+        """
+        Simple helper for returning a log action dict for saving the project
+        """
 
-    engine = sgtk.platform.current_engine()
+        engine = self.parent.engine
 
-    # default save callback
-    callback = lambda: engine.save_as(document)
+        # default save callback
+        callback = lambda: engine.save_as()
 
-    # if workfiles2 is configured, use that for file save
-    if "tk-multi-workfiles2" in engine.apps:
-        app = engine.apps["tk-multi-workfiles2"]
-        if hasattr(app, "show_file_save_dlg"):
-            callback = app.show_file_save_dlg
+        # if workfiles2 is configured, use that for file save
+        if "tk-multi-workfiles2" in engine.apps:
+            app = engine.apps["tk-multi-workfiles2"]
+            if hasattr(app, "show_file_save_dlg"):
+                callback = app.show_file_save_dlg
 
-    return {
-        "action_button": {
-            "label": "Save As...",
-            "tooltip": "Save the current document",
-            "callback": callback
+        return {
+            "action_button": {
+                "label": "Save As...",
+                "tooltip": "Save the active project",
+                "callback": callback
+            }
         }
-    }
 
-
-def _document_path(document):
-    """
-    Returns the path on disk to the supplied document. May be ``None`` if the
-    document has not been saved.
-    """
-
-    try:
-        path = document.fullName.fsName
-    except Exception:
-        path = None
-
-    return path

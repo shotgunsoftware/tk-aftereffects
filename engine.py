@@ -453,22 +453,26 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
             )
         return jpeg_path
 
-    def save(self, document):
+    def save(self):
         """
-        Save the document in place
+        Save the project in place
         """
 
         with self.context_changes_disabled():
 
             self.adobe.app.project.save()
 
-    def save_to_path(self, document, path):
-        """
-        Save the document to the supplied path.
-        """
+    def get_project_path(self):
+        doc_obj = self.adobe.app.project.file
+        doc_path = ''
+        if doc_obj != None:
+            doc_path = doc_obj.fsName
+        return doc_path
 
-        # TODO: more logic is needed here to save account for different file
-        # options. By default, the file will always be saved to a PDF.
+    def save_to_path(self, path):
+        """
+        Save the project to the supplied path.
+        """
 
         with self.context_changes_disabled():
 
@@ -477,21 +481,15 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
             self.adobe.app.project.save(self.adobe.File(path))
 
-
-    def save_as(self, document):
+    def save_as(self):
         """
         Launch a Qt file browser to select a file, then save the supplied
-        document to that path.
-
-        :param document: The document to save.
+        project to that path.
         """
 
         from sgtk.platform.qt import QtGui
 
-        try:
-            doc_path = document.fullName.fsName
-        except RuntimeError:
-            doc_path = None
+        doc_path = self.get_project_path()
 
         # After Effects doesn't appear to have a "save as" dialog accessible via
         # python. so open our own Qt file dialog.
@@ -510,7 +508,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         path = file_dialog.selectedFiles()[0]
 
         if path:
-            self.save_to_path(document, path)
+            self.save_to_path(path)
 
     @property
     def host_info(self):

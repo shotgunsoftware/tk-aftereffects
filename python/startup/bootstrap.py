@@ -12,7 +12,6 @@ import contextlib
 import os
 import shutil
 import sys
-import yaml
 import codecs
 import tempfile
 import zipfile

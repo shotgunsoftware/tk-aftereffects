@@ -63,6 +63,51 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
 
         return collector_settings
 
+    def __icon_path(self):
+        return os.path.join(
+                self.disk_location,
+                os.pardir,
+                "icons",
+                "aftereffects.png"
+            )
+
+    def __get_project_publish_item(self, settings, parent_item):
+        project_name = 'Untitled'
+        path = self.parent.engine.get_project_path()
+        if path:
+            project_name = self.parent.engine.adobe.app.project.file.name
+        project_item = parent_item.create_item(
+            "aftereffects.project",
+            "After Effects Scene",
+            project_name
+        )
+        self.logger.info(
+            "Collected After Effects document: %s" % (project_name))
+
+        project_item.set_icon_from_path(self.__icon_path())
+        project_item.thumbnail_enabled = False
+        project_item.properties["file_path"] = path
+        if path:
+            project_item.set_thumbnail_from_path(path)
+
+        work_template = self.__get_work_template_for_item(settings)
+        if work_template is not None:
+            project_item.properties["work_template"] = work_template
+            self.logger.debug("Work template defined for After Effects collection.")
+        return project_item
+
+    def __get_work_template_for_item(self, settings):
+        # try to get the work-template
+        work_template_setting = settings.get("Work Template")
+        if work_template_setting:
+            return self.parent.engine.get_template_by_name(
+                work_template_setting.value)
+
+
+    def __iter_collection(self, collection_item):
+        for i in range(1, collection_item.length+1):
+            yield collection_item[i]
+
     def process_current_session(self, settings, parent_item):
         """
         Analyzes the open documents in After Effects and creates publish items
@@ -71,98 +116,53 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
         :param dict settings: Configured settings for this collector
         :param parent_item: Root item instance
         """
+        adobe = self.parent.engine.adobe
 
-        # go ahead and build the path to the icon for use by any documents
-        icon_path = os.path.join(
-            self.disk_location,
-            os.pardir,
-            "icons",
-            "aftereffects.png"
-        )
-
-        publisher = self.parent
-        engine = publisher.engine
-        #document = engine.adobe.get_active_document()
-
-        #if document:
-        #    active_doc_name = document.name
-        #else:
-        #    engine.logger.debug("No active document found.")
-        #    active_doc_name = None
-
-        # attempt to retrive a configured work template. we can attach
-        # it to the collected project items
-        work_template_setting = settings.get("Work Template")
-        work_template = None
-        if work_template_setting:
-            work_template = publisher.engine.get_template_by_name(
-                work_template_setting.value)
-
-        # FIXME: begin temporary workaround
-        # we use different logic here only because we don't have proper support
-        # for multi context workflows when templates are in play. So if we have
-        # a work template configured, for now we'll only collect the current,
-        # active document. Once we have proper multi context support, we can
-        # remove this.
-        if work_template:
-            # same logic as the loop below but only processing the active doc
-            if not document:
-                return
-            document_item = parent_item.create_item(
-                "photoshop.document",
-                "Photoshop Image",
-                document.name
-            )
-            self.logger.info(
-                "Collected Photoshop document: %s" % (document.name))
-            document_item.set_icon_from_path(icon_path)
-            document_item.thumbnail_enabled = False
-            document_item.properties["document"] = document
-            path = _document_path(document)
-            if path:
-                document_item.set_thumbnail_from_path(path)
-            document_item.properties["work_template"] = work_template
-            self.logger.debug("Work template defined for Photoshop collection.")
+        # check if the current project was saved already
+        # if not we will not add a publish item for it
+        parent_item = self.__get_project_publish_item(settings, parent_item)
+        if adobe.app.project.file == None:
             return
-        # FIXME: end temporary workaround
 
-        # remember the current document. we need to switch documents while
-        # collecting in order to get the proper context associated with each
-        # item created.
-        for i in range(engine.adobe.app.project.renderQueue.numItems):
-            queue_item = engine.adobe.app.project.renderQueue.items[i+1]
-            if queue_item.status not in [engine.adobe.RQItemStatus.QUEUED, engine.adobe.RQItemStatus.DONE]:
+        # itering through the render queue items
+        for i, queue_item in enumerate(self.__iter_collection(adobe.app.project.renderQueue.items)):
+            if queue_item.status not in [adobe.RQItemStatus.QUEUED, adobe.RQItemStatus.DONE]:
                 continue
-
             
-            render_path = 'path needs to be set.'
-            if queue_item.status is not engine.adobe.RQItemStatus.NEEDS_OUTPUT and queue_item.numOutputModules:
-                render_path = queue_item.outputModules[1].file.fsName
-            comp_item_name = '{} - {}'.format(queue_item.comp.name, render_path)
+            render_paths = []
+            if queue_item.status is not adobe.RQItemStatus.NEEDS_OUTPUT and queue_item.numOutputModules:
+                for output_module in self.__iter_collection(queue_item.outputModules):
+                    render_paths.append(output_module.file.fsName)
+            comp_item_name = '#{} {} - {}'.format(
+                        i+1, queue_item.comp.name,
+                        'copy' if queue_item.status == adobe.RQItemStatus.DONE else 'render')
 
             # create a publish item for the document
             comp_item = parent_item.create_item(
-                "aftereffects.document",
-                "After Effects Rendering",
+                "aftereffects.rendering",
+                "Rendered Image",
                 comp_item_name
             )
-            comp_item.set_icon_from_path(icon_path)
-
+            comp_item.set_icon_from_path(self.__icon_path())
 
             # disable thumbnail creation for After Effects documents. for the
             # default workflow, the thumbnail will be auto-updated after the
             # version creation plugin runs
             comp_item.thumbnail_enabled = False
+            comp_item.context_change_allowed = False
 
-            # add the document object to the properties so that the publish
-            # plugins know which open document to associate with this item
-            comp_item.properties["document"] = queue_item.outputModules[1].file
+            comp_item.description = "will process the following outputs:\n\t{}".format('\n\t'.join([os.path.basename(e) for e in render_paths]) or 'Renderpath Not Set.')
+            comp_item.properties["queue_item"] = queue_item
+            comp_item.properties["queue_item_index"] = i
+            comp_item.properties["renderpaths"] = render_paths
+            comp_item.properties["render_on_publish"] = queue_item.status != adobe.RQItemStatus.DONE
+            comp_item.properties["set_render_path"] = queue_item.status == adobe.RQItemStatus.NEEDS_OUTPUT
 
-            self.logger.info("Collected After Effects document: %s" % (comp_item_name))
+            self.logger.info("Collected After Effects renderings: %s" % (comp_item_name))
 
             # enable the rendered render queue items and expand it. other documents are
             # collapsed and disabled.
-            if queue_item.status == engine.adobe.RQItemStatus.DONE:
+            if queue_item.status == adobe.RQItemStatus.DONE:
                 comp_item.expanded = True
                 comp_item.checked = True
             else:
@@ -171,34 +171,13 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
                 comp_item.expanded = False
                 comp_item.checked = False
 
-            path = None#_document_path(render_path)
-
-            if path:
-                # try to set the thumbnail for display. won't display anything
-                # for psd/psb, but others should work.
+            for path in render_paths:
                 comp_item.set_thumbnail_from_path(path)
+                break
 
-            # store the template on the item for use by publish plugins. we
-            # can't evaluate the fields here because there's no guarantee the
-            # current session path won't change once the item has been created.
-            # the attached publish plugins will need to resolve the fields at
-            # execution time.
+            work_template = self.__get_work_template_for_item(settings)
             if work_template:
                 comp_item.properties["work_template"] = work_template
                 self.logger.debug(
                     "Work template defined for After Effects collection.")
 
-
-
-def _document_path(document):
-    """
-    Returns the path on disk to the supplied document. May be ``None`` if the
-    document has not been saved.
-    """
-
-    try:
-        path = document.fullName.fsName
-    except Exception:
-        path = None
-
-    return path

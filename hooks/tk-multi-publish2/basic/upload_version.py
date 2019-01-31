@@ -98,7 +98,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         """
 
         # we use "video" since that's the mimetype category.
-        return ["aftereffects.document"]
+        return ["aftereffects.project", "aftereffects.render"]
 
     def accept(self, settings, item):
         """

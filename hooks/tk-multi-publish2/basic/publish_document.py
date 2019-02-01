@@ -110,6 +110,12 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
                 "description": "Template path for published work files. Should"
                                "correspond to a template defined in "
                                "templates.yml.",
+            },
+            "Create Version": {
+                "type": "bool",
+                "default": False,
+                "description": "Will create a version for review in "
+                               "Shotgun. Default is False."
             }
         }
 
@@ -312,6 +318,18 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         # let the base class register the publish
         super(AfterEffectsCCProjectPublishPlugin, self).publish(settings, item)
 
+    def _get_version_entity(self, item):
+        """
+        Returns the best entity to link the version to.
+        """
+
+        if item.context.entity:
+            return item.context.entity
+        elif item.context.project:
+            return item.context.project
+        else:
+            return None
+
     def finalize(self, settings, item):
         """
         Execute the finalization pass. This pass executes once all the publish
@@ -328,12 +346,33 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
 
         path = item.properties["path"]
 
+        # in case creating a shotgun version is enabled
+        # we will create the shotgun version here
+        if settings.get('Create Version', False):
+            version_data = {
+                "project": item.context.project,
+                "code": os.path.basename(path),
+                "description": item.description,
+                "entity": self._get_version_entity(item),
+                "sg_task": item.context.task
+            }
+
+            published_renderings = item.properties.get("published_renderings", [])
+            publish_data = item.properties.get("sg_publish_data")
+            if publish_data:
+                published_renderings.insert(0, publish_data)
+
+            version_data["published_files"] =  published_renderings
+
+            # create the version
+            self.logger.info("Creating version for review...")
+            version = self.parent.shotgun.create("Version", version_data)
+
         # we need the path to be saved for this project.
         save_callback = lambda path, e=self.parent.engine: e.save_to_path(path)
 
         # bump the project path to the next version
         self._save_to_next_version(path, item, save_callback)
-
 
     def __get_save_as_action(self):
         """

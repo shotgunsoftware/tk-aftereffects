@@ -87,6 +87,7 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
         project_item.set_icon_from_path(self.__icon_path())
         project_item.thumbnail_enabled = False
         project_item.properties["file_path"] = path
+        project_item.properties["published_renderings"] = []
         if path:
             project_item.set_thumbnail_from_path(path)
 

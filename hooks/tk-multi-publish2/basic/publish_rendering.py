@@ -253,6 +253,8 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
                 # if the render fails we will exit here.
                 return
 
+        published_renderings = item.parent.properties.get("published_renderings", [])
+
         for each_path in self.__iter_publishable_paths(
                             queue_item,
                             queue_item_index,
@@ -262,6 +264,7 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
                             render_seq_path_template):
             item.properties["path"] = each_path
             super(AfterEffectsCCRenderPublishPlugin, self).publish(settings, item)
+            published_renderings.append(item.properties.get("sg_publish_data"))
 
     def __is_acceptable(self, settings, item):
         """
@@ -273,7 +276,8 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
             instances.
         :param item: Item to process
 
-
+        :returns: int indicating the acceptance-level. One of
+            REJECTED, PARTIALLY_ACCEPTED, FULLY_ACCEPTED
         """
 
         queue_item = item.properties.get("queue_item")

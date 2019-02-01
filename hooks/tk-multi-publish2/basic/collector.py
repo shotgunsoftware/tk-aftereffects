@@ -124,18 +124,27 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
         if adobe.app.project.file == None:
             return
 
+        work_template = self.__get_work_template_for_item(settings)
+
         # itering through the render queue items
         for i, queue_item in enumerate(self.__iter_collection(adobe.app.project.renderQueue.items)):
             if queue_item.status not in [adobe.RQItemStatus.QUEUED, adobe.RQItemStatus.DONE]:
                 continue
             
             render_paths = []
-            if queue_item.status is not adobe.RQItemStatus.NEEDS_OUTPUT and queue_item.numOutputModules:
-                for output_module in self.__iter_collection(queue_item.outputModules):
-                    render_paths.append(output_module.file.fsName)
-            comp_item_name = '#{} {} - {}'.format(
+            for output_module in self.__iter_collection(queue_item.outputModules):
+                render_paths.append(output_module.file.fsName)
+
+            action = "register only"
+            if work_template:
+                if queue_item.status == adobe.RQItemStatus.DONE:
+                    action = 'copy'
+                else:
+                    action = 'render'
+
+            comp_item_name = 'Render Queue Item #{} - {} - {}'.format(
                         i+1, queue_item.comp.name,
-                        'copy' if queue_item.status == adobe.RQItemStatus.DONE else 'render')
+                        action)
 
             # create a publish item for the document
             comp_item = parent_item.create_item(
@@ -143,6 +152,7 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
                 "Rendered Image",
                 comp_item_name
             )
+
             comp_item.set_icon_from_path(self.__icon_path())
 
             # disable thumbnail creation for After Effects documents. for the
@@ -151,14 +161,11 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
             comp_item.thumbnail_enabled = False
             comp_item.context_change_allowed = False
 
-            comp_item.description = "will process the following outputs:\n\t{}".format('\n\t'.join([os.path.basename(e) for e in render_paths]) or 'Renderpath Not Set.')
-            comp_item.properties["queue_item"] = queue_item
             comp_item.properties["queue_item_index"] = i
+            comp_item.properties["queue_item"] = queue_item
             comp_item.properties["renderpaths"] = render_paths
             comp_item.properties["render_on_publish"] = queue_item.status != adobe.RQItemStatus.DONE
             comp_item.properties["set_render_path"] = queue_item.status == adobe.RQItemStatus.NEEDS_OUTPUT
-
-            self.logger.info("Collected After Effects renderings: %s" % (comp_item_name))
 
             # enable the rendered render queue items and expand it. other documents are
             # collapsed and disabled.
@@ -175,9 +182,13 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
                 comp_item.set_thumbnail_from_path(path)
                 break
 
-            work_template = self.__get_work_template_for_item(settings)
             if work_template:
                 comp_item.properties["work_template"] = work_template
-                self.logger.debug(
-                    "Work template defined for After Effects collection.")
+                self.logger.debug("Work template defined for After Effects collection.")
+            else:
+                # without templates we disable any render and copy process
+                # and only allow 
+                item.properties["no_render_no_copy"] = True
+
+            self.logger.info("Collected After Effects renderings: %s" % (comp_item_name))
 

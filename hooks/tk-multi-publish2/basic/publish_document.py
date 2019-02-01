@@ -17,7 +17,7 @@ HookBaseClass = sgtk.get_hook_baseclass()
 
 class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
     """
-    Plugin for publishing an open nuke studio project.
+    Plugin for publishing an after effects project.
 
     This hook relies on functionality found in the base file publisher hook in
     the publish2 app and should inherit from it in the configuration. The hook
@@ -192,9 +192,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        publisher = self.parent
-        engine = publisher.engine
-        path = engine.get_project_path()
+        path = self.parent.engine.get_project_path()
 
         # ---- ensure the project has been saved
 
@@ -264,7 +262,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
                         "label": "Save to v%s" % (version,),
                         "tooltip": "Save to the next available version number, "
                                    "v%s" % (version,),
-                        "callback": lambda: engine.save_to_path(next_version_path)
+                        "callback": lambda: self.parent.engine.save_to_path(next_version_path)
                     }
                 }
             )
@@ -274,7 +272,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
 
         # populate the publish template on the item if found
         publish_template_setting = settings.get("Publish Template")
-        publish_template = publisher.engine.get_template_by_name(
+        publish_template = self.parent.engine.get_template_by_name(
             publish_template_setting.value)
         if publish_template:
             item.properties["publish_template"] = publish_template
@@ -299,15 +297,13 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        publisher = self.parent
-        engine = publisher.engine
-        path = engine.get_project_path()
+        path = self.parent.engine.get_project_path()
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
         path = sgtk.util.ShotgunPath.normalize(path)
 
-        engine.save()
+        self.parent.engine.save()
 
         # update the item with the saved project path
         item.properties["path"] = path
@@ -327,16 +323,13 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        publisher = self.parent
-        engine = publisher.engine
-
         # do the base class finalization
         super(AfterEffectsCCProjectPublishPlugin, self).finalize(settings, item)
 
         path = item.properties["path"]
 
         # we need the path to be saved for this project.
-        save_callback = lambda path: engine.save_to_path(path)
+        save_callback = lambda path, e=self.parent.engine: e.save_to_path(path)
 
         # bump the project path to the next version
         self._save_to_next_version(path, item, save_callback)

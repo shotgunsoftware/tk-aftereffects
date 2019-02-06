@@ -2017,7 +2017,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         #
         # The number of digits or hashes does not matter; we match as many as
         # exist.
-        frame_pattern = re.compile(r"(^|[\.\_\- ])[\[]?([0-9#@]+|[%]0\dd)[\]]?([ \.\_\-]|$)")
+        frame_pattern = re.compile(r"(^|[\.\_\- ])[\[]?([0-9#@]+|[%]0\d+d)[\]]?$")
         root, ext = os.path.splitext(path)
         match = re.search(frame_pattern, root)
 
@@ -2029,7 +2029,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         # We need to get all files that match the pattern from disk so that we
         # can determine what the min and max frame number is.
         glob_path = "%s%s" % (
-            re.sub(frame_pattern, "*", root),
+            re.sub(frame_pattern, r"\1*", root),
             ext,
         )
         files = glob.glob(glob_path)
@@ -2041,7 +2041,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         # We know that the search will result in a match at this point, otherwise
         # the glob wouldn't have found the file. We can search and pull group 1
         # to get the integer frame number from the file root name.
-        frames = [int(re.search(frame_pattern, f).group(1)) for f in file_roots]
+        frames = [int(re.search(frame_pattern, f).group(2)) for f in file_roots]
         return (min(frames), max(frames))
 
 

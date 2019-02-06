@@ -215,7 +215,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                         new_item.height,
                         new_item.pixelAspect,
                         new_item.duration,
-                        new_item.frameRate
+                        new_item.frameRate or 25
                     )
 
         temp_item = self.parent.engine.adobe.app.project.renderQueue.items.add(new_cmp_item)

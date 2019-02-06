@@ -8,6 +8,7 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
+import re
 import os
 import pprint
 import tempfile
@@ -85,7 +86,16 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         The type string should be one of the data types that toolkit accepts as
         part of its environment configuration.
         """
-        return {}
+        return {
+            "Movie Output Module": {
+                "type": "str",
+                "default": "Lossless with Alpha",
+                "description": "The output module to be chosen "
+                               "in case no output module has "
+                               "been set. This will control the "
+                               "rendersettings.",
+            }
+        }
 
     @property
     def item_filters(self):
@@ -98,7 +108,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         """
 
         # we use "video" since that's the mimetype category.
-        return ["aftereffects.project", "aftereffects.render"]
+        return ["aftereffects.rendering"]
 
     def accept(self, settings, item):
         """
@@ -126,26 +136,28 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        document = item.properties.get("document")
-        if not document:
-            self.logger.warn("Could not determine the document for item")
-            return {"accepted": False}
-
-        path = _document_path(document)
+        path = sgtk.util.ShotgunPath.normalize(self.parent.engine.get_project_path())
 
         if not path:
-            # the document has not been saved before (no path determined).
-            # provide a save button. the document will need to be saved before
+            # the project has not been saved before (no path determined).
+            # provide a save button. the project will need to be saved before
             # validation will succeed.
             self.logger.warn(
-                "The After Effects document '%s' has not been saved." %
-                (document.name,),
-                extra=_get_save_as_action(document)
+                "The After Effects project has not been saved.",
+                extra=self.__get_save_as_action()
             )
 
+        if not self.__check_rendered_item(item):
+            return {"accepted": True,
+                    "checked": False
+                    }
+
+        if not self.__check_renderings(item):
+            return {"accepted": False}
+
         self.logger.info(
-            "After Effects '%s' plugin accepted document: %s" %
-            (self.name, document.name)
+            "After Effects '%s' plugin accepted." %
+            (self.name,)
         )
         return {
             "accepted": True,
@@ -166,21 +178,64 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        document = item.properties["document"]
-        path = _document_path(document)
+        path = sgtk.util.ShotgunPath.normalize(self.parent.engine.get_project_path())
 
         if not path:
-            # the document still requires saving. provide a save button.
+            # the project still requires saving. provide a save button.
             # validation fails.
-            error_msg = "The After Effects document '%s' has not been saved." % \
-                        (document.name,)
+            error_msg = "The After Effects project has not been saved."
             self.logger.error(
                 error_msg,
-                extra=_get_save_as_action(document)
+                extra=self.__get_save_as_action()
             )
             raise Exception(error_msg)
 
+        if not self.__check_rendered_item(item):
+            return False
+
+        if not self.__check_renderings(item):
+            return False
+
         return True
+
+    def __path_is_sequence(self, path):
+        """
+        Helper to query if an adobe-style render path is
+        describing a sequence.
+
+        :param path: str filepath to check
+        :returns: bool True if the path describes a sequence
+        """
+        if re.search(u"\[(#+)\]", path):
+            return True
+        return False
+
+    def __render_to_temp_location(self, queue_item, mov_output_module_template):
+
+        temp_item = queue_item.duplicate()
+
+        output_modules = list(self.__iter_collection(temp_item.outputModules))
+        removable_output_modules = output_modules[1:]
+        output_module = output_modules[0]
+
+        output_module.applyTemplate(mov_output_module_template)
+        _, ext = os.path.splitext(output_module.file.fsName)
+
+        allocate_file = tempfile.NamedTemporaryFile(suffix=ext, delete=False)
+        allocate_file.close()
+
+        render_file = self.parent.engine.adobe.File(allocate_file.name)
+        output_module.file = render_file
+
+        while removable_output_modules:
+            removable_output_modules.pop(0).remove()
+
+        render_state = self.__render_queue_item(temp_item)
+
+        temp_item.remove()
+        if render_state:
+            return allocate_file.name
+        return ''
 
     def publish(self, settings, item):
         """
@@ -194,44 +249,23 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
 
         publisher = self.parent
         engine = publisher.engine
-        document = item.properties["document"]
 
-        path = _document_path(document)
-        upload_path = path
-
-        file_info = publisher.util.get_file_path_components(path)
-        if file_info["extension"] in ["psd", "psb"]:
-
-            with engine.context_changes_disabled():
-
-                # remember the active document so that we can restore it.
-                previous_active_document = engine.adobe.get_active_document()
-
-                # make the document being processed the active document
-                engine.adobe.app.activeDocument = document
-
-                # path to a temp jpg file
-                upload_path = os.path.join(
-                    tempfile.gettempdir(),
-                    "%s_sgtk.jpg" % uuid.uuid4().hex
-                )
-
-                # jpg file/options
-                jpg_file = engine.adobe.File(upload_path)
-                jpg_options = engine.adobe.JPEGSaveOptions
-                jpg_options.quality = 12
-
-                # mark the temp upload path for removal
-                item.properties["remove_upload"] = True
-
-                # save a jpg copy of the document
-                document.saveAs(jpg_file, jpg_options, True)
-
-                # restore the active document
-                engine.adobe.app.activeDocument = previous_active_document
+        queue_item = item.properties.get("queue_item")
+        render_paths = item.properties.get("renderpaths")
+        for each_path in render_paths:
+            if not self.__path_is_sequence(each_path):
+                upload_path = each_path
+                break
+        else:
+            self.logger.info("About to render movie...")
+            mov_output_module_template = settings.get('Movie Output Module').value
+            upload_path = self.__render_to_temp_location(queue_item, mov_output_module_template)
+            if not upload_path:
+                self.logger.error("Rendering a movie failed. Cannot upload a version of this item.")
+                return
 
         # use the path's filename as the publish name
-        path_components = publisher.util.get_file_path_components(path)
+        path_components = publisher.util.get_file_path_components(render_paths[0])
         publish_name = path_components["filename"]
 
         # populate the version data to send to SG
@@ -285,23 +319,6 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         )
         self.logger.info("Upload complete!")
 
-        # thumbnail to upload is the one stored in item
-        thumb = item.get_thumbnail_as_path()
-        # if thumbnail not set, consider the one created from file path
-        if not thumb:
-           thumb = upload_path
-
-        # go ahead and update the publish thumbnail (if there was one)
-        if publish_data:
-            self.logger.info("Updating publish thumbnail...")
-            self.parent.shotgun.upload_thumbnail(
-                publish_data["type"],
-                publish_data["id"],
-                thumb
-            )
-            self.logger.info("Publish thumbnail updated!")
-            
-
         item.properties["upload_path"] = upload_path
 
     def finalize(self, settings, item):
@@ -339,6 +356,84 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                     "Unable to remove temp file: %s" % (upload_path,))
                 pass
 
+    def __render_queue_item(self, queue_item):
+        """
+        renders a given queue_item, by disabling all other queued items
+        and only enabling the given item. After rendering the state of the
+        render-queue is reverted.
+
+        :param queue_item: the adobe.RenderQueueItem to be rendered
+        :returns: bool indicating successful rendering or not
+        """
+        adobe = self.parent.engine.adobe
+
+        # save the queue state for all unrendered items
+        queue_item_state_cache = [(queue_item, queue_item.render)]
+        for item in self.__iter_collection(adobe.app.project.renderQueue.items):
+            # one cannot change the status on 
+            if item.status != adobe.RQItemStatus.QUEUED:
+                continue
+            queue_item_state_cache.append((item, item.render))
+            item.render = False
+
+        success = False
+        queue_item.render = True
+        try:
+            self.logger.debug("Start rendering..")
+            adobe.app.project.renderQueue.render()
+        except Exception as e:
+            self.logger.error(("Skipping item due to an error "
+                    "while rendering: {}").format(e))
+
+        # reverting the original queued state for all
+        # unprocessed items
+        while queue_item_state_cache:
+            item, status = queue_item_state_cache.pop(0)
+            if item.status not in [adobe.RQItemStatus.DONE,
+                            adobe.RQItemStatus.ERR_STOPPED,
+                            adobe.RQItemStatus.RENDERING]:
+                item.render = status
+
+        # we check for success if the render queue item status
+        # has changed to DONE
+        success = (queue_item.status == adobe.RQItemStatus.DONE)
+        return success
+
+    def __check_rendered_item(self, item):
+        queue_item = item.properties.get("queue_item")
+        idx = item.properties.get("queue_item_index", '0')
+
+        # as this plugin can only process rendered items,
+        # we'll have to check if the given item is already
+        # rendered. If not, we'll provide a render button.
+        if queue_item.status != self.parent.engine.adobe.RQItemStatus.DONE:
+            self.logger.warn("Render item is not Done yet. Please render it first.",
+                        extra={
+                        "action_button": {
+                            "label": "Render Item {}".format(idx),
+                            "tooltip": ("Render the queue item {} as"
+                                       "movie, so it can be uploaded.").format(idx),
+                            "callback": lambda qi=queue_item:self.__render_queue_item(qi)
+                            }
+                        }
+                    )
+            return False
+        return True
+
+    def __check_renderings(self, item):
+        queue_item = item.properties.get("queue_item")
+        render_paths = item.properties.get("renderpaths")
+        has_incomplete_renderings = False
+        for each_path in render_paths:
+            if not self.__check_sequence(each_path, queue_item):
+                has_incomplete_renderings = True
+
+        if has_incomplete_renderings:
+            self.logger.warn("Render Queue item has incomplete renderings, "
+                              "please rerender this or duisable the queue item.")
+            return False
+        return True
+
     def _get_version_entity(self, item):
         """
         Returns the best entity to link the version to.
@@ -351,6 +446,72 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         else:
             return None
 
+    def __check_sequence(self, path, queue_item):
+        """
+        Helper to query if all render files of a given queue item
+        are actually existing.
+
+        :param path: str filepath to check
+        :param queue_item: an after effects render queue item
+        :returns: bool True if the path describes a sequence
+        """
+        for file_path, _ in self.__iter_render_files(path, queue_item):
+            if not os.path.exists(file_path):
+                return False
+        return True
+
+    def __iter_collection(self, collection_item):
+        """
+        Helper to iter safely through an adobe-collection item
+        as its index starts at 1, not 0.
+
+        :param collection_item: the after-effects collection item to iter
+        :yields: the next child item of the collection
+        """
+        for i in range(1, collection_item.length+1):
+            yield collection_item[i]
+
+    def __iter_render_files(self, path, queue_item):
+        """
+        Yields all render-files and its frame number of a given
+        after effects render queue item.
+
+        :param path: str filepath to check
+        :param queue_item: an after effects render queue item
+        :yields: 2-item-tuple where the firstitem is the resolved path (str)
+                of the render file and the second item the frame-number or
+                None if the path is not an image-sequence.
+        """
+        # is the given render-path a sequence?
+        match = re.search(u"\[(#+)\]", path)
+        if not match:
+            # if not, we just check if the file exists
+            yield path, None
+            raise StopIteration()
+
+    def __get_save_as_action(self):
+        """
+        Simple helper for returning a log action dict for saving the project
+        """
+
+        engine = self.parent.engine
+
+        # default save callback
+        callback = lambda: engine.save_as()
+
+        # if workfiles2 is configured, use that for file save
+        if "tk-multi-workfiles2" in engine.apps:
+            app = engine.apps["tk-multi-workfiles2"]
+            if hasattr(app, "show_file_save_dlg"):
+                callback = app.show_file_save_dlg
+
+        return {
+            "action_button": {
+                "label": "Save As...",
+                "tooltip": "Save the active project",
+                "callback": callback
+            }
+        }
 
 def _get_save_as_action(document):
     """

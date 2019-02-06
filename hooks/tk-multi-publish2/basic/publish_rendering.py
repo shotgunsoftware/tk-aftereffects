@@ -370,7 +370,8 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
 
         return self.FULLY_ACCEPTED
 
-    def __template_extension_match_render_paths(self, render_paths, seq_template, mov_template):
+    def __template_extension_match_render_paths(self,
+                render_paths, seq_template, mov_template):
         """
         Helper method to verify that the template extensions are matching the
         extensions of the render paths. This helper is called during verification
@@ -391,13 +392,14 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
 
             if path_ext != template_ext:
                 self.logger.warn(("The template extension {} is not matching"
-                                  "the render output path extension for "
-                                  "path {!r}").format(template_ext, each_path))
+                                  "the render output path extension {} for "
+                                  "path {!r}").format(template_ext, path_ext, each_path))
                 return self.REJECTED
         return self.FULLY_ACCEPTED
 
-    def __templates_acceptable(self, work_template, seq_template,
-                mov_template, project_path):
+    def __templates_acceptable(self,
+                work_template, seq_template, mov_template,
+                project_path):
         """
         Helper method to verify that the configured templates are valid.
         To do this, this method checks for the missing keys when initial fields
@@ -432,7 +434,8 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
 
         return self.FULLY_ACCEPTED
 
-    def __render_files_existing(self, publish_item, queue_item, render_paths):
+    def __render_files_existing(self,
+                publish_item, queue_item, render_paths):
         """
         Helper that verifies, that all render-files are actually existing on disk.
 
@@ -465,7 +468,9 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
             return self.REJECTED
         return self.FULLY_ACCEPTED
 
-    def __output_modules_acceptable(self, queue_item, mov_template, seq_template, check=True, force=True):
+    def __output_modules_acceptable(self,
+                queue_item, mov_template, seq_template,
+                check=True, force=True):
         """
         Helper that verifies, that all the output modules are configured correctly.
         It will perform extended checking if check is True. This means, that
@@ -479,6 +484,7 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
         :param check: bool indicating if extended checking should be performed (see above)
         :param force: bool indicating that a fix should be applied in case extended checking fails
         """
+        adobe = self.parent.engine.adobe
         # check configuration
         output_module_names = []
         for i, output_module in enumerate(self.__iter_collection(queue_item.outputModules)):
@@ -517,7 +523,9 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
             # if the fix output module is configured, we can apply the fix
             # and continue
             fix_output_module = lambda om=output_module, t=template_name: om.applyTemplate(t)
-            if force:
+            if force and queue_item.status not in [adobe.RQItemStatus.DONE,
+                            adobe.RQItemStatus.ERR_STOPPED,
+                            adobe.RQItemStatus.RENDERING]:
                 self.logger.info("Forcing Output Module to follow template {!r}".format(template_name))
                 fix_output_module()
                 continue
@@ -602,7 +610,9 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
         for frame_no in range(start_time, start_time+frame_numbers, skip_frames):
             yield test_path % frame_no, frame_no
 
-    def __iter_publishable_paths(self, queue_item, queue_item_idx, render_paths, work_template, mov_template, seq_template):
+    def __iter_publishable_paths(self,
+                queue_item, queue_item_idx, render_paths,
+                work_template, mov_template, seq_template):
         """
         Helper method to copy and iter all renderfiles to the configured publish location
 
@@ -743,3 +753,4 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
                 "callback": callback
             }
         }
+

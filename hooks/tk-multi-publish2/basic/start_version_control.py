@@ -72,7 +72,7 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["aftereffects.document"]
+        return ["aftereffects.project"]
 
     @property
     def settings(self):
@@ -121,38 +121,30 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        document = item.properties.get("document")
-        if not document:
-            self.logger.warn("Could not determine the document for item")
-            return {"accepted": False}
-
-        path = _document_path(document)
+        path = self.parent.engine.get_project_path()
 
         if path:
             version_number = self._get_version_number(path, item)
             if version_number is not None:
                 self.logger.info(
-                    "After Effects '%s' plugin rejected document: %s..." %
-                    (self.name, document.name)
+                    "After Effects '%s' plugin rejected project" % self.name
                 )
                 self.logger.info(
                     "  There is already a version number in the file...")
-                self.logger.info("  Document file path: %s" % (path,))
+                self.logger.info("  Project file path: %s" % (path,))
                 return {"accepted": False}
         else:
             # the session has not been saved before (no path determined).
             # provide a save button. the session will need to be saved before
             # validation will succeed.
             self.logger.warn(
-                "After Effects document'%s' has not been saved." %
-                (document.name),
-                extra=_get_save_as_action(document)
+                "After Effects project has not been saved.",
+                extra=self.__get_save_as_action()
             )
 
         self.logger.info(
-            "After Effects '%s' plugin accepted the document %s." %
-            (self.name, document.name),
-            extra=_get_version_docs_action()
+            "After Effects '%s' plugin accepted the project." % self.name,
+            extra=self.__get_version_docs_action()
         )
 
         # accept the plugin, but don't force the user to add a version number
@@ -177,17 +169,15 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        document = item.properties["document"]
-        path = _document_path(document)
+        path = self.parent.engine.get_project_path()
 
         if not path:
             # the session still requires saving. provide a save button.
             # validation fails
-            error_msg = "The After Effects document '%s' has not been saved." % \
-                        (document.name,)
+            error_msg = "The After Effects project has not been saved."
             self.logger.error(
                 error_msg,
-                extra=_get_save_as_action(document)
+                extra=self.__get_save_as_action()
             )
             raise Exception(error_msg)
 
@@ -204,7 +194,7 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
                         "choose another name."
             self.logger.error(
                 error_msg,
-                extra=_get_save_as_action(document)
+                extra=self._get_save_as_action()
             )
             raise Exception(error_msg)
 
@@ -222,35 +212,24 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
 
         publisher = self.parent
         engine = publisher.engine
-        document = item.properties["document"]
-        path = _document_path(document)
+        path = engine.get_project_path()
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.
         path = sgtk.util.ShotgunPath.normalize(path)
 
         # ensure the session is saved in its current state
-        engine.save(document)
+        engine.save()
 
         # get the path to a versioned copy of the file.
         version_path = publisher.util.get_version_path(path, "v001")
 
-        with engine.context_changes_disabled():
+        # save to the new version path
+        engine.save_to_path(version_path)
+        self.logger.info(
+            "A version number has been added to the After Effects project...")
+        self.logger.info("  After Effects project path: %s" % (version_path,))
 
-            '''# remember the active document so that we can restore it.
-            previous_active_document = engine.adobe.get_active_document()
-
-            # make the document being processed the active document
-            engine.adobe.app.activeDocument = document'''
-
-            # save to the new version path
-            engine.save_to_path(document, version_path)
-            self.logger.info(
-                "A version number has been added to the After Effects document...")
-            self.logger.info("  After Effects document path: %s" % (version_path,))
-
-            # restore the active document
-            '''engine.adobe.app.activeDocument = previous_active_document'''
 
     def finalize(self, settings, item):
         """
@@ -305,54 +284,40 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
 
         return version_number
 
+    def __get_save_as_action(self):
+        """
+        Simple helper for returning a log action dict for saving the project
+        """
 
-def _get_save_as_action(document):
-    """
-    Simple helper for returning a log action dict for saving the document
-    """
+        engine = self.parent.engine
 
-    engine = sgtk.platform.current_engine()
+        # default save callback
+        callback = lambda: engine.save_as()
 
-    # default save callback
-    callback = lambda: engine.save_as(document)
+        # if workfiles2 is configured, use that for file save
+        if "tk-multi-workfiles2" in engine.apps:
+            app = engine.apps["tk-multi-workfiles2"]
+            if hasattr(app, "show_file_save_dlg"):
+                callback = app.show_file_save_dlg
 
-    # if workfiles2 is configured, use that for file save
-    if "tk-multi-workfiles2" in engine.apps:
-        app = engine.apps["tk-multi-workfiles2"]
-        if hasattr(app, "show_file_save_dlg"):
-            callback = app.show_file_save_dlg
-
-    return {
-        "action_button": {
-            "label": "Save As...",
-            "tooltip": "Save the current document",
-            "callback": callback
+        return {
+            "action_button": {
+                "label": "Save As...",
+                "tooltip": "Save the active project",
+                "callback": callback
+            }
         }
-    }
 
-
-def _get_version_docs_action():
-    """
-    Simple helper for returning a log action to show version docs
-    """
-    return {
-        "action_open_url": {
-            "label": "Version Docs",
-            "tooltip": "Show docs for version formats",
-            "url": "https://support.shotgunsoftware.com/hc/en-us/articles/115000068574-User-Guide-WIP-#What%20happens%20when%20you%20publish"
+    def __get_version_docs_action(self):
+        """
+        Simple helper for returning a log action to show version docs
+        """
+        return {
+            "action_open_url": {
+                "label": "Version Docs",
+                "tooltip": "Show docs for version formats",
+                "url": "https://support.shotgunsoftware.com/hc/en-us/articles/115000068574-User-Guide-WIP-#What%20happens%20when%20you%20publish"
+            }
         }
-    }
 
 
-def _document_path(document):
-    """
-    Returns the path on disk to the supplied document. May be ``None`` if the
-    document has not been saved.
-    """
-
-    try:
-        path = document.fsName
-    except Exception:
-        path = None
-
-    return path

@@ -104,7 +104,6 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
             return self.parent.engine.get_template_by_name(
                 work_template_setting.value)
 
-
     def __iter_collection(self, collection_item):
         for i in range(1, collection_item.length+1):
             yield collection_item[i]
@@ -137,11 +136,14 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
                 render_paths.append(output_module.file.fsName)
 
             action = "register only"
+            comment = "Registers the Rendered Imagepaths"
             if work_template:
                 if queue_item.status == adobe.RQItemStatus.DONE:
                     action = 'copy'
+                    comment = "Register & Copy Rendered Images to the Publishpath"
                 else:
                     action = 'render'
+                    comment = "Render, Register & Copy Images to the Publishpath"
 
             comp_item_name = 'Render Queue Item #{} - {} - {}'.format(
                         i+1, queue_item.comp.name,
@@ -150,7 +152,7 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
             # create a publish item for the document
             comp_item = parent_item.create_item(
                 "aftereffects.rendering",
-                "Rendered Image",
+                comment,
                 comp_item_name
             )
 

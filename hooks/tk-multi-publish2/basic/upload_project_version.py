@@ -15,7 +15,7 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
+class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
     """
     Plugin for publishing an after effects project.
 
@@ -34,49 +34,8 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
 
-        loader_url = "https://support.shotgunsoftware.com/hc/en-us/articles/219033078"
-
         return """
-        Publishes the file to Shotgun. A <b>Publish</b> entry will be
-        created in Shotgun which will include a reference to the file's current
-        path on disk. Other users will be able to access the published file via
-        the <b><a href='%s'>Loader</a></b> so long as they have access to
-        the file's location on disk.
-
-        If the project has not been saved, validation will fail and a button
-        will be provided in the logging output to save the file.
-
-        <h3>File versioning</h3>
-        If the filename contains a version number, the process will bump the
-        file to the next version after publishing.
-
-        The <code>version</code> field of the resulting <b>Publish</b> in
-        Shotgun will also reflect the version number identified in the filename.
-        The basic worklfow recognizes the following version formats by default:
-
-        <ul>
-        <li><code>filename.v###.ext</code></li>
-        <li><code>filename_v###.ext</code></li>
-        <li><code>filename-v###.ext</code></li>
-        </ul>
-
-        After publishing, if a version number is detected in the file, the file
-        will automatically be saved to the next incremental version number.
-        For example, <code>filename.v001.ext</code> will be published and copied
-        to <code>filename.v002.ext</code>
-
-        If the next incremental version of the file already exists on disk, the
-        validation step will produce a warning, and a button will be provided in
-        the logging output which will allow saving the project to the next
-        available version number prior to publishing.
-
-        <br><br><i>NOTE: any amount of version number padding is supported.</i>
-
-        <h3>Overwriting an existing publish</h3>
-        A file can be published multiple times however only the most recent
-        publish will be available to other users. Warnings will be provided
-        during validation if there are previous publishes.
-        """ % (loader_url,)
+            """
 
     @property
     def settings(self):
@@ -100,21 +59,8 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
 
         # inherit the settings from the base publish plugin
         base_settings = \
-            super(AfterEffectsCCProjectPublishPlugin, self).settings or {}
+            super(AfterEffectsCCUploadProjectPlugin, self).settings or {}
 
-        # settings specific to this class
-        aftereffects_publish_settings = {
-            "Publish Template": {
-                "type": "template",
-                "default": None,
-                "description": "Template path for published work files. Should"
-                               "correspond to a template defined in "
-                               "templates.yml.",
-            }
-        }
-
-        # update the base settings
-        base_settings.update(aftereffects_publish_settings)
 
         return base_settings
 
@@ -156,10 +102,6 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         """
         path = self.parent.engine.get_project_path()
 
-        # if a publish template is configured, disable context change. 
-        if settings.get("Publish Template").value:
-            item.context_change_allowed = False
-
         if not path:
             # the project has not been saved before (no path determined).
             # provide a save button. the project will need to be saved before
@@ -170,9 +112,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
             )
 
         self.logger.info(
-            "After Effects '%s' plugin accepted." %
-            (self.name,)
-        )
+            "After Effects 'Upload Project Version' plugin accepted.")
         return {
             "accepted": True,
             "checked": True
@@ -241,79 +181,25 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
 
             # ---- see if the version can be bumped post-publish
 
-        # check to see if the next version of the work file already exists on
-        # disk. if so, warn the user and provide the ability to jump to save
-        # to that version now
-        (next_version_path, version) = self._get_next_version_info(path,
-                                                                   item)
-        if next_version_path and os.path.exists(next_version_path):
-
-            # determine the next available version_number. just keep asking for
-            # the next one until we get one that doesn't exist.
-            while os.path.exists(next_version_path):
-                (next_version_path, version) = self._get_next_version_info(
-                    next_version_path, item)
-
-            error_msg = "The next version of this file already exists on disk."
-            self.logger.error(
-                error_msg,
-                extra={
-                    "action_button": {
-                        "label": "Save to v%s" % (version,),
-                        "tooltip": "Save to the next available version number, "
-                                   "v%s" % (version,),
-                        "callback": lambda: self.parent.engine.save_to_path(next_version_path)
-                    }
-                }
-            )
-            raise Exception(error_msg)
-
         # ---- populate the necessary properties and call base class validation
-
-        # populate the publish template on the item if found
-        publish_template_setting = settings.get("Publish Template")
-        publish_template = self.parent.engine.get_template_by_name(
-            publish_template_setting.value)
-        if publish_template:
-            item.properties["publish_template"] = publish_template
 
         # set the project path on the item for use by the base plugin
         # validation step. NOTE: this path could change prior to the publish
         # phase.
         item.name = os.path.basename(path)
         item.properties["path"] = path
-
-        # run the base class validation
-        return super(AfterEffectsCCProjectPublishPlugin, self).validate(
-            settings, item)
+        return True
 
     def publish(self, settings, item):
         """
-        Executes the publish logic for the given item and settings.
+        Nothing to do for the publish. This publish plugin will only work together with the publish document
 
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
         """
-
-        path = self.parent.engine.get_project_path()
-
-        # get the path in a normalized state. no trailing separator, separators
-        # are appropriate for current os, no double separators, etc.
-        path = sgtk.util.ShotgunPath.normalize(path)
-
-        self.parent.engine.save()
-
-        # update the item with the saved project path
-        item.properties["path"] = path
-        item.properties["publish_type"] = "After Effects Project"
-
-        # let the base class register the publish
-        super(AfterEffectsCCProjectPublishPlugin, self).publish(settings, item)
-
-        published_renderings = item.properties.get("published_renderings", [])
-        published_renderings.insert(0, item.properties.get("sg_publish_data"))
+        return
 
     def _get_version_entity(self, item):
         """
@@ -338,16 +224,27 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        # do the base class finalization
-        super(AfterEffectsCCProjectPublishPlugin, self).finalize(settings, item)
 
         path = item.properties["path"]
 
-        # we need the path to be saved for this project.
-        save_callback = lambda path, e=self.parent.engine: e.save_to_path(path)
+        # in case creating a shotgun version is enabled
+        # we will create the shotgun version here
+        version_data = {
+            "project": item.context.project,
+            "code": os.path.basename(path),
+            "description": item.description,
+            "entity": self._get_version_entity(item),
+            "sg_task": item.context.task
+        }
 
-        # bump the project path to the next version
-        self._save_to_next_version(path, item, save_callback)
+        published_renderings = item.properties.get("published_renderings", [])
+
+        version_data["published_files"] =  published_renderings
+
+        # create the version
+        self.logger.info("Creating version for review...")
+        version = self.parent.shotgun.create("Version", version_data)
+
 
     def __get_save_as_action(self):
         """

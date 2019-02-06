@@ -104,10 +104,6 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
             return self.parent.engine.get_template_by_name(
                 work_template_setting.value)
 
-    def __iter_collection(self, collection_item):
-        for i in range(1, collection_item.length+1):
-            yield collection_item[i]
-
     def process_current_session(self, settings, parent_item):
         """
         Analyzes the open documents in After Effects and creates publish items
@@ -127,12 +123,12 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
         work_template = self.__get_work_template_for_item(settings)
 
         # itering through the render queue items
-        for i, queue_item in enumerate(self.__iter_collection(adobe.app.project.renderQueue.items)):
+        for i, queue_item in enumerate(self.parent.engine.iter_collection(adobe.app.project.renderQueue.items)):
             if queue_item.status not in [adobe.RQItemStatus.QUEUED, adobe.RQItemStatus.DONE]:
                 continue
             
             render_paths = []
-            for output_module in self.__iter_collection(queue_item.outputModules):
+            for output_module in self.parent.engine.iter_collection(queue_item.outputModules):
                 render_paths.append(output_module.file.fsName)
 
             action = "register only"
@@ -167,8 +163,6 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
             comp_item.properties["queue_item_index"] = i
             comp_item.properties["queue_item"] = queue_item
             comp_item.properties["renderpaths"] = render_paths
-            comp_item.properties["render_on_publish"] = queue_item.status != adobe.RQItemStatus.DONE
-            comp_item.properties["set_render_path"] = queue_item.status == adobe.RQItemStatus.NEEDS_OUTPUT
 
             # enable the rendered render queue items and expand it. other documents are
             # collapsed and disabled.

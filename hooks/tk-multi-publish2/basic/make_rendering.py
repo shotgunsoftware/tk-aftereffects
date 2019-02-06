@@ -9,36 +9,41 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import sys
+import re
+import shutil
 import os
 import sgtk
+from sgtk.util.filesystem import ensure_folder_exists
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
+class RenderingFailed(Exception): pass
 
-class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
+class AfterEffectsCCRenderPlugin(HookBaseClass):
     """
-    Plugin for publishing an after effects project.
+    Plugin for publishing after effects renderings.
 
     This hook relies on functionality found in the base file publisher hook in
     the publish2 app and should inherit from it in the configuration. The hook
     setting for this plugin should look something like this::
 
-        hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_document.py"
+        hook: "{self}/publish_file.py:{engine}/tk-multi-publish2/basic/publish_rendering.py"
 
     """
+
+    REJECTED, PARTIALLY_ACCEPTED, FULLY_ACCEPTED = range(3)
 
     @property
     def icon(self):
         """
         Path to an png icon on disk
         """
-
         # look for icon one level up from this hook's folder in "icons" folder
         return os.path.join(
             self.disk_location,
             os.pardir,
             "icons",
-            "review.png"
+            "rendering.png"
         )
 
     @property
@@ -48,8 +53,12 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
         contain simple html for formatting.
         """
 
+
         return """
-            """
+            Will render the given render queue item in case it didn't render before.
+            In case not all frames were rendered, it is optional to actually render
+            the item.
+        """
 
     @property
     def settings(self):
@@ -73,8 +82,7 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
 
         # inherit the settings from the base publish plugin
         base_settings = \
-            super(AfterEffectsCCUploadProjectPlugin, self).settings or {}
-
+            super(AfterEffectsCCRenderPlugin, self).settings or {}
 
         return base_settings
 
@@ -87,8 +95,8 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
         accept() method. Strings can contain glob patters such as *, for example
         ["maya.*", "file.maya"]
         """
-        return ["aftereffects.project"]
-
+        return ["aftereffects.rendering"]
+
     def accept(self, settings, item):
         """
         Method called by the publisher to determine if an item is of any
@@ -114,23 +122,17 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
 
         :returns: dictionary with boolean keys accepted, required and enabled
         """
-        path = self.parent.engine.get_project_path()
-
-        if not path:
-            # the project has not been saved before (no path determined).
-            # provide a save button. the project will need to be saved before
-            # validation will succeed.
-            self.logger.warn(
-                "The After Effects project has not been saved.",
-                extra=self.__get_save_as_action()
-            )
-
-        self.logger.info(
-            "After Effects 'Upload Project Version' plugin accepted.")
+        if self.__is_acceptable(settings, item) is self.REJECTED:
+            return {"accepted": False}
+        elif self.__is_acceptable(settings, item) is self.PARTIALLY_ACCEPTED:
+            return {
+                "accepted": True,
+                "checked": False
+            }
         return {
-            "accepted": True,
-            "checked": True
-        }
+                "accepted": True,
+                "checked": True
+            }
 
     def validate(self, settings, item):
         """
@@ -145,120 +147,92 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
 
         :returns: True if item is valid, False otherwise.
         """
+        if self.__is_acceptable(settings, item) is not self.FULLY_ACCEPTED:
+            return False
 
-        path = self.parent.engine.get_project_path()
-
-        # ---- ensure the project has been saved
-
-        if not path:
-            # the project still requires saving. provide a save button.
-            # validation fails.
-            error_msg = "The After Effects project '%s' has not been saved." % \
-                        (item.name,)
-            self.logger.error(
-                error_msg,
-                extra=self.__get_save_as_action()
-            )
-            raise Exception(error_msg)
-
-        # ---- check the project against any attached work template
-
-        # get the path in a normalized state. no trailing separator,
-        # separators are appropriate for current os, no double separators,
-        # etc.
-        path = sgtk.util.ShotgunPath.normalize(path)
-
-        # if the project item has a known work template, see if the path
-        # matches. if not, warn the user and provide a way to save the file to
-        # a different path
-        work_template = item.properties.get("work_template")
-        if work_template:
-            if not work_template.validate(path):
-                self.logger.warning(
-                    "The current project does not match the configured work "
-                    "template.",
-                    extra={
-                        "action_button": {
-                            "label": "Save File",
-                            "tooltip": "Save the current After Effects project"
-                                       "to a different file name",
-                            # will launch wf2 if configured
-                            "callback": self.__get_save_as_action()
-                        }
-                    }
-                )
-            else:
-                self.logger.debug(
-                    "Work template configured and matches project path.")
-        else:
-            self.logger.debug("No work template configured.")
-
-            # ---- see if the version can be bumped post-publish
-
-        # ---- populate the necessary properties and call base class validation
-
-        # set the project path on the item for use by the base plugin
-        # validation step. NOTE: this path could change prior to the publish
-        # phase.
-        item.name = os.path.basename(path)
-        item.properties["path"] = path
-        return True
+        # run the base class validation
+        return super(AfterEffectsCCRenderPlugin, self).validate(
+            settings, item)
 
     def publish(self, settings, item):
         """
-        Nothing to do for the publish. This publish plugin will only work together with the publish document
+        Executes the publish logic for the given item and settings.
 
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
         """
-        return
+        # we get the neccessary settings
+        queue_item = item.properties.get("queue_item")
+        queue_item_index = item.properties.get("queue_item_index", "")
 
-    def _get_version_entity(self, item):
-        """
-        Returns the best entity to link the version to.
-        """
+        # render the queue item
+        render_success = self.parent.engine.render_queue_item(queue_item)
+        if not render_success:
+            raise RenderingFailed("Rendering the render queue item {} failed.".format(queue_item_index))
 
-        if item.context.entity:
-            return item.context.entity
-        elif item.context.project:
-            return item.context.project
-        else:
-            return None
-
-    def finalize(self, settings, item):
+    def __is_acceptable(self, settings, item):
         """
-        Execute the finalization pass. This pass executes once all the publish
-        tasks have completed, and can for example be used to version up files.
+        This method is a helper to decide, whether the current publish item
+        is valid. it is called from the validate and the accept method.
 
         :param settings: Dictionary of Settings. The keys are strings, matching
             the keys returned in the settings property. The values are `Setting`
             instances.
         :param item: Item to process
+
+        :returns: int indicating the acceptance-level. One of
+            REJECTED, PARTIALLY_ACCEPTED, FULLY_ACCEPTED
+        """
+        queue_item = item.properties.get("queue_item")
+        render_paths = item.properties.get("renderpaths")
+        work_template = item.properties.get("work_template")
+        project_path = sgtk.util.ShotgunPath.normalize(self.parent.engine.get_project_path())
+
+        if queue_item is None:
+            self.logger.warn(("No queue_item was set. This is most likely due to "
+                        "a mismatch of the collector and this publish-plugin."))
+            return self.REJECTED
+
+        if not project_path:
+            self.logger.warn("Project has to be saved in order to allow publishing renderings",
+                    extra=self.__get_save_as_action())
+            return self.REJECTED
+        
+        # we now know, that we have templates available, so we can do extended checking
+        if queue_item.status == self.parent.engine.adobe.RQItemStatus.DONE:
+            if self.__render_files_existing(queue_item, render_paths) == self.REJECTED:
+                return self.REJECTED
+
+        return self.FULLY_ACCEPTED
+
+    def __render_files_existing(self,
+                queue_item, render_paths):
+        """
+        Helper that verifies, that all render-files are actually existing on disk.
+
+        :param queue_item: an after effects render-queue-item
+        :param render_paths: list of strings describing after-effects style render files. Sequences are marked like [####]
         """
 
+        if not render_paths:
+            self.logger.warn("No render path for the queue item. Please add at least one output module")
+            return self.REJECTED
 
-        path = item.properties["path"]
+        has_incomplete_renderings = False
+        for each_path in render_paths:
+            if not self.parent.engine.check_sequence(each_path, queue_item):
+                has_incomplete_renderings = True
+            self.logger.info(("Render Queue item %s has incomplete renderings, "
+                              "but status is DONE. "
+                              "Rerendering is needed.") % (queue_item.comp.name,))
+        if has_incomplete_renderings:
+            return self.PARTIALLY_ACCEPTED
 
-        # in case creating a shotgun version is enabled
-        # we will create the shotgun version here
-        version_data = {
-            "project": item.context.project,
-            "code": os.path.basename(path),
-            "description": item.description,
-            "entity": self._get_version_entity(item),
-            "sg_task": item.context.task
-        }
-
-        published_data = item.properties.get("sg_publish_data")
-        if published_data:
-            version_data["published_files"] = [published_data]
-
-        # create the version
-        self.logger.info("Creating version for review...")
-        version = self.parent.shotgun.create("Version", version_data)
-
+        self.logger.info(("No rendering needed in case the render queue item "
+                    "is already rendered."))
+        return self.REJECTED
 
     def __get_save_as_action(self):
         """

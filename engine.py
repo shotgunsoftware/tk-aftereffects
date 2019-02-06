@@ -11,6 +11,7 @@
 import logging
 import os
 import re
+import glob
 import math
 import subprocess
 import sys
@@ -89,6 +90,8 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
     _CONTEXT_CACHE_KEY = "aftereffectscc_context_cache"
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
+
+    __DEFAULT_IMPORT_TYPES = None
 
     ############################################################################
     # context changing
@@ -510,6 +513,205 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         if path:
             self.save_to_path(path)
 
+    def iter_collection(self, collection_item):
+        """
+        Helper to iter safely through an adobe-collection item
+        as its index starts at 1, not 0.
+
+        :param collection_item: the after-effects collection item to iter
+        :yields: the next child item of the collection
+        """
+        for i in range(1, collection_item.length+1):
+            yield collection_item[i]
+
+    def __get_import_type_for_path(self, import_options):
+        if self.__DEFAULT_IMPORT_TYPES is None:
+            # the following dict allows to set default values
+            # for specific file types
+            self.__DEFAULT_IMPORT_TYPES = {
+                    '.mov': self.adobe.ImportAsType.FOOTAGE
+                    }
+        _, ext = os.path.splitext(import_options.file.fsName)
+        if ext in self.__DEFAULT_IMPORT_TYPES:
+            return self.__DEFAULT_IMPORT_TYPES[ext]
+        # find out what type of footage we try to import
+        # Note: this order is important as we skip as soon as we can
+        #       import a piece of footage in a certain way
+        import_types = [
+                self.adobe.ImportAsType.PROJECT,  # aep
+                self.adobe.ImportAsType.COMP,  # psd, aep
+                self.adobe.ImportAsType.COMP_CROPPED_LAYERS,  # aep, psd fallback
+                self.adobe.ImportAsType.FOOTAGE,  # jpg
+            ]
+
+        for each_type in import_types:
+            if import_options.canImportAs(each_type):
+                return each_type
+        return None
+
+    def import_filepath(self, path):
+        file_obj = self.adobe.File(path)
+        import_options = self.adobe.ImportOptions()
+        import_options.file = file_obj
+        import_options.sequence = False
+
+        import_type = self.__get_import_type_for_path(import_options)
+        if import_type is None:
+            self.logger.warn("Filepath {!r} cannot be imported.".format(path))
+            return []
+        import_options.importAs = import_type
+
+        sequence_range = self.find_sequence_range(path)
+        if sequence_range and sequence_range[0] != sequence_range[1]:
+            import_options.sequence = True
+            import_options.forceAlphabetical = True
+
+        return self.__import_file(import_options)
+
+    def is_comp_item(self, item):
+        return item.data.get("instanceof", "") == "CompItem"
+
+    def is_folder_item(self, item):
+        return item.data.get("instanceof", "") == "FolderItem"
+
+    def is_footage_item(self, item):
+        return item.data.get("instanceof", "") == "FootageItem"
+
+    def selection_is_comp_item(self):
+        item = self.adobe.app.project.activeItem
+        if item == None:
+            return False
+        return self.is_comp_item(item)
+
+    def add_items_to_comp(self, item_collection, comp_item):
+        # first we generate a list of items within
+        # the given collection (FolderItem), because
+        # we have different include-priorities per
+        # type
+        folders = []
+        comps = []
+        footage = []
+        for item in self.iter_collection(item_collection):
+            if self.is_folder_item(item):
+                folder.append(item)
+            elif self.is_comp_item(item):
+                comps.append(item)
+            elif self.is_footage_item(item):
+                footage.append(item)
+
+        # if there is a comp in the given folder,
+        # then we prefer to add this to the comp,
+        # as it is likely to include the other layers
+        added = False
+        comp_and_footage = comps + footage
+        while not added and comp_and_footage:
+            comp_item = comp_item.layers.add(comp_and_footage.pop(0))
+            added = True
+
+        # in case no footage was added, we recurse into
+        # the folders until we find something or return None
+        while not added and folders:
+            folder = folders.pop(0)
+            added = self.add_items_to_comp(folder.items, comp_item)
+        return added
+
+    def render_queue_item(self, queue_item):
+        """
+        renders a given queue_item, by disabling all other queued items
+        and only enabling the given item. After rendering the state of the
+        render-queue is reverted.
+
+        :param queue_item: the adobe.RenderQueueItem to be rendered
+        :returns: bool indicating successful rendering or not
+        """
+
+        # save the queue state for all unrendered items
+        queue_item_state_cache = [(queue_item, queue_item.render)]
+        for item in self.iter_collection(self.adobe.app.project.renderQueue.items):
+            # one cannot change the status on 
+            if item.status != self.adobe.RQItemStatus.QUEUED:
+                continue
+            queue_item_state_cache.append((item, item.render))
+            item.render = False
+
+        success = False
+        queue_item.render = True
+        try:
+            self.logger.debug("Start rendering..")
+            self.adobe.app.project.renderQueue.render()
+        except Exception as e:
+            self.logger.error(("Skipping item due to an error "
+                    "while rendering: {}").format(e))
+
+        # reverting the original queued state for all
+        # unprocessed items
+        while queue_item_state_cache:
+            item, status = queue_item_state_cache.pop(0)
+            if item.status not in [self.adobe.RQItemStatus.DONE,
+                            self.adobe.RQItemStatus.ERR_STOPPED,
+                            self.adobe.RQItemStatus.RENDERING]:
+                item.render = status
+
+        # we check for success if the render queue item status
+        # has changed to DONE
+        success = (queue_item.status == self.adobe.RQItemStatus.DONE)
+        return success
+
+    def path_is_sequence(self, path):
+        """
+        Helper to query if an adobe-style render path is
+        describing a sequence.
+
+        :param path: str filepath to check
+        :returns: bool True if the path describes a sequence
+        """
+        if re.search(u"(\[(#+)\]|%[0-9]+d|@+|#+)", path):
+            return True
+        return False
+
+    def check_sequence(self, path, queue_item):
+        """
+        Helper to query if all render files of a given queue item
+        are actually existing.
+
+        :param path: str filepath to check
+        :param queue_item: an after effects render queue item
+        :returns: bool True if the path describes a sequence
+        """
+        for file_path, _ in self.iter_render_files(path, queue_item):
+            if not os.path.exists(file_path):
+                return False
+        return True
+
+    def iter_render_files(self, path, queue_item):
+        """
+        Yields all render-files and its frame number of a given
+        after effects render queue item.
+
+        :param path: str filepath to iter
+        :param queue_item: an after effects render queue item
+        :yields: 2-item-tuple where the firstitem is the resolved path (str)
+                of the render file and the second item the frame-number or
+                None if the path is not an image-sequence.
+        """
+        # is the given render-path a sequence?
+        match = re.search(u"[\[]?([#@]+|[%]0\dd)[\]]?", path)
+        if not match:
+            # if not, we just check if the file exists
+            yield path, None
+            raise StopIteration()
+
+        # if yes, we check the existence of each frame
+        frame_time = queue_item.comp.frameDuration
+        start_time = int(round(queue_item.timeSpanStart / frame_time, 3))
+        frame_numbers = int(round(queue_item.timeSpanDuration / frame_time, 3))
+        skip_frames = queue_item.skipFrames + 1
+        padding = len(match.group(1))
+
+        test_path = path.replace(match.group(0), "%%0%dd" % padding)
+        for frame_no in range(start_time, start_time+frame_numbers, skip_frames):
+            yield test_path % frame_no, frame_no
+
     @property
     def host_info(self):
         """
@@ -581,9 +783,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                     "document context..."
                 )
 
-                active_document_path = None
-                #if self.adobe.app.project.file:
-                #    active_document_path = self.adobe.app.project.file.fsName
+                active_document_path = self.get_project_path()
 
                 if active_document_path:
                     self.logger.debug(
@@ -1726,6 +1926,123 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                 self.logger.error("Could not activate python.")
         elif sys.platform == "win32":
             pass
+
+    def __import_file(self, import_options):
+
+        # as the return value of importFile will not
+        # reliably return the new items, one
+        # has to track the changes
+        item_cache = []
+        for item in self.iter_collection(self.adobe.app.project.rootFolder.items):
+            item_cache.append(item)
+
+        # do the import
+        self.adobe.app.project.importFile(import_options)
+
+        new_items = []
+        for item in self.iter_collection(self.adobe.app.project.rootFolder.items):
+            if item not in item_cache:
+                new_items.append(item)
+
+        return new_items
+
+    def find_sequence_range(self, path):
+        """
+        Helper method attempting to extract sequence information.
+
+        Using the toolkit template system, the path will be probed to 
+        check if it is a sequence, and if so, frame information is
+        attempted to be extracted.
+
+        :param path: Path to file on disk.
+        :returns: None if no range could be determined, otherwise (min, max)
+        """
+
+        # find a template that matches the path:
+        template = None
+        try:
+            template = self.sgtk.template_from_path(path)
+        except sgtk.TankError:
+            pass
+
+        if not template:
+            # If we don't have a template to take advantage of, then 
+            # we are forced to do some rough parsing ourself to try
+            # to determine the frame range.
+            return self._sequence_range_from_path(path)
+
+        # get the fields and find all matching files:
+        fields = template.get_fields(path)
+        if not "SEQ" in fields:
+            return None
+
+        files = self.sgtk.paths_from_template(template, fields, ["SEQ", "eye"])
+
+        # find frame numbers from these files:
+        frames = []
+        for file in files:
+            fields = template.get_fields(file)
+            frame = fields.get("SEQ")
+            if frame != None:
+                frames.append(frame)
+        if not frames:
+            return None
+
+        # return the range
+        return (min(frames), max(frames))
+
+    def _sequence_range_from_path(self, path):
+        """
+        Parses the file name in an attempt to determine the first and last
+        frame number of a sequence. This assumes some sort of common convention
+        for the file names, where the frame number is an integer at the end of
+        the basename, just ahead of the file extension, such as
+        file.0001.jpg, or file_001.jpg. We also check for input file names with
+        abstracted frame number tokens, such as file.####.jpg, or file.%04d.jpg.
+
+        :param str path: The file path to parse.
+
+        :returns: None if no range could be determined, otherwise (min, max)
+        :rtype: tuple or None
+        """
+        # This pattern will match the following at the end of a string and
+        # retain the frame number or frame token as group(1) in the resulting
+        # match object:
+        #
+        # 0001
+        # ####
+        # @@@@
+        # [####]
+        # %04d
+        #
+        # The number of digits or hashes does not matter; we match as many as
+        # exist.
+        frame_pattern = re.compile(r"(^|[\.\_\- ])[\[]?([0-9#@]+|[%]0\dd)[\]]?([ \.\_\-]|$)")
+        root, ext = os.path.splitext(path)
+        match = re.search(frame_pattern, root)
+
+        # If we did not match, we don't know how to parse the file name, or there
+        # is no frame number to extract.
+        if not match:
+            return None
+
+        # We need to get all files that match the pattern from disk so that we
+        # can determine what the min and max frame number is.
+        glob_path = "%s%s" % (
+            re.sub(frame_pattern, "*", root),
+            ext,
+        )
+        files = glob.glob(glob_path)
+
+        # Our pattern from above matches against the file root, so we need
+        # to chop off the extension at the end.
+        file_roots = [os.path.splitext(f)[0] for f in files]
+
+        # We know that the search will result in a match at this point, otherwise
+        # the glob wouldn't have found the file. We can search and pull group 1
+        # to get the integer frame number from the file root name.
+        frames = [int(re.search(frame_pattern, f).group(1)) for f in file_roots]
+        return (min(frames), max(frames))
 
 
 # a little action script to activate the given python process.

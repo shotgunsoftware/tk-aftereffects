@@ -7,12 +7,16 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-
-import sys
 import os
+
+
 import sgtk
 
+
 HookBaseClass = sgtk.get_hook_baseclass()
+
+
+class ProjectUnsavedError(Exception): pass
 
 
 class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
@@ -159,7 +163,7 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
                 error_msg,
                 extra=self.__get_save_as_action()
             )
-            raise Exception(error_msg)
+            raise ProjectUnsavedError(error_msg)
 
         # ---- check the project against any attached work template
 
@@ -215,18 +219,6 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
         """
         return
 
-    def _get_version_entity(self, item):
-        """
-        Returns the best entity to link the version to.
-        """
-
-        if item.context.entity:
-            return item.context.entity
-        elif item.context.project:
-            return item.context.project
-        else:
-            return None
-
     def finalize(self, settings, item):
         """
         Execute the finalization pass. This pass executes once all the publish
@@ -259,6 +251,17 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
         self.logger.info("Creating version for review...")
         version = self.parent.shotgun.create("Version", version_data)
 
+    def _get_version_entity(self, item):
+        """
+        Returns the best entity to link the version to.
+        """
+
+        if item.context.entity:
+            return item.context.entity
+        elif item.context.project:
+            return item.context.project
+        else:
+            return None
 
     def __get_save_as_action(self):
         """

@@ -7,13 +7,11 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-
-import sys
 import re
-import shutil
-import os
+
+
 import sgtk
-from sgtk.util.filesystem import ensure_folder_exists
+
 
 HookBaseClass = sgtk.get_hook_baseclass()
 

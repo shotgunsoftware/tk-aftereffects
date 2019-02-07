@@ -15,12 +15,11 @@ import glob
 import math
 import subprocess
 import sys
-import tempfile
 import threading
-import uuid
-import re
+
 
 from contextlib import contextmanager
+
 
 import sgtk
 from sgtk.util.filesystem import ensure_folder_exists
@@ -68,14 +67,6 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                 "DEBUG": "debug",
             }
 
-    __CC_VERSION_MAPPING = {
-                12: '2015',
-                13: '2016',
-                14:'2017',
-                15:'2018',
-                16:'2019'
-            }
-
     _COMMAND_UID_COUNTER = 0
     _LOCK = threading.Lock()
     _FAILED_PINGS = 0
@@ -92,6 +83,14 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
 
     __DEFAULT_IMPORT_TYPES = None
+
+    __CC_VERSION_MAPPING = {
+                12: '2015',
+                13: '2016',
+                14:'2017',
+                15:'2018',
+                16:'2019'
+            }
 
     ############################################################################
     # context changing
@@ -311,150 +310,44 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
             properties,
         )
 
-    def export_as_jpeg(self, document=None, output_path=None, max_size=2048, quality=12):
+    @property
+    def host_info(self):
         """
-        Export a Jpeg image from the given document or from the current document.
-        
-        :param document: The document to generate a thumbnail for. Assumes the
-                         active document if ``None`` is supplied.
-        :param output_path: The output file path to write the thumbnail. If
-                            ``None`` is supplied, the method will write to a temp file.
-        :param int max_size: The maximum width and height of the exported image.
-        :param int quality: The Jpeg quality of the exported image.
-        :returns: The full path to the exported image.
-        :raises: RuntimeError if the document or its size can't be retrieved.
+        Returns information about the application hosting this engine.
+
+        :returns: A {"name": application name, "version": application version}
+                  dictionary. 
         """
-        # TODO IMPLEMENT
-        try: sys.path.insert(0, r"R:\tools\bin\eclipse\4.6.2_all_x64\plugins\org.python.pydev_5.5.0.201701191708\pysrc"); import pydevd, _pydevd_bundle.pydevd_comm; _pydevd_bundle.pydevd_comm.MAX_IO_MSG_SIZE=50000; pydevd.settrace(stdoutToServer=True, stderrToServer=True, suspend=True); sys.path.pop(0)
-        except Exception as e: self.log_debug("%s: ERROROROROOROOR" % e)
-        adobe = self.adobe
+        if not self.adobe:
+            # Don't error out if the bridge was not yet started
+            return ("AfterFX", "unknown")
 
-        # Get some current values so we can restore them.
-        original_ruler_units = adobe.app.preferences.rulerUnits
-        original_dialog_mode = adobe.app.displayDialogs
+        version = self.adobe.aftereffects.AfterEffectsVersion
+        # app.aftereffects.AfterEffectsVersion just returns 18.1.1 which is not what users see in the UI
+        # extract a more meaningful version from the systemInformation property
+        # which gives something like:
+        # Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....
+        # and use it instead if available.
+        m = re.search("([\.0-9]+)", unicode(version))
+        if m:
+            cc_version = self.__CC_VERSION_MAPPING.get(math.floor(float(m.group(1))), version)
+        return {
+            "name": self.adobe.aftereffects.AfterEffectsAppName,
+            "version": cc_version,
+        }
 
-        # If no output_path was given, use a temp file.
-        jpeg_pub_path = output_path or os.path.join(
-            tempfile.gettempdir(), "%s_sgtk.jpg" % uuid.uuid4().hex
-        )
+    ############################################################################
+    # engine host interaction methods
 
-        with self.context_changes_disabled():
-            try:
-                # Set unit system to pixels:
-                adobe.app.preferences.rulerUnits = adobe.Units.PIXELS
-                # Disable dialogs.
-                adobe.app.displayDialogs = adobe.DialogModes.NO
-
-                try:
-                    active_doc = document or adobe.app.activeDocument
-                except RuntimeError, e:
-                    # Exceptions reported by After Effects CEP through the RPC API
-                    # are pretty useless, so catch the error, raise our own exception
-                    # but still log the original exception for debug purpose.
-                    self.logger.debug(
-                        "Unable to retrieve a document: %s" % e,
-                        exc_info=True, # Get traceback automatically
-                    )
-                    raise RuntimeError("Unable to retrieve a document")
-
-                orig_name = active_doc.name
-                width_str = str(active_doc.width.value)
-                height_str = str(active_doc.height.value)
-                
-                # Get a temp document name so we can manipulate the document without
-                # affecting the original docuement.
-                name, sfx = os.path.splitext(orig_name)
-                # a "." is included in the extension returned by splitext
-                jpeg_name = "%s_tkjpeg%s" % (name, sfx)
-                
-                # Find the doc size in pixels
-                # Note: this doesn't handle measurements other than pixels.
-                doc_width = doc_height = 0
-                # It seems we used to get back "<size> px" but now we receive back
-                # just a number, so let's have the " px" bit optional.
-                exp = re.compile("^(?P<value>[0-9]+)( px)?$")
-                mo = exp.match(width_str)
-                if mo:
-                    doc_width = int(mo.group("value"))
-                mo = exp.match(height_str)
-                if mo:
-                    doc_height = int(mo.group("value"))
-        
-                jpeg_width = jpeg_height = 0
-                if doc_width and doc_height:
-                    max_sz = max(doc_width, doc_height)
-                    if max_sz > max_size:
-                        scale = min(float(max_size)/float(max_sz), 1.0)
-                        jpeg_width = max(min(int(doc_width * scale), doc_width), 1)
-                        jpeg_height = max(min(int(doc_height * scale), doc_height), 1)
-                else:
-                    raise RuntimeError("Unable to retrieve document size from %s x %s " % (
-                        width_str, height_str,
-                    ))
-
-                # Get a file object from After Effects for this path and the current
-                # jpg save options:
-                jpeg_file = adobe.File(jpeg_pub_path)
-                jpeg_options = adobe.JPEGSaveOptions
-                jpeg_options.quality = quality
-
-                # duplicate the original doc:
-                save_options = adobe.SaveOptions.DONOTSAVECHANGES     
-                jpeg_doc = active_doc.duplicate(jpeg_name)
-        
-                try:
-                    # Flatten image:
-                    jpeg_doc.flatten()
-                    # Convert to eight bits
-                    jpeg_doc.bitsPerChannel = adobe.BitsPerChannelType.EIGHT
-                    # Resize if needed:
-                    if jpeg_width and jpeg_height:
-                        jpeg_doc.resizeImage(
-                            "%d px" % jpeg_width,
-                            "%d px" % jpeg_height
-                        )
-                    # Save:
-                    jpeg_doc.saveAs(jpeg_file, jpeg_options, True)
-        
-                finally:
-                    # Close the doc:
-                    jpeg_doc.close(save_options)
-
-            finally:
-                # Set units back to original
-                adobe.app.preferences.rulerUnits = original_ruler_units
-                # Set dialog mode back to original.
-                adobe.app.displayDialogs = original_dialog_mode
-        return jpeg_pub_path
-
-    def generate_thumbnail(self, document=None, output_path=None):
+    def get_project_path(self):
         """
-        Try to generate a thumbnail for an open document.
-
-        If a thumbnail can be generated, the output path will be returned. If
-        no thumbnail can be created, ``None`` will be returned.
-
-        :param document: The document to generate a thumbnail for. Assumes the
-            active document if ``None`` is supplied.
-        :param output_path: The output file path to write the thumbnail. If
-            ``None`` supplied, the method will write to a temp file.
-        :returns: Full path the thumbnail file, or None.
+        Returns the current project path or an empty string
         """
-        jpeg_path = None
-        try:
-            jpeg_path = self.export_as_jpeg(
-                document,
-                output_path,
-                max_size=self.MAX_THUMB_SIZE,
-                quality=3, # Default quality value for After Effects Jpeg option
-            )
-        except Exception, e:
-            # Log the error for debug purpose.
-            self.logger.warning(
-                "Couldn't generate thumbnail: %s" % e,
-                exc_info=True, # include traceback
-            )
-        return jpeg_path
+        doc_obj = self.adobe.app.project.file
+        doc_path = ''
+        if doc_obj != None:
+            doc_path = doc_obj.fsName
+        return doc_path
 
     def save(self):
         """
@@ -464,13 +357,6 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         with self.context_changes_disabled():
 
             self.adobe.app.project.save()
-
-    def get_project_path(self):
-        doc_obj = self.adobe.app.project.file
-        doc_path = ''
-        if doc_obj != None:
-            doc_path = doc_obj.fsName
-        return doc_path
 
     def save_to_path(self, path):
         """
@@ -513,6 +399,68 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         if path:
             self.save_to_path(path)
 
+    def is_comp_item(self, item):
+        """
+        :param item: adobe-Item-object to be checked
+        :returns: bool indicating if the given item is a CompItem
+        """
+        return item.data.get("instanceof", "") == "CompItem"
+
+    def is_folder_item(self, item):
+        """
+        :param item: adobe-Item-object to be checked
+        :returns: bool indicating if the given item is a FolderItem
+        """
+        return item.data.get("instanceof", "") == "FolderItem"
+
+    def is_footage_item(self, item):
+        """
+        :param item: adobe-Item-object to be checked
+        :returns: bool indicating if the given item is a FootageItem
+        """
+        return item.data.get("instanceof", "") == "FootageItem"
+
+    def selection_is_comp_item(self):
+        """
+        Helper indicating if the currently selected item
+        in After effects is a comp item. This will return True
+        if either the item is directly selected in the projects-
+        main bin or if no item is selected in the main-bin but
+        the mouse-focus is in the comp-panel.
+
+        :returns: bool
+        """
+        item = self.adobe.app.project.activeItem
+        if item == None:
+            return False
+        return self.is_comp_item(item)
+
+    def path_is_sequence(self, path):
+        """
+        Helper to query if an adobe-style render path is
+        describing a sequence.
+
+        :param path: str filepath to check
+        :returns: bool True if the path describes a sequence
+        """
+        if re.search(u"(\[(#+)\]|%[0-9]+d|@+|#+)", path):
+            return True
+        return False
+
+    def check_sequence(self, path, queue_item):
+        """
+        Helper to query if all render files of a given queue item
+        are actually existing.
+
+        :param path: str filepath to check
+        :param queue_item: an after effects render queue item
+        :returns: bool True if the path describes a sequence
+        """
+        for file_path, _ in self.iter_render_files(path, queue_item):
+            if not os.path.exists(file_path):
+                return False
+        return True
+
     def iter_collection(self, collection_item):
         """
         Helper to iter safely through an adobe-collection item
@@ -524,32 +472,48 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         for i in range(1, collection_item.length+1):
             yield collection_item[i]
 
-    def __get_import_type_for_path(self, import_options):
-        if self.__DEFAULT_IMPORT_TYPES is None:
-            # the following dict allows to set default values
-            # for specific file types
-            self.__DEFAULT_IMPORT_TYPES = {
-                    '.mov': self.adobe.ImportAsType.FOOTAGE
-                    }
-        _, ext = os.path.splitext(import_options.file.fsName)
-        if ext in self.__DEFAULT_IMPORT_TYPES:
-            return self.__DEFAULT_IMPORT_TYPES[ext]
-        # find out what type of footage we try to import
-        # Note: this order is important as we skip as soon as we can
-        #       import a piece of footage in a certain way
-        import_types = [
-                self.adobe.ImportAsType.PROJECT,  # aep
-                self.adobe.ImportAsType.COMP,  # psd, aep
-                self.adobe.ImportAsType.COMP_CROPPED_LAYERS,  # aep, psd fallback
-                self.adobe.ImportAsType.FOOTAGE,  # jpg
-            ]
+    def iter_render_files(self, path, queue_item):
+        """
+        Yields all render-files and its frame number of a given
+        after effects render queue item.
 
-        for each_type in import_types:
-            if import_options.canImportAs(each_type):
-                return each_type
-        return None
+        :param path: str filepath to iter
+        :param queue_item: an after effects render queue item
+        :yields: 2-item-tuple where the firstitem is the resolved path (str)
+                of the render file and the second item the frame-number or
+                None if the path is not an image-sequence.
+        """
+        # is the given render-path a sequence?
+        match = re.search(u"[\[]?([#@]+|[%]0\dd)[\]]?", path)
+        if not match:
+            # if not, we just check if the file exists
+            yield path, None
+            raise StopIteration()
+
+        # if yes, we check the existence of each frame
+        frame_time = queue_item.comp.frameDuration
+        start_time = int(round(queue_item.timeSpanStart / frame_time, 3))
+        frame_numbers = int(round(queue_item.timeSpanDuration / frame_time, 3))
+        skip_frames = queue_item.skipFrames + 1
+        padding = len(match.group(1))
+
+        test_path = path.replace(match.group(0), "%%0%dd" % padding)
+        for frame_no in range(start_time, start_time+frame_numbers, skip_frames):
+            yield test_path % frame_no, frame_no
 
     def import_filepath(self, path):
+        """
+        Helper method to import footage into the current comp.
+        This method contains logic to determine as what the given file-path
+        may be imported (PROJECT, FOOTAGE, COMP etc.)
+        It will also collect all new items and return those in case
+        the import leads to more than one (1) Item-objects to be imported.
+
+        :param path: str filepath to be imported. Sequences should give either the
+                first frame or the frames replaced by hashes (#), at (@) or the
+                percent formatting (%04d) syntax.
+        :returns: list of adobe.CompItem. All new items that were imported
+        """
         file_obj = self.adobe.File(path)
         import_options = self.adobe.ImportOptions()
         import_options.file = file_obj
@@ -568,22 +532,20 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
         return self.__import_file(import_options)
 
-    def is_comp_item(self, item):
-        return item.data.get("instanceof", "") == "CompItem"
-
-    def is_folder_item(self, item):
-        return item.data.get("instanceof", "") == "FolderItem"
-
-    def is_footage_item(self, item):
-        return item.data.get("instanceof", "") == "FootageItem"
-
-    def selection_is_comp_item(self):
-        item = self.adobe.app.project.activeItem
-        if item == None:
-            return False
-        return self.is_comp_item(item)
-
     def add_items_to_comp(self, item_collection, comp_item):
+        """
+        Helper method that adds the "best-matching" items from a given
+        adobe.CollectionItem into a given CompItem. Where "best-matching"
+        means, that the first CompItem found is added alternatively the first
+        Footage item is added.
+        In case the collection contains only FolderItems, this method will
+        recurse into the folders until one ItemObject was found.
+
+        :param item_collection: adobe.ItemCollection object to be analyzed
+        :param comp_item: adobe.CompItem that should receive the items from item_collection
+        :returns: bool indicating if an item was added or not.
+        """
+
         # first we generate a list of items within
         # the given collection (FolderItem), because
         # we have different include-priorities per
@@ -657,86 +619,50 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         success = (queue_item.status == self.adobe.RQItemStatus.DONE)
         return success
 
-    def path_is_sequence(self, path):
+    def find_sequence_range(self, path):
         """
-        Helper to query if an adobe-style render path is
-        describing a sequence.
+        Helper method attempting to extract sequence information.
 
-        :param path: str filepath to check
-        :returns: bool True if the path describes a sequence
+        Using the toolkit template system, the path will be probed to 
+        check if it is a sequence, and if so, frame information is
+        attempted to be extracted.
+
+        :param path: Path to file on disk.
+        :returns: None if no range could be determined, otherwise (min, max)
         """
-        if re.search(u"(\[(#+)\]|%[0-9]+d|@+|#+)", path):
-            return True
-        return False
 
-    def check_sequence(self, path, queue_item):
-        """
-        Helper to query if all render files of a given queue item
-        are actually existing.
+        # find a template that matches the path:
+        template = None
+        try:
+            template = self.sgtk.template_from_path(path)
+        except sgtk.TankError:
+            pass
 
-        :param path: str filepath to check
-        :param queue_item: an after effects render queue item
-        :returns: bool True if the path describes a sequence
-        """
-        for file_path, _ in self.iter_render_files(path, queue_item):
-            if not os.path.exists(file_path):
-                return False
-        return True
+        if not template:
+            # If we don't have a template to take advantage of, then 
+            # we are forced to do some rough parsing ourself to try
+            # to determine the frame range.
+            return self._sequence_range_from_path(path)
 
-    def iter_render_files(self, path, queue_item):
-        """
-        Yields all render-files and its frame number of a given
-        after effects render queue item.
+        # get the fields and find all matching files:
+        fields = template.get_fields(path)
+        if not "SEQ" in fields:
+            return None
 
-        :param path: str filepath to iter
-        :param queue_item: an after effects render queue item
-        :yields: 2-item-tuple where the firstitem is the resolved path (str)
-                of the render file and the second item the frame-number or
-                None if the path is not an image-sequence.
-        """
-        # is the given render-path a sequence?
-        match = re.search(u"[\[]?([#@]+|[%]0\dd)[\]]?", path)
-        if not match:
-            # if not, we just check if the file exists
-            yield path, None
-            raise StopIteration()
+        files = self.sgtk.paths_from_template(template, fields, ["SEQ", "eye"])
 
-        # if yes, we check the existence of each frame
-        frame_time = queue_item.comp.frameDuration
-        start_time = int(round(queue_item.timeSpanStart / frame_time, 3))
-        frame_numbers = int(round(queue_item.timeSpanDuration / frame_time, 3))
-        skip_frames = queue_item.skipFrames + 1
-        padding = len(match.group(1))
+        # find frame numbers from these files:
+        frames = []
+        for file in files:
+            fields = template.get_fields(file)
+            frame = fields.get("SEQ")
+            if frame != None:
+                frames.append(frame)
+        if not frames:
+            return None
 
-        test_path = path.replace(match.group(0), "%%0%dd" % padding)
-        for frame_no in range(start_time, start_time+frame_numbers, skip_frames):
-            yield test_path % frame_no, frame_no
-
-    @property
-    def host_info(self):
-        """
-        Returns information about the application hosting this engine.
-        
-        :returns: A {"name": application name, "version": application version}
-                  dictionary. 
-        """
-        if not self.adobe:
-            # Don't error out if the bridge was not yet started
-            return ("AfterFX", "unknown")
-
-        version = self.adobe.aftereffects.AfterEffectsVersion
-        # app.aftereffects.AfterEffectsVersion just returns 18.1.1 which is not what users see in the UI
-        # extract a more meaningful version from the systemInformation property
-        # which gives something like:
-        # Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....
-        # and use it instead if available.
-        m = re.search("([\.0-9]+)", unicode(version))
-        if m:
-            cc_version = self.__CC_VERSION_MAPPING.get(math.floor(float(m.group(1))), version)
-        return {
-            "name": self.adobe.aftereffects.AfterEffectsAppName,
-            "version": cc_version,
-        }
+        # return the range
+        return (min(frames), max(frames))
 
     ############################################################################
     # RPC
@@ -1297,7 +1223,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                 self._DIALOG_PARENT = self._win32_get_proxy_window()
             else:
                 self._DIALOG_PARENT = QtGui.QApplication.activeWindow()
-            
+
         return self._DIALOG_PARENT
 
     def show_dialog(self, title, bundle, widget_class, *args, **kwargs):
@@ -1927,70 +1853,6 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         elif sys.platform == "win32":
             pass
 
-    def __import_file(self, import_options):
-
-        # as the return value of importFile will not
-        # reliably return the new items, one
-        # has to track the changes
-        item_cache = []
-        for item in self.iter_collection(self.adobe.app.project.rootFolder.items):
-            item_cache.append(item)
-
-        # do the import
-        self.adobe.app.project.importFile(import_options)
-
-        new_items = []
-        for item in self.iter_collection(self.adobe.app.project.rootFolder.items):
-            if item not in item_cache:
-                new_items.append(item)
-
-        return new_items
-
-    def find_sequence_range(self, path):
-        """
-        Helper method attempting to extract sequence information.
-
-        Using the toolkit template system, the path will be probed to 
-        check if it is a sequence, and if so, frame information is
-        attempted to be extracted.
-
-        :param path: Path to file on disk.
-        :returns: None if no range could be determined, otherwise (min, max)
-        """
-
-        # find a template that matches the path:
-        template = None
-        try:
-            template = self.sgtk.template_from_path(path)
-        except sgtk.TankError:
-            pass
-
-        if not template:
-            # If we don't have a template to take advantage of, then 
-            # we are forced to do some rough parsing ourself to try
-            # to determine the frame range.
-            return self._sequence_range_from_path(path)
-
-        # get the fields and find all matching files:
-        fields = template.get_fields(path)
-        if not "SEQ" in fields:
-            return None
-
-        files = self.sgtk.paths_from_template(template, fields, ["SEQ", "eye"])
-
-        # find frame numbers from these files:
-        frames = []
-        for file in files:
-            fields = template.get_fields(file)
-            frame = fields.get("SEQ")
-            if frame != None:
-                frames.append(frame)
-        if not frames:
-            return None
-
-        # return the range
-        return (min(frames), max(frames))
-
     def _sequence_range_from_path(self, path):
         """
         Parses the file name in an attempt to determine the first and last
@@ -2044,6 +1906,74 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         frames = [int(re.search(frame_pattern, f).group(2)) for f in file_roots]
         return (min(frames), max(frames))
 
+    def __import_file(self, import_options):
+        """
+        Does the import and gets all new items, by caching the list of existing
+        items before importing and comparing them to the list of existing items
+        after importing.
+
+        :param import_options: adobe.ImportOptions object that should be imported
+        :returns: list of adobe.CompItem. All new items that were imported
+        """
+
+        # as the return value of importFile will not
+        # reliably return the new items, one
+        # has to track the changes
+        item_cache = []
+        for item in self.iter_collection(self.adobe.app.project.rootFolder.items):
+            item_cache.append(item)
+
+        # do the import
+        self.adobe.app.project.importFile(import_options)
+
+        new_items = []
+        for item in self.iter_collection(self.adobe.app.project.rootFolder.items):
+            if item not in item_cache:
+                new_items.append(item)
+
+        return new_items
+
+    def __get_import_type_for_path(self, import_options):
+        """
+        Helper to determine, what import type the given import candidate
+        needs. Assuming an *.aep file was given this method will return a
+        PROJECT, whereas if an *.jpg was given it will return FOOTAGE
+
+        Note::
+
+        It is possible to overwrite the default behavior by editing this method.
+        For example would *.mov normally return PROJECT but this method will return
+        FOOTAGE instead.
+
+        :param import_options: adobe.ImportOptions object that should be imported
+        :returns: int or None. None indicates, that the current object cannot be imported
+            an integer will be the adobe.ImportAsType-constant that should be used,
+            when importing
+        """
+        if self.__DEFAULT_IMPORT_TYPES is None:
+            # the following dict allows to set default values
+            # for specific file types
+            self.__DEFAULT_IMPORT_TYPES = {
+                    '.mov': self.adobe.ImportAsType.FOOTAGE
+                    }
+        _, ext = os.path.splitext(import_options.file.fsName)
+        if ext in self.__DEFAULT_IMPORT_TYPES:
+            return self.__DEFAULT_IMPORT_TYPES[ext]
+        # find out what type of footage we try to import
+        # Note: this order is important as we skip as soon as we can
+        #       import a piece of footage in a certain way
+        import_types = [
+                self.adobe.ImportAsType.PROJECT,  # aep
+                self.adobe.ImportAsType.COMP,  # psd, aep
+                self.adobe.ImportAsType.COMP_CROPPED_LAYERS,  # aep, psd fallback
+                self.adobe.ImportAsType.FOOTAGE,  # jpg
+            ]
+
+        for each_type in import_types:
+            if import_options.canImportAs(each_type):
+                return each_type
+        return None
+
 
 # a little action script to activate the given python process.
 OSX_ACTIVATE_SCRIPT = \
@@ -2052,11 +1982,5 @@ tell application "System Events"
   set frontmost of the first process whose unix id is {pid} to true
 end tell
 """.format(pid=os.getpid())
-
-
-
-
-
-
 
 

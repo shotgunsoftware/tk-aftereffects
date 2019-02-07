@@ -7,16 +7,23 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-
 import re
 import os
 import pprint
 import tempfile
-import uuid
 import sys
+
+
 import sgtk
 
+
 HookBaseClass = sgtk.get_hook_baseclass()
+
+
+class ProjectUnsavedError(Exception): pass
+
+
+class RenderingFailed(Exception): pass
 
 
 class AfterEffectsUploadVersionPlugin(HookBaseClass):
@@ -147,14 +154,6 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                 extra=self.__get_save_as_action()
             )
 
-        #if not self.__check_rendered_item(item):
-        #    return {"accepted": True,
-        #            "checked": False
-        #            }
-
-        #if not self.__check_renderings(item):
-        #    return {"accepted": False}
-
         self.logger.info(
             "After Effects '%s' plugin accepted." %
             (self.name,)
@@ -188,64 +187,9 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                 error_msg,
                 extra=self.__get_save_as_action()
             )
-            raise Exception(error_msg)
-
-        #if not self.__check_rendered_item(item):
-        #    return False
-
-        #if not self.__check_renderings(item):
-        #    return False
+            raise ProjectUnsavedError(error_msg)
 
         return True
-
-    def __render_to_temp_location(self, sequence_path, queue_item, mov_output_module_template):
-
-        for first_frame, _ in self.parent.engine.iter_render_files(sequence_path, queue_item):
-            break
-
-        # import the footage and add it to the render queue
-        new_items = self.parent.engine.import_filepath(first_frame)
-        for new_item in new_items:
-            break
-        else:
-            return ''
-        new_cmp_item = self.parent.engine.adobe.app.project.items.addComp(
-                        new_item.name,
-                        new_item.width,
-                        new_item.height,
-                        new_item.pixelAspect,
-                        new_item.duration,
-                        new_item.frameRate or 25
-                    )
-
-        temp_item = self.parent.engine.adobe.app.project.renderQueue.items.add(new_cmp_item)
-
-        # set the output module
-        output_module = temp_item.outputModules[1]
-        output_module.applyTemplate(mov_output_module_template)
-
-        # set the filepath to a temp location
-        _, ext = os.path.splitext(output_module.file.fsName)
-
-        allocate_file = tempfile.NamedTemporaryFile(suffix=ext)
-        allocate_file.close()
-
-        render_file = self.parent.engine.adobe.File(allocate_file.name)
-        output_module.file = render_file
-
-        # render
-        render_state = self.parent.engine.render_queue_item(temp_item)
-
-        # clean up temporary items
-        temp_item.remove()
-        new_cmp_item.remove()
-        while new_items:
-            new_items.pop().remove()
-
-        # return the render file path or an empty string
-        if render_state:
-            return allocate_file.name
-        return ''
 
     def publish(self, settings, item):
         """
@@ -351,28 +295,6 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
 
         item.properties["upload_path"] = upload_path
 
-    def __get_additional_version_data(self, queue_item, path_to_frames):
-        if path_to_frames is None:
-            return {}
-
-        out_dict = {}
-        frame_numbers = []
-        for _, fn in self.parent.engine.iter_render_files(path_to_frames, queue_item):
-            frame_numbers.append(fn)
-        out_dict['sg_first_frame'] = min(frame_numbers)
-        out_dict['sg_last_frame'] = max(frame_numbers)
-        out_dict['frame_range'] = "{}-{}".format(min(frame_numbers), max(frame_numbers))
-        out_dict['frame_count'] = len(frame_numbers)
-        match = re.search('[\[]?([#@]+)[\]]?', path_to_frames)
-        if match:
-            path_to_frames = path_to_frames.replace(match.group(0), '%0{}d'.format(len(match.group(1))))
-        out_dict["sg_path_to_frames"] = path_to_frames
-
-        # use the path's filename as the publish name
-        path_components = self.parent.util.get_file_path_components(path_to_frames)
-        out_dict["code"] = path_components["filename"]
-        return out_dict
-
     def finalize(self, settings, item):
         """
         Execute the finalization pass. This pass executes once all the publish
@@ -407,6 +329,77 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                 self.logger.warn(
                     "Unable to remove temp file: %s" % (upload_path,))
                 pass
+
+    def __render_to_temp_location(self, sequence_path, queue_item, mov_output_module_template):
+
+        for first_frame, _ in self.parent.engine.iter_render_files(sequence_path, queue_item):
+            break
+
+        # import the footage and add it to the render queue
+        new_items = self.parent.engine.import_filepath(first_frame)
+        for new_item in new_items:
+            break
+        else:
+            return ''
+        new_cmp_item = self.parent.engine.adobe.app.project.items.addComp(
+                        new_item.name,
+                        new_item.width,
+                        new_item.height,
+                        new_item.pixelAspect,
+                        new_item.duration,
+                        new_item.frameRate or 25
+                    )
+
+        temp_item = self.parent.engine.adobe.app.project.renderQueue.items.add(new_cmp_item)
+
+        # set the output module
+        output_module = temp_item.outputModules[1]
+        output_module.applyTemplate(mov_output_module_template)
+
+        # set the filepath to a temp location
+        _, ext = os.path.splitext(output_module.file.fsName)
+
+        allocate_file = tempfile.NamedTemporaryFile(suffix=ext)
+        allocate_file.close()
+
+        render_file = self.parent.engine.adobe.File(allocate_file.name)
+        output_module.file = render_file
+
+        # render
+        render_state = self.parent.engine.render_queue_item(temp_item)
+
+        # clean up temporary items
+        temp_item.remove()
+        new_cmp_item.remove()
+        while new_items:
+            new_items.pop().remove()
+
+        # return the render file path or an empty string
+        if render_state:
+            return allocate_file.name
+        return ''
+
+    def __get_additional_version_data(self, queue_item, path_to_frames):
+        if path_to_frames is None:
+            return {}
+
+        out_dict = {}
+        frame_numbers = []
+        for _, fn in self.parent.engine.iter_render_files(path_to_frames, queue_item):
+            frame_numbers.append(fn)
+        out_dict['sg_first_frame'] = min(frame_numbers)
+        out_dict['sg_last_frame'] = max(frame_numbers)
+        out_dict['frame_range'] = "{}-{}".format(min(frame_numbers), max(frame_numbers))
+        out_dict['frame_count'] = len(frame_numbers)
+        match = re.search('[\[]?([#@]+)[\]]?', path_to_frames)
+        if match:
+            path_to_frames = path_to_frames.replace(match.group(0), '%0{}d'.format(len(match.group(1))))
+        out_dict["sg_path_to_frames"] = path_to_frames
+
+        # use the path's filename as the publish name
+        path_components = self.parent.util.get_file_path_components(path_to_frames)
+        out_dict["code"] = path_components["filename"]
+        return out_dict
 
     def __check_rendered_item(self, item):
         queue_item = item.properties.get("queue_item")
@@ -479,40 +472,4 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
             }
         }
 
-def _get_save_as_action(document):
-    """
-    Simple helper for returning a log action dict for saving the document
-    """
 
-    engine = sgtk.platform.current_engine()
-
-    # default save callback
-    callback = lambda: engine.save_as(document)
-
-    # if workfiles2 is configured, use that for file save
-    if "tk-multi-workfiles2" in engine.apps:
-        app = engine.apps["tk-multi-workfiles2"]
-        if hasattr(app, "show_file_save_dlg"):
-            callback = app.show_file_save_dlg
-
-    return {
-        "action_button": {
-            "label": "Save As...",
-            "tooltip": "Save the current document",
-            "callback": callback
-        }
-    }
-
-
-def _document_path(document):
-    """
-    Returns the path on disk to the supplied document. May be ``None`` if the
-    document has not been saved.
-    """
-
-    try:
-        path = document.fullName.fsName
-    except Exception:
-        path = None
-
-    return path

@@ -7,13 +7,14 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-
-import sys
 import re
-import shutil
 import os
+import shutil
+
+
 import sgtk
 from sgtk.util.filesystem import ensure_folder_exists
+
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -52,20 +53,19 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
         contain simple html for formatting.
         """
 
-        loader_url = "https://support.shotgunsoftware.com/hc/en-us/articles/219033078"
-
         return """
-        Publishes Render Queue elements to Shotgun. A <b>Publish</b> entry will be
-        created in Shotgun which will include a reference to the file's current
-        path on disk. Other users will be able to access the published file via
-        the <b><a href='%s'>Loader</a></b> so long as they have access to
-        the file's location on disk.
+        This Publish plugin will take care of copying the render output files generated
+        by the associated render queue item to the configured publish location.
 
-        <h3>Overwriting an existing publish</h3>
-        A file can be published multiple times however only the most recent
-        publish will be available to other users. Warnings will be provided
-        during validation if there are previous publishes.
-        """ % (loader_url,)
+        When configuring this plugin please be aware of the following:
+
+        1. You need to set default output-module templates for movies and sequences.
+            These output modules should exists at the artists machine.
+        2. The publish-path-templates for sequences and movies should match the given output-module-templates.
+            This means, that you cannot configue an output-module-template, which renders a '*.mov' file
+            while your publish-path-template defines an extension like '*.avi'
+        3. You may enforce the use of your configured output module templates.
+        """
 
     @property
     def settings(self):
@@ -301,7 +301,7 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
             self.logger.warn("Project has to be saved in order to allow publishing renderings",
                     extra=self.__get_save_as_action())
             return self.REJECTED
-        
+
         # check if the current configuration has templates assigned
         if not work_template:
             self.logger.warn(("Copy the render-files to the publish location"
@@ -550,16 +550,6 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
             # register that.
             yield abstract_target_path
 
-    def __change_item_settings(self, item, setting_name, value):
-        """
-        Helper as item assignment doesn't work in lambdas
-
-        :param item: item to be published from the publisher
-        :param setting_name: str of the setting name
-        :param value: value to set the given setting to
-        """
-        item.properties[setting_name] = value
-
     def __get_save_as_action(self):
         """
         Simple helper for returning a log action dict for saving the project
@@ -583,4 +573,5 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
                 "callback": callback
             }
         }
+
 

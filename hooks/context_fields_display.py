@@ -9,6 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 import sgtk
 
+
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
@@ -536,3 +537,5 @@ class ContextFieldsDisplay(HookBaseClass):
             self.parent.sgtk.shotgun_url, entity["type"], entity["id"])
 
         return self.parent.get_panel_link(url, text)
+
+

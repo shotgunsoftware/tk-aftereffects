@@ -8,10 +8,21 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-import sys
+import sgtk
 
-from .adobe_bridge import AdobeBridge, RPCTimeoutError
-import shotgunutils
+adobe_bridge = sgtk.platform.import_framework(
+    "tk-framework-adobe",
+    "adobe_bridge"
+)
 
-if sys.platform == "win32":
-    import win_32_api
+AdobeBridge = adobe_bridge.AdobeBridge
+
+shotgunutils = sgtk.platform.import_framework(
+    "tk-framework-adobe",
+    "shotgunutils"
+)
+
+win_32_api = sgtk.platform.import_framework(
+    "tk-framework-adobe",
+    "win_32_api"
+)

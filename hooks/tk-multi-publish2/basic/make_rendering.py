@@ -7,17 +7,17 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-
-import sys
-import re
-import shutil
 import os
+
+
 import sgtk
-from sgtk.util.filesystem import ensure_folder_exists
+
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
+
 class RenderingFailed(Exception): pass
+
 
 class AfterEffectsCCRenderPlugin(HookBaseClass):
     """
@@ -52,8 +52,6 @@ class AfterEffectsCCRenderPlugin(HookBaseClass):
         Verbose, multi-line description of what the plugin does. This can
         contain simple html for formatting.
         """
-
-
         return """
             Will render the given render queue item in case it didn't render before.
             In case not all frames were rendered, it is optional to actually render
@@ -199,7 +197,7 @@ class AfterEffectsCCRenderPlugin(HookBaseClass):
             self.logger.warn("Project has to be saved in order to allow publishing renderings",
                     extra=self.__get_save_as_action())
             return self.REJECTED
-        
+
         # we now know, that we have templates available, so we can do extended checking
         if queue_item.status == self.parent.engine.adobe.RQItemStatus.DONE:
             if self.__render_files_existing(queue_item, render_paths) == self.REJECTED:
@@ -257,4 +255,5 @@ class AfterEffectsCCRenderPlugin(HookBaseClass):
                 "callback": callback
             }
         }
+
 

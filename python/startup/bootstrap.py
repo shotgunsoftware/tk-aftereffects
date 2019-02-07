@@ -8,21 +8,12 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-import contextlib
 import os
-import shutil
 import sys
-import codecs
-import tempfile
-import zipfile
+
 
 import sgtk
-import sgtk.platform.framework
-from sgtk.util.filesystem import (
-    backup_folder,
-    ensure_folder_exists,
-    move_folder,
-)
+
 
 logger = sgtk.LogManager.get_logger(__name__)
 
@@ -53,19 +44,19 @@ def bootstrap(engine_name, context, app_path, app_args, **kwargs):
     # set the environment
     os.environ.update(env)
 
-
     # all good to go
     return (app_path, app_args)
 
 
 def _get_adobe_framework_location():
-    """ This helper method will query the current environment for the configured
-        location on disk where the tk-adobe-framework is to be found.
+    """
+    This helper method will query the current environment for the configured
+    location on disk where the tk-adobe-framework is to be found.
 
-        This is necessary, as the the framework relies on an environment variable
-        to be set by the parent engine.
+    This is necessary, as the the framework relies on an environment variable
+    to be set by the parent engine.
 
-        Returns (str): The folder path to the latest framework. Empty string if no match.
+    Returns (str): The folder path to the latest framework. Empty string if no match.
     """
     engine = sgtk.platform.current_engine()
     if engine is None:
@@ -119,6 +110,5 @@ def compute_environment():
     env["PYTHONPATH"] = os.environ["PYTHONPATH"]
 
     return env
-
 
 

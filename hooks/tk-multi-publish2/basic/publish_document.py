@@ -7,12 +7,16 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-
-import sys
 import os
+
+
 import sgtk
 
+
 HookBaseClass = sgtk.get_hook_baseclass()
+
+
+class ProjectUnsavedError(Exception): pass
 
 
 class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
@@ -37,7 +41,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         loader_url = "https://support.shotgunsoftware.com/hc/en-us/articles/219033078"
 
         return """
-        Publishes the file to Shotgun. A <b>Publish</b> entry will be
+        Publishes the project file to Shotgun. A <b>Publish</b> entry will be
         created in Shotgun which will include a reference to the file's current
         path on disk. Other users will be able to access the published file via
         the <b><a href='%s'>Loader</a></b> so long as they have access to
@@ -128,7 +132,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         ["maya.*", "file.maya"]
         """
         return ["aftereffects.project"]
-
+
     def accept(self, settings, item):
         """
         Method called by the publisher to determine if an item is of any
@@ -205,7 +209,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
                 error_msg,
                 extra=self.__get_save_as_action()
             )
-            raise Exception(error_msg)
+            raise ProjectUnsavedError(error_msg)
 
         # ---- check the project against any attached work template
 
@@ -266,7 +270,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
                     }
                 }
             )
-            raise Exception(error_msg)
+            raise ProjectUnsavedError(error_msg)
 
         # ---- populate the necessary properties and call base class validation
 
@@ -315,18 +319,6 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         published_renderings = item.properties.get("published_renderings", [])
         published_renderings.insert(0, item.properties.get("sg_publish_data"))
 
-    def _get_version_entity(self, item):
-        """
-        Returns the best entity to link the version to.
-        """
-
-        if item.context.entity:
-            return item.context.entity
-        elif item.context.project:
-            return item.context.project
-        else:
-            return None
-
     def finalize(self, settings, item):
         """
         Execute the finalization pass. This pass executes once all the publish
@@ -348,6 +340,18 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
 
         # bump the project path to the next version
         self._save_to_next_version(path, item, save_callback)
+
+    def _get_version_entity(self, item):
+        """
+        Returns the best entity to link the version to.
+        """
+
+        if item.context.entity:
+            return item.context.entity
+        elif item.context.project:
+            return item.context.project
+        else:
+            return None
 
     def __get_save_as_action(self):
         """
@@ -372,4 +376,5 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
                 "callback": callback
             }
         }
+
 

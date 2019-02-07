@@ -443,7 +443,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         :param path: str filepath to check
         :returns: bool True if the path describes a sequence
         """
-        if re.search(u"(\[(#+)\]|%[0-9]+d|@+|#+)", path):
+        if re.search(u"([\[]?(#+)[\]]?|%[0-9]+d|@+|#+)", path):
             return True
         return False
 

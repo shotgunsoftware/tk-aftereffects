@@ -89,7 +89,7 @@ def compute_environment():
 
     framework_location = _get_adobe_framework_location()
     if not os.path.exists(framework_location):
-        raise EngineConfigurationError('The tk-adobe-framework could not be found in the current environment. Please check the log for more information.')
+        raise EngineConfigurationError('The tk-framework-adobe could not be found in the current environment. Please check the log for more information.')
 
     # set the interpreter with which to launch the CC integration
     env["SHOTGUN_ADOBE_PYTHON"] = sys.executable

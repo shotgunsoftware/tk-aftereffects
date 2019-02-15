@@ -177,9 +177,9 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         # in order to use frameworks, they have to be imported via
         # import_module. so they're exposed in the bundled python. keep a handle
         # on them for reuse.
-        self.__shotgun_data = self.__tk_aftereffectscc.shotgunutils.shotgun_data
-        self.__shotgun_globals = self.__tk_aftereffectscc.shotgunutils.shotgun_globals
-        self.__settings = self.__tk_aftereffectscc.shotgunutils.settings
+        self.__shotgun_data = self.__tk_aftereffectscc.shotgun_data
+        self.__shotgun_globals = self.__tk_aftereffectscc.shotgun_globals
+        self.__settings = self.__tk_aftereffectscc.shotgun_settings
 
         # import here since the engine is responsible for defining Qt.
         from sgtk.platform.qt import QtCore

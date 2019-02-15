@@ -63,7 +63,6 @@ class AfterEffectsLauncher(SoftwareLauncher):
         :param str file_to_open: (optional) Full path name of a file to open on launch.
         :returns: :class:`LaunchInformation` instance
         """
-        # todo - add support for the file_to_open parameter.
 
         # find the bootstrap script and import it.
         # note: all the business logic for how to launch is

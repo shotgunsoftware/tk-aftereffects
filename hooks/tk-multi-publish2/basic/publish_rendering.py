@@ -185,7 +185,7 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
 
         queue_item = item.properties.get("queue_item")
         render_paths = item.properties.get("renderpaths")
-        project_path = sgtk.util.ShotgunPath.normalize(self.parent.engine.get_project_path())
+        project_path = sgtk.util.ShotgunPath.normalize(self.parent.engine.project_path)
 
         # set the item path to some temporary value
         for each_path in render_paths:

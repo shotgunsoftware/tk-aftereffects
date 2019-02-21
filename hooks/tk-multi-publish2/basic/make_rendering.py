@@ -186,7 +186,7 @@ class AfterEffectsCCRenderPlugin(HookBaseClass):
         queue_item = item.properties.get("queue_item")
         render_paths = item.properties.get("renderpaths")
         work_template = item.properties.get("work_template")
-        project_path = sgtk.util.ShotgunPath.normalize(self.parent.engine.get_project_path())
+        project_path = sgtk.util.ShotgunPath.normalize(self.parent.engine.project_path)
 
         if queue_item is None:
             self.logger.warn(("No queue_item was set. This is most likely due to "

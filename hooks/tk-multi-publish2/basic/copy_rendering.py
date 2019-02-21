@@ -275,7 +275,7 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
         queue_item = item.properties.get("queue_item")
         render_paths = item.properties.get("renderpaths")
         work_template = item.properties.get("work_template")
-        project_path = sgtk.util.ShotgunPath.normalize(self.parent.engine.get_project_path())
+        project_path = sgtk.util.ShotgunPath.normalize(self.parent.engine.project_path)
 
         default_seq_output_module = settings.get('Default Sequence Output Module').value
         default_mov_output_module = settings.get('Default Movie Output Module').value
@@ -357,7 +357,7 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
 
         for each_path in render_paths:
             path_template = mov_template
-            if self.parent.engine.path_is_sequence(each_path):
+            if self.parent.engine.is_adobe_sequence(each_path):
                 path_template = seq_template
 
             _, template_ext = os.path.splitext(path_template.definition)
@@ -452,7 +452,7 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
 
             # getting the template to use for this output module.
             template_name = mov_template
-            if self.parent.engine.path_is_sequence(output_module.file.fsName):
+            if self.parent.engine.is_adobe_sequence(output_module.file.fsName):
                 template_name = seq_template
 
             # if we don't check or the check is OK, we can continue
@@ -500,7 +500,7 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
 
         # get the neccessary template fields from the..
         # ..work-template
-        project_path = self.parent.engine.get_project_path()
+        project_path = self.parent.engine.project_path
         fields_from_work_template = work_template.get_fields(
                 sgtk.util.ShotgunPath.normalize(project_path))
 
@@ -518,7 +518,7 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
             each_path = sgtk.util.ShotgunPath.normalize(each_path)
 
             # check whether the given path points to a sequence
-            is_sequence = self.parent.engine.path_is_sequence(each_path)
+            is_sequence = self.parent.engine.is_adobe_sequence(each_path)
 
             # get the template to use depending if
             # the rendering is an image sequence or

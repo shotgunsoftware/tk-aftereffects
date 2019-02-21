@@ -123,7 +123,7 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        path = self.parent.engine.get_project_path()
+        path = self.parent.engine.project_path
 
         if path:
             version_number = self._get_version_number(path, item)
@@ -171,7 +171,7 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        path = self.parent.engine.get_project_path()
+        path = self.parent.engine.project_path
 
         if not path:
             # the session still requires saving. provide a save button.
@@ -214,7 +214,7 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
 
         publisher = self.parent
         engine = publisher.engine
-        path = engine.get_project_path()
+        path = engine.project_path
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.

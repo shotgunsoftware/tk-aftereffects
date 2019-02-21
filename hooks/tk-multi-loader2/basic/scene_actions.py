@@ -152,7 +152,7 @@ class AfterEffectsActions(HookBaseClass):
         # so convert the path to ensure filenames containing complex characters are supported
         path = self.get_publish_path(sg_publish_data).decode('utf-8')
 
-        if self.parent.engine.path_is_sequence(path):
+        if self.parent.engine.is_adobe_sequence(path):
            frame_range = self.parent.engine.find_sequence_range(path)
            if frame_range:
                glob_path = re.sub("[\[]?([#@]+|%0\d+d)[\]]?", "*{}".format(frame_range[0]), path)
@@ -161,7 +161,7 @@ class AfterEffectsActions(HookBaseClass):
                     break
 
         if not os.path.exists(path):
-            raise Exception("File not found on disk - '%s'" % path)
+            raise IOError("File not found on disk - '%s'" % path)
 
         if name == _ADD_TO_COMP:
             self._add_to_comp(path)

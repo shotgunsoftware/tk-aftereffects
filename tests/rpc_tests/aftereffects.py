@@ -32,18 +32,18 @@ class TestAfterEffectsRPC(TestAdobeRPC):
     def tearDown(self):
         self.engine.adobe.app.project.close(self.engine.adobe.CloseOptions.DO_NOT_SAVE_CHANGES)
 
-    def test_get_project_path_no_project(self):
+    def test_project_path_no_project(self):
         """
-        Tests if the method get_project_path returns an empty string in case no project was loaded
+        Tests if the method project_path returns an empty string in case no project was loaded
         """
         self.engine.adobe.app.project.close(self.engine.adobe.CloseOptions.DO_NOT_SAVE_CHANGES)
-        self.assertEquals(self.engine.get_project_path(), "")
+        self.assertEquals(self.engine.project_path, "")
 
-    def test_get_project_path_project_loaded(self):
+    def test_project_path_project_loaded(self):
         """
-        Tests if the method get_project_path returns the file_path (str) to the project file
+        Tests if the method project_path returns the file_path (str) to the project file
         """
-        self.assertEquals(self.engine.get_project_path(), self.project_path)
+        self.assertEquals(self.engine.project_path, self.project_path)
 
     def test_save_to_path(self):
         """
@@ -52,12 +52,12 @@ class TestAfterEffectsRPC(TestAdobeRPC):
         temp_file = tempfile.NamedTemporaryFile(suffix='.aep')
         temp_file.close()
 
-        self.engine.save_to_path(temp_file.name)
-        self.assertEquals(self.engine.get_project_path().lower(), temp_file.name.lower())
+        self.engine.save(temp_file.name)
+        self.assertEquals(self.engine.project_path.lower(), temp_file.name.lower())
 
-    def test_path_is_sequence_True(self):
+    def test_is_adobe_sequence_True(self):
         """
-        Tests if the path_is_sequence returns True when it should
+        Tests if the is_adobe_sequence returns True when it should
         """
         test_paths = [
                 '/this/is/a/test/path[###].jpg',
@@ -66,11 +66,11 @@ class TestAfterEffectsRPC(TestAdobeRPC):
                 '/this/is/a/test/path%03d.jpg',
                 ]
         while test_paths:
-            self.assertTrue(self.engine.path_is_sequence(test_paths.pop(0)))
+            self.assertTrue(self.engine.is_adobe_sequence(test_paths.pop(0)))
 
-    def test_path_is_sequence_False(self):
+    def test_is_adobe_sequence_False(self):
         """
-        Tests if the path_is_sequence returns False when it should
+        Tests if the is_adobe_sequence returns False when it should
         """
         test_paths = [
                 '/this/is/a/test/path0.jpg',
@@ -78,7 +78,7 @@ class TestAfterEffectsRPC(TestAdobeRPC):
                 '/this/is/a/test/path[123].jpg',
                 ]
         while test_paths:
-            self.assertFalse(self.engine.path_is_sequence(test_paths.pop(0)))
+            self.assertFalse(self.engine.is_adobe_sequence(test_paths.pop(0)))
 
     def test_iter_collection(self):
         """

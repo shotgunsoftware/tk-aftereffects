@@ -143,7 +143,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         :returns: dictionary with boolean keys accepted, required and enabled
         """
 
-        path = sgtk.util.ShotgunPath.normalize(self.parent.engine.get_project_path())
+        path = sgtk.util.ShotgunPath.normalize(self.parent.engine.project_path)
 
         if not path:
             # the project has not been saved before (no path determined).
@@ -177,7 +177,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        path = sgtk.util.ShotgunPath.normalize(self.parent.engine.get_project_path())
+        path = sgtk.util.ShotgunPath.normalize(self.parent.engine.project_path)
 
         if not path:
             # the project still requires saving. provide a save button.
@@ -212,7 +212,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         path_to_frames = None
         while render_paths and (not all([upload_path, path_to_movie, path_to_frames])):
             each_path = render_paths.pop(0)
-            if not self.parent.engine.path_is_sequence(each_path):
+            if not self.parent.engine.is_adobe_sequence(each_path):
                 path_to_movie = each_path
                 upload_path = each_path
             else:

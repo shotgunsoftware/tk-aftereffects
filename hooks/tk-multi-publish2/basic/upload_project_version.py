@@ -118,7 +118,7 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
 
         :returns: dictionary with boolean keys accepted, required and enabled
         """
-        path = self.parent.engine.get_project_path()
+        path = self.parent.engine.project_path
 
         if not path:
             # the project has not been saved before (no path determined).
@@ -150,7 +150,7 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        path = self.parent.engine.get_project_path()
+        path = self.parent.engine.project_path
 
         # ---- ensure the project has been saved
 

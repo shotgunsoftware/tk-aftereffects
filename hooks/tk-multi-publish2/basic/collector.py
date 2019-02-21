@@ -134,7 +134,7 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
         :returns: the newly created project item
         """
         project_name = "Untitled"
-        path = self.parent.engine.get_project_path()
+        path = self.parent.engine.project_path
         if path:
             project_name = self.parent.engine.adobe.app.project.file.name
         project_item = parent_item.create_item(

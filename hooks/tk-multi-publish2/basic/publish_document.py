@@ -158,7 +158,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
 
         :returns: dictionary with boolean keys accepted, required and enabled
         """
-        path = self.parent.engine.get_project_path()
+        path = self.parent.engine.project_path
 
         # if a publish template is configured, disable context change. 
         if settings.get("Publish Template").value:
@@ -196,7 +196,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         :returns: True if item is valid, False otherwise.
         """
 
-        path = self.parent.engine.get_project_path()
+        path = self.parent.engine.project_path
 
         # ---- ensure the project has been saved
 
@@ -301,7 +301,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-        path = self.parent.engine.get_project_path()
+        path = self.parent.engine.project_path
 
         # get the path in a normalized state. no trailing separator, separators
         # are appropriate for current os, no double separators, etc.

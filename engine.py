@@ -339,12 +339,13 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
     ############################################################################
     # engine host interaction methods
 
-    def get_project_path(self):
+    @property
+    def project_path(self):
         """
         Returns the current project path or an empty string
         """
         doc_obj = self.adobe.app.project.file
-        doc_path = ''
+        doc_path = ""
         if doc_obj != None:
             doc_path = doc_obj.fsName
         return doc_path
@@ -378,7 +379,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
         from sgtk.platform.qt import QtGui
 
-        doc_path = self.get_project_path()
+        doc_path = self.project_path
 
         # After Effects doesn't appear to have a "save as" dialog accessible via
         # python. so open our own Qt file dialog.
@@ -421,25 +422,26 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
         return item.data.get("instanceof", "") == adobe_type
 
-    def selection_is_comp_item(self):
+    @property
+    def selected_item(self):
         """
-        Helper indicating if the currently selected item
-        in After effects is a comp item. This will return True
-        if either the item is directly selected in the projects-
-        main bin or if no item is selected in the main-bin but
-        the mouse-focus is in the comp-panel.
+        Helper getting the currently selected item in the after effects project
 
-        :returns: bool
+        :returns: adobe ItemObject
         """
-        item = self.adobe.app.project.activeItem
-        if item == None:
-            return False
-        return self.is_comp_item(item)
+        return self.adobe.app.project.activeItem
 
-    def path_is_sequence(self, path):
+    def is_adobe_sequence(self, path):
         """
         Helper to query if an adobe-style render path is
         describing a sequence.
+
+        The sequencepath must contain one of the following patterns in
+        order to be recognized:
+        ###
+        @@@
+        [###]
+        %0xd
 
         :param path: str filepath to check
         :returns: bool True if the path describes a sequence
@@ -710,7 +712,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                     "document context..."
                 )
 
-                active_document_path = self.get_project_path()
+                active_document_path = self.project_path
 
                 if active_document_path:
                     self.logger.debug(

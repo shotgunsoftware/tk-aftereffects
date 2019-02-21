@@ -534,7 +534,7 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
 
             # copy the files to the publish location
             target_path = None
-            for file_path, frame_no in self.parent.engine.iter_render_files(each_path, queue_item):
+            for file_path, frame_no in self.parent.engine.get_render_files(each_path, queue_item):
                 target_path = abstract_target_path
                 if is_sequence:
                     target_path = abstract_target_path % frame_no

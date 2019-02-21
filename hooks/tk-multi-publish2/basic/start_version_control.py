@@ -227,7 +227,7 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
         version_path = publisher.util.get_version_path(path, "v001")
 
         # save to the new version path
-        engine.save_to_path(version_path)
+        engine.save(version_path)
         self.logger.info(
             "A version number has been added to the After Effects project...")
         self.logger.info("  After Effects project path: %s" % (version_path,))

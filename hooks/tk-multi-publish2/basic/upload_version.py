@@ -332,7 +332,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
 
     def __render_to_temp_location(self, sequence_path, queue_item, mov_output_module_template):
 
-        for first_frame, _ in self.parent.engine.iter_render_files(sequence_path, queue_item):
+        for first_frame, _ in self.parent.engine.get_render_files(sequence_path, queue_item):
             break
 
         # import the footage and add it to the render queue
@@ -385,7 +385,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
 
         out_dict = {}
         frame_numbers = []
-        for _, fn in self.parent.engine.iter_render_files(path_to_frames, queue_item):
+        for _, fn in self.parent.engine.get_render_files(path_to_frames, queue_item):
             frame_numbers.append(fn)
         out_dict['sg_first_frame'] = min(frame_numbers)
         out_dict['sg_last_frame'] = max(frame_numbers)

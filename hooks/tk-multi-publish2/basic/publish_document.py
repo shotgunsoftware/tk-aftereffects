@@ -266,7 +266,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
                         "label": "Save to v%s" % (version,),
                         "tooltip": "Save to the next available version number, "
                                    "v%s" % (version,),
-                        "callback": lambda: self.parent.engine.save_to_path(next_version_path)
+                        "callback": lambda: self.parent.engine.save(next_version_path)
                     }
                 }
             )
@@ -336,7 +336,7 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
         path = item.properties["path"]
 
         # we need the path to be saved for this project.
-        save_callback = lambda path, e=self.parent.engine: e.save_to_path(path)
+        save_callback = lambda path, e=self.parent.engine: e.save(path)
 
         # bump the project path to the next version
         self._save_to_next_version(path, item, save_callback)

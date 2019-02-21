@@ -352,26 +352,23 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
             doc_path = doc_obj.fsName
         return doc_path
 
-    def save(self):
+    def save(self, path=None):
         """
-        Save the project in place
-        """
+        Save the project in place or to the given file-path
 
-        with self.context_changes_disabled():
-
-            self.adobe.app.project.save()
-
-    def save_to_path(self, path):
-        """
-        Save the project to the supplied path.
+        :param path: str, optional. The target file path
         """
 
         with self.context_changes_disabled():
-
-            # After Effects won't ensure that the folder is created when saving, so we must make sure it exists
-            ensure_folder_exists(os.path.dirname(path))
-
-            self.adobe.app.project.save(self.adobe.File(path))
+            
+            if path is None:
+                self.adobe.app.project.save()
+            else:
+                # After Effects won't ensure that the folder is created when saving, so we must make sure it exists
+                ensure_folder_exists(os.path.dirname(path))
+                self.adobe.app.project.save(self.adobe.File(path))
+            new_path = self.project_path
+            self.logger.info("Saved file to to {!r}".format(new_path))
 
     def save_as(self):
         """
@@ -400,7 +397,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         path = file_dialog.selectedFiles()[0]
 
         if path:
-            self.save_to_path(path)
+            self.save(path)
 
     @property
     def AdobeItemTypes(self):
@@ -461,7 +458,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         :param queue_item: an after effects render queue item
         :returns: bool True if the path describes a sequence
         """
-        for file_path, _ in self.iter_render_files(path, queue_item):
+        for file_path, _ in self.get_render_files(path, queue_item):
             if not os.path.exists(file_path):
                 return False
         return True
@@ -477,10 +474,12 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         for i in range(1, collection_item.length+1):
             yield collection_item[i]
 
-    def iter_render_files(self, path, queue_item):
+    def get_render_files(self, path, queue_item):
         """
         Yields all render-files and its frame number of a given
         after effects render queue item.
+
+        The path is needed to uniquely identify the correct output_module
 
         :param path: str filepath to iter
         :param queue_item: an after effects render queue item
@@ -489,7 +488,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                 None if the path is not an image-sequence.
         """
         # is the given render-path a sequence?
-        match = re.search(u"[\[]?([#@]+|[%]0\dd)[\]]?", path)
+        match = re.search(self.__IS_SEQUENCE_REGEX, path)
         if not match:
             # if not, we just check if the file exists
             yield path, None

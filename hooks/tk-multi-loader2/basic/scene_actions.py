@@ -81,7 +81,11 @@ class AfterEffectsActions(HookBaseClass):
             # base class doesn't have the method, so ignore and continue
             pass
 
-        if _ADD_TO_COMP in actions and self.parent.engine.selection_is_comp_item():
+        active_item = self.parent.engine.selected_item
+        is_comp_selected = False
+        if active_item:
+            is_comp_selected = self.parent.engine.is_item_of_type(active_item, self.parent.engine.AdobeItemTypes.COMP_ITEM)
+        if _ADD_TO_COMP in actions and is_comp_selected:
             action_instances.append({"name": _ADD_TO_COMP,
                                      "params": None,
                                      "caption": "Add to current composition",
@@ -173,13 +177,13 @@ class AfterEffectsActions(HookBaseClass):
         """
         adobe = self.parent.engine.adobe
         comp_item = adobe.app.project.activeItem
-        if not self.parent.engine.is_comp_item(comp_item):
+        if not comp_item or not self.parent.engine.is_item_of_type(comp_item, self.parent.engine.AdobeItemTypes.COMP_ITEM):
             return False
 
         new_items = self.parent.engine.import_filepath(path)
 
         for item in new_items:
-            if self.parent.engine.is_folder_item(item):
+            if self.parent.engine.is_item_of_type(item, self.parent.engine.AdobeItemTypes.FOLDER_ITEM):
                 self.parent.engine.add_items_to_comp(item.items, comp_item)
                 continue
             comp_item.layers.add(item)

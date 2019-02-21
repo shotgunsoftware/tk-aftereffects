@@ -399,26 +399,27 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         if path:
             self.save_to_path(path)
 
-    def is_comp_item(self, item):
+    @property
+    def AdobeItemTypes(self):
         """
-        :param item: adobe-Item-object to be checked
-        :returns: bool indicating if the given item is a CompItem
-        """
-        return item.data.get("instanceof", "") == "CompItem"
+        This returns a constant class that maps constants against
+        adobe aftereffects internal class names.
 
-    def is_folder_item(self, item):
+        :returns: AdobeItemTypes constants object
         """
+        afx_module = self.import_module("tk_aftereffectscc")
+        return afx_module.AdobeItemTypes
+
+    def is_item_of_type(self, item, adobe_type):
+        """
+        Indicates whether the given item is of the given AdobeItemType.
+
         :param item: adobe-Item-object to be checked
+        :param adobe_type: AdobeItemType-constant. One of the constants held by engine.AdobeItemTypes
+            Like AdobeItemType.COMP_ITEM, AdobeItemType.FOLDER_ITEM or AdobeItemType.FOOTAGE_ITEM
         :returns: bool indicating if the given item is a FolderItem
         """
-        return item.data.get("instanceof", "") == "FolderItem"
-
-    def is_footage_item(self, item):
-        """
-        :param item: adobe-Item-object to be checked
-        :returns: bool indicating if the given item is a FootageItem
-        """
-        return item.data.get("instanceof", "") == "FootageItem"
+        return item.data.get("instanceof", "") == adobe_type
 
     def selection_is_comp_item(self):
         """
@@ -554,11 +555,11 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         comps = []
         footage = []
         for item in self.iter_collection(item_collection):
-            if self.is_folder_item(item):
+            if self.is_item_of_type(item, self.AdobeItemTypes.FOLDER_ITEM):
                 folder.append(item)
-            elif self.is_comp_item(item):
+            elif self.is_item_of_type(item, self.AdobeItemTypes.COMP_ITEM):
                 comps.append(item)
-            elif self.is_footage_item(item):
+            elif self.is_item_of_type(item, self.AdobeItemTypes.FOOTAGE_ITEM):
                 footage.append(item)
 
         # if there is a comp in the given folder,

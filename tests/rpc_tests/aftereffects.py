@@ -96,7 +96,7 @@ class TestAfterEffectsRPC(TestAdobeRPC):
         expected_name = 'testcapture'
         found_items = []
         for itm in self.engine.iter_collection(self.engine.adobe.app.project.items):
-            if self.engine.is_footage_item(itm):
+            if self.engine.is_item_of_type(itm, self.engine.AdobeItemTypes.FOOTAGE_ITEM):
                 found_items.append(itm.name)
         self.assertEquals(found_items, [expected_name])
 
@@ -107,7 +107,7 @@ class TestAfterEffectsRPC(TestAdobeRPC):
         expected_name = 'testcomp'
         found_items = []
         for itm in self.engine.iter_collection(self.engine.adobe.app.project.items):
-            if self.engine.is_comp_item(itm):
+            if self.engine.is_item_of_type(itm, self.engine.AdobeItemTypes.COMP_ITEM):
                 found_items.append(itm.name)
         self.assertEquals(found_items, [expected_name])
 
@@ -118,6 +118,6 @@ class TestAfterEffectsRPC(TestAdobeRPC):
         expected_name = 'testfolder'
         found_items = []
         for itm in self.engine.iter_collection(self.engine.adobe.app.project.items):
-            if self.engine.is_folder_item(itm):
+            if self.engine.is_item_of_type(itm, self.engine.AdobeItemTypes.FOLDER_ITEM):
                 found_items.append(itm.name)
         self.assertEquals(found_items, [expected_name])

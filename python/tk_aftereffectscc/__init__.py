@@ -27,3 +27,13 @@ win_32_api = sgtk.platform.import_framework(
     "tk-framework-adobe",
     "win_32_api"
 )
+
+class AdobeItemTypes:
+    """
+    This class stores some constants in order to expose certain important
+    adobe aftereffects internal class names within python
+    """
+    COMP_ITEM = "CompItem"
+    FOLDER_ITEM = "FolderItem"
+    FOOTAGE_ITEM = "FootageItem"
+

@@ -92,6 +92,8 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                 16:'2019'
             }
 
+    __IS_SEQUENCE_REGEX = re.compile(u"[\[]?([#@]+|[%]0\dd)[\]]?")
+
     ############################################################################
     # context changing
 
@@ -446,7 +448,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         :param path: str filepath to check
         :returns: bool True if the path describes a sequence
         """
-        if re.search(u"([\[]?(#+)[\]]?|%[0-9]+d|@+|#+)", path):
+        if re.search(self.__IS_SEQUENCE_REGEX, path):
             return True
         return False
 
@@ -624,47 +626,55 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
     def find_sequence_range(self, path):
         """
-        Helper method attempting to extract sequence information.
+        Parses the file name in an attempt to determine the first and last
+        frame number of a sequence. This assumes some sort of common convention
+        for the file names, where the frame number is an integer at the end of
+        the basename, just ahead of the file extension, such as
+        file.0001.jpg, or file_001.jpg. We also check for input file names with
+        abstracted frame number tokens, such as file.####.jpg, or file.%04d.jpg.
 
-        Using the toolkit template system, the path will be probed to 
-        check if it is a sequence, and if so, frame information is
-        attempted to be extracted.
+        :param str path: The file path to parse.
 
-        :param path: Path to file on disk.
         :returns: None if no range could be determined, otherwise (min, max)
+        :rtype: tuple or None
         """
+        # This pattern will match the following at the end of a string and
+        # retain the frame number or frame token as group(1) in the resulting
+        # match object:
+        #
+        # 0001
+        # ####
+        # @@@@
+        # [####]
+        # %04d
+        #
+        # The number of digits or hashes does not matter; we match as many as
+        # exist.
+        frame_pattern = re.compile(r"(^|[\.\_\- ])[\[]?([0-9#@]+|[%]0\d+d)[\]]?$")
+        root, ext = os.path.splitext(path)
+        match = re.search(frame_pattern, root)
 
-        # find a template that matches the path:
-        template = None
-        try:
-            template = self.sgtk.template_from_path(path)
-        except sgtk.TankError:
-            pass
-
-        if not template:
-            # If we don't have a template to take advantage of, then 
-            # we are forced to do some rough parsing ourself to try
-            # to determine the frame range.
-            return self._sequence_range_from_path(path)
-
-        # get the fields and find all matching files:
-        fields = template.get_fields(path)
-        if not "SEQ" in fields:
+        # If we did not match, we don't know how to parse the file name, or there
+        # is no frame number to extract.
+        if not match:
             return None
 
-        files = self.sgtk.paths_from_template(template, fields, ["SEQ", "eye"])
+        # We need to get all files that match the pattern from disk so that we
+        # can determine what the min and max frame number is.
+        glob_path = "%s%s" % (
+            re.sub(frame_pattern, r"\1*", root),
+            ext,
+        )
+        files = glob.glob(glob_path)
 
-        # find frame numbers from these files:
-        frames = []
-        for file in files:
-            fields = template.get_fields(file)
-            frame = fields.get("SEQ")
-            if frame != None:
-                frames.append(frame)
-        if not frames:
-            return None
+        # Our pattern from above matches against the file root, so we need
+        # to chop off the extension at the end.
+        file_roots = [os.path.splitext(f)[0] for f in files]
 
-        # return the range
+        # We know that the search will result in a match at this point, otherwise
+        # the glob wouldn't have found the file. We can search and pull group 1
+        # to get the integer frame number from the file root name.
+        frames = [int(re.search(frame_pattern, f).group(2)) for f in file_roots]
         return (min(frames), max(frames))
 
     ############################################################################
@@ -1855,59 +1865,6 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                 self.logger.error("Could not activate python.")
         elif sys.platform == "win32":
             pass
-
-    def _sequence_range_from_path(self, path):
-        """
-        Parses the file name in an attempt to determine the first and last
-        frame number of a sequence. This assumes some sort of common convention
-        for the file names, where the frame number is an integer at the end of
-        the basename, just ahead of the file extension, such as
-        file.0001.jpg, or file_001.jpg. We also check for input file names with
-        abstracted frame number tokens, such as file.####.jpg, or file.%04d.jpg.
-
-        :param str path: The file path to parse.
-
-        :returns: None if no range could be determined, otherwise (min, max)
-        :rtype: tuple or None
-        """
-        # This pattern will match the following at the end of a string and
-        # retain the frame number or frame token as group(1) in the resulting
-        # match object:
-        #
-        # 0001
-        # ####
-        # @@@@
-        # [####]
-        # %04d
-        #
-        # The number of digits or hashes does not matter; we match as many as
-        # exist.
-        frame_pattern = re.compile(r"(^|[\.\_\- ])[\[]?([0-9#@]+|[%]0\d+d)[\]]?$")
-        root, ext = os.path.splitext(path)
-        match = re.search(frame_pattern, root)
-
-        # If we did not match, we don't know how to parse the file name, or there
-        # is no frame number to extract.
-        if not match:
-            return None
-
-        # We need to get all files that match the pattern from disk so that we
-        # can determine what the min and max frame number is.
-        glob_path = "%s%s" % (
-            re.sub(frame_pattern, r"\1*", root),
-            ext,
-        )
-        files = glob.glob(glob_path)
-
-        # Our pattern from above matches against the file root, so we need
-        # to chop off the extension at the end.
-        file_roots = [os.path.splitext(f)[0] for f in files]
-
-        # We know that the search will result in a match at this point, otherwise
-        # the glob wouldn't have found the file. We can search and pull group 1
-        # to get the integer frame number from the file root name.
-        frames = [int(re.search(frame_pattern, f).group(2)) for f in file_roots]
-        return (min(frames), max(frames))
 
     def __import_file(self, import_options):
         """

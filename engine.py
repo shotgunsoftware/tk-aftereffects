@@ -36,26 +36,9 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
     SHOTGUN_ADOBE_PORT = os.environ.get("SHOTGUN_ADOBE_PORT")
     SHOTGUN_ADOBE_APPID = os.environ.get("SHOTGUN_ADOBE_APPID")
 
-    # Backwards compatibility added to support tk-aftereffects environment vars.
-    # https://support.shotgunsoftware.com/hc/en-us/articles/219039748-Photoshop#If%20the%20engine%20does%20not%20start
-    SHOTGUN_ADOBE_HEARTBEAT_INTERVAL = os.environ.get(
-        "SHOTGUN_ADOBE_HEARTBEAT_INTERVAL",
-        os.environ.get(
-            "SGTK_AFTEREFFECTS_HEARTBEAT_INTERVAL",
-            1.0,
-        )
-    )
-    SHOTGUN_ADOBE_HEARTBEAT_TOLERANCE = os.environ.get(
-        "SHOTGUN_ADOBE_HEARTBEAT_TOLERANCE",
-        os.environ.get(
-            "SGTK_AFTEREFFECTS_HEARTBEAT_TOLERANCE",
-            2,
-        ),
-    )
-    SHOTGUN_ADOBE_NETWORK_DEBUG = (
-        "SGTK_AFTEREFFECTS_NETWORK_DEBUG" in os.environ or
-        "SHOTGUN_ADOBE_NETWORK_DEBUG" in os.environ
-    )
+    SHOTGUN_ADOBE_HEARTBEAT_INTERVAL = 1.0
+    SHOTGUN_ADOBE_HEARTBEAT_TOLERANCE = 2
+    SHOTGUN_ADOBE_NETWORK_DEBUG = ("SHOTGUN_ADOBE_NETWORK_DEBUG" in os.environ)
 
     TEST_SCRIPT_BASENAME = "run_tests.py"
 
@@ -82,16 +65,15 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
 
-    __DEFAULT_IMPORT_TYPES = None
-
     __CC_VERSION_MAPPING = {
-                12: '2015',
-                13: '2016',
-                14:'2017',
-                15:'2018',
-                16:'2019'
+                12: "2015",
+                13: "2016",
+                14: "2017",
+                15: "2018",
+                16: "2019"
             }
 
+                                        
     __IS_SEQUENCE_REGEX = re.compile(u"[\[]?([#@]+|[%]0\dd)[\]]?")
 
     ############################################################################
@@ -177,22 +159,23 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         self.adobe.state_requested.connect(self.__send_state)
 
         # in order to use frameworks, they have to be imported via
-        # import_module. so they're exposed in the bundled python. keep a handle
-        # on them for reuse.
-        self.__shotgun_data = self.__tk_aftereffectscc.shotgun_data
+        # import_module. so they're exposed in the bundled python. 
+        shotgun_data = self.__tk_aftereffectscc.shotgun_data
+        settings = self.__tk_aftereffectscc.shotgun_settings
+        # keep a handle for shotgun globals as they are needed in other
+        # functions as well
         self.__shotgun_globals = self.__tk_aftereffectscc.shotgun_globals
-        self.__settings = self.__tk_aftereffectscc.shotgun_settings
 
         # import here since the engine is responsible for defining Qt.
         from sgtk.platform.qt import QtCore
 
         # create a data retriever for async querying of sg data
-        self.__sg_data = self.__shotgun_data.ShotgunDataRetriever(
+        self.__sg_data = shotgun_data.ShotgunDataRetriever(
             QtCore.QCoreApplication.instance()
         )
 
         # get outselves a settings manager where we can store metadata.
-        self.__settings_manager = self.__settings.UserSettings(self)
+        self.__settings_manager = settings.UserSettings(self)
 
         # connect the retriever signals
         self.__sg_data.work_completed.connect( self.__on_worker_signal)
@@ -233,7 +216,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
         # If there are fewer than 2 documents open, we don't need the stored
         # cache, regardless of whether this is a restart situation or a fresh
-        # launch of PS. In that case, we take the opportunity to clear anything
+        # launch of AE. In that case, we take the opportunity to clear anything
         # that might exist in the stored cache, as it's data we don't need.
         self.logger.debug("Single document found, clearing stored context cache.")
 
@@ -318,11 +301,11 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         Returns information about the application hosting this engine.
 
         :returns: A {"name": application name, "version": application version}
-                  dictionary. 
+                  dictionary. eg: {"name": "AfterFX", "version": "2017.1.1"}
         """
         if not self.adobe:
             # Don't error out if the bridge was not yet started
-            return ("AfterFX", "unknown")
+            return {"name": "AfterFX", "version": "unknown"}
 
         version = self.adobe.aftereffects.AfterEffectsVersion
         # app.aftereffects.AfterEffectsVersion just returns 18.1.1 which is not what users see in the UI
@@ -468,10 +451,16 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         Helper to iter safely through an adobe-collection item
         as its index starts at 1, not 0.
 
+        ```
+        item_collection = engine.adobe.project.items
+        for item in engine.iter_collection(item_collection):
+            print item.name
+        ```
+
         :param collection_item: the after-effects collection item to iter
         :yields: the next child item of the collection
         """
-        for i in range(1, collection_item.length+1):
+        for i in xrange(1, collection_item.length+1):
             yield collection_item[i]
 
     def get_render_files(self, path, queue_item):
@@ -502,7 +491,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         padding = len(match.group(1))
 
         test_path = path.replace(match.group(0), "%%0%dd" % padding)
-        for frame_no in range(start_time, start_time+frame_numbers, skip_frames):
+        for frame_no in xrange(start_time, start_time+frame_numbers, skip_frames):
             yield test_path % frame_no, frame_no
 
     def import_filepath(self, path):
@@ -603,15 +592,15 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         except Exception as e:
             self.logger.error(("Skipping item due to an error "
                     "while rendering: {}").format(e))
-
-        # reverting the original queued state for all
-        # unprocessed items
-        while queue_item_state_cache:
-            item, status = queue_item_state_cache.pop(0)
-            if item.status not in [self.adobe.RQItemStatus.DONE,
-                            self.adobe.RQItemStatus.ERR_STOPPED,
-                            self.adobe.RQItemStatus.RENDERING]:
-                item.render = status
+        finally:
+            # reverting the original queued state for all
+            # unprocessed items
+            while queue_item_state_cache:
+                item, status = queue_item_state_cache.pop(0)
+                if item.status not in [self.adobe.RQItemStatus.DONE,
+                                self.adobe.RQItemStatus.ERR_STOPPED,
+                                self.adobe.RQItemStatus.RENDERING]:
+                    item.render = status
 
         # we check for success if the render queue item status
         # has changed to DONE
@@ -751,7 +740,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
         # If the _adobe attribute is set, then we can forward logging calls
         # back to the js process via rpc.
-        if hasattr(self, '_adobe'):
+        if hasattr(self, "_adobe"):
 
             level = self.PY_TO_JS_LOG_LEVEL_MAPPING[record.levelname]
 
@@ -1111,7 +1100,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
         if not self._WIN32_AFTEREFFECTS_MAIN_HWND:
             for major in sorted(self.__CC_VERSION_MAPPING.keys()):
-                for minor in range(10):
+                for minor in xrange(10):
                     found_hwnds = self.__tk_aftereffectscc.win_32_api.find_windows(
                         class_name="AE_CApplication_{}.{}".format(major, minor),
                         stop_if_found=True,
@@ -1611,11 +1600,11 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
             # run the app
             if system == "linux2":
-                cmd = 'xdg-open "%s"' % disk_location
+                cmd = "xdg-open \"%s\"" % disk_location
             elif system == "darwin":
-                cmd = 'open "%s"' % disk_location
+                cmd = "open \"%s\"" % disk_location
             elif system == "win32":
-                cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
+                cmd = "cmd.exe /C start \"Folder\" \"%s\"" % disk_location
             else:
                 raise Exception("Platform '%s' is not supported." % system)
 

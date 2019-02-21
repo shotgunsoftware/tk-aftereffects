@@ -34,6 +34,12 @@ configuration:
                 name: { type: str }
                 app_instance: { type: str }
 
+    import_footage_hook:
+        type: hook
+        default_value: "{self}/import_footage.py"
+        description:
+          Hook which controls how footage is imported into the current project.
+
     context_fields_display_hook:
         type: hook
         default_value: "{self}/context_fields_display.py"

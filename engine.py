@@ -523,16 +523,11 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         import_options.file = file_obj
         import_options.sequence = False
 
-        import_type = self.__get_import_type_for_path(import_options)
-        if import_type is None:
-            self.logger.warn("Filepath {!r} cannot be imported.".format(path))
-            return []
-        import_options.importAs = import_type
-
-        sequence_range = self.find_sequence_range(path)
-        if sequence_range and sequence_range[0] != sequence_range[1]:
-            import_options.sequence = True
-            import_options.forceAlphabetical = True
+        self.execute_hook_method(
+            "import_footage_hook",
+            "set_import_options",
+            import_options=import_options
+        )
 
         return self.__import_file(import_options)
 
@@ -1891,47 +1886,6 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                 new_items.append(item)
 
         return new_items
-
-    def __get_import_type_for_path(self, import_options):
-        """
-        Helper to determine, what import type the given import candidate
-        needs. Assuming an *.aep file was given this method will return a
-        PROJECT, whereas if an *.jpg was given it will return FOOTAGE
-
-        Note::
-
-        It is possible to overwrite the default behavior by editing this method.
-        For example would *.mov normally return PROJECT but this method will return
-        FOOTAGE instead.
-
-        :param import_options: adobe.ImportOptions object that should be imported
-        :returns: int or None. None indicates, that the current object cannot be imported
-            an integer will be the adobe.ImportAsType-constant that should be used,
-            when importing
-        """
-        if self.__DEFAULT_IMPORT_TYPES is None:
-            # the following dict allows to set default values
-            # for specific file types
-            self.__DEFAULT_IMPORT_TYPES = {
-                    '.mov': self.adobe.ImportAsType.FOOTAGE
-                    }
-        _, ext = os.path.splitext(import_options.file.fsName)
-        if ext in self.__DEFAULT_IMPORT_TYPES:
-            return self.__DEFAULT_IMPORT_TYPES[ext]
-        # find out what type of footage we try to import
-        # Note: this order is important as we skip as soon as we can
-        #       import a piece of footage in a certain way
-        import_types = [
-                self.adobe.ImportAsType.PROJECT,  # aep
-                self.adobe.ImportAsType.COMP,  # psd, aep
-                self.adobe.ImportAsType.COMP_CROPPED_LAYERS,  # aep, psd fallback
-                self.adobe.ImportAsType.FOOTAGE,  # jpg
-            ]
-
-        for each_type in import_types:
-            if import_options.canImportAs(each_type):
-                return each_type
-        return None
 
 
 # a little action script to activate the given python process.

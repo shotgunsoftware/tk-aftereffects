@@ -20,10 +20,12 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class ProjectUnsavedError(Exception): pass
+class ProjectUnsavedError(Exception):
+    pass
 
 
-class RenderingFailed(Exception): pass
+class RenderingFailed(Exception):
+    pass
 
 
 class AfterEffectsUploadVersionPlugin(HookBaseClass):
@@ -202,7 +204,6 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         """
 
         publisher = self.parent
-        engine = publisher.engine
 
         queue_item = item.properties.get("queue_item")
         render_paths = list(item.properties.get("renderpaths"))
@@ -266,7 +267,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                     "label": "Version Data",
                     "tooltip": "Show the complete Version data dictionary",
                     "text": "<pre>%s</pre>" % (
-                    pprint.pformat(version_data),)
+                        pprint.pformat(version_data),)
                 }
             }
         )
@@ -342,13 +343,13 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         else:
             return ''
         new_cmp_item = self.parent.engine.adobe.app.project.items.addComp(
-                        new_item.name,
-                        new_item.width,
-                        new_item.height,
-                        new_item.pixelAspect,
-                        new_item.duration,
-                        new_item.frameRate or 25
-                    )
+            new_item.name,
+            new_item.width,
+            new_item.height,
+            new_item.pixelAspect,
+            new_item.duration,
+            new_item.frameRate or 25
+        )
 
         temp_item = self.parent.engine.adobe.app.project.renderQueue.items.add(new_cmp_item)
 
@@ -409,16 +410,17 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         # we'll have to check if the given item is already
         # rendered. If not, we'll provide a render button.
         if queue_item.status != self.parent.engine.adobe.RQItemStatus.DONE:
-            self.logger.warn("Render item is not Done yet. Please render it first.",
-                        extra={
-                        "action_button": {
-                            "label": "Render Item {}".format(idx),
-                            "tooltip": ("Render the queue item {} as"
-                                       "movie, so it can be uploaded.").format(idx),
-                            "callback": lambda qi=queue_item:self.parent.engine.render_queue_item(qi)
-                            }
-                        }
-                    )
+            self.logger.warn(
+                "Render item is not Done yet. Please render it first.",
+                extra={
+                    "action_button": {
+                        "label": "Render Item {}".format(idx),
+                        "tooltip": ("Render the queue item {} as"
+                                    "movie, so it can be uploaded.").format(idx),
+                        "callback": lambda qi=queue_item: self.parent.engine.render_queue_item(qi)
+                    }
+                }
+            )
             return False
         return True
 
@@ -432,7 +434,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
 
         if has_incomplete_renderings:
             self.logger.warn("Render Queue item has incomplete renderings, "
-                              "please rerender this or duisable the queue item.")
+                             "please rerender this or duisable the queue item.")
             return False
         return True
 

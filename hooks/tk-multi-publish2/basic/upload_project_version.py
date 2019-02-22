@@ -16,7 +16,8 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class ProjectUnsavedError(Exception): pass
+class ProjectUnsavedError(Exception):
+    pass
 
 
 class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
@@ -78,7 +79,6 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
         # inherit the settings from the base publish plugin
         base_settings = \
             super(AfterEffectsCCUploadProjectPlugin, self).settings or {}
-
 
         return base_settings
 
@@ -230,7 +230,6 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
         :param item: Item to process
         """
 
-
         path = item.properties["path"]
 
         # in case creating a shotgun version is enabled
@@ -249,7 +248,7 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
 
         # create the version
         self.logger.info("Creating version for review...")
-        version = self.parent.shotgun.create("Version", version_data)
+        self.parent.shotgun.create("Version", version_data)
 
     def _get_version_entity(self, item):
         """

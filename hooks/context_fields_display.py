@@ -302,9 +302,9 @@ class ContextFieldsDisplay(HookBaseClass):
                 )
 
         # include head/tail if set
-        if (cut_display and
-           entity["sg_head_in"] is not None and
-           entity["sg_tail_out"] is not None):
+        if cut_display and \
+           entity["sg_head_in"] is not None and \
+           entity["sg_tail_out"] is not None:
 
             cut_display = \
                 """

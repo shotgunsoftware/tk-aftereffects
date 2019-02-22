@@ -1,7 +1,7 @@
 # Copyright (c) 2019 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
+#
 # This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
 # Source Code License included in this distribution package. See LICENSE.
 # By accessing, using, copying or modifying this work you indicate your 
@@ -43,12 +43,12 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
     TEST_SCRIPT_BASENAME = "run_tests.py"
 
     PY_TO_JS_LOG_LEVEL_MAPPING = {
-                "CRITICAL": "error",
-                "ERROR": "error",
-                "WARNING": "warn",
-                "INFO": "info",
-                "DEBUG": "debug",
-            }
+        "CRITICAL": "error",
+        "ERROR": "error",
+        "WARNING": "warn",
+        "INFO": "info",
+        "DEBUG": "debug"
+    }
 
     _COMMAND_UID_COUNTER = 0
     _LOCK = threading.Lock()
@@ -66,14 +66,13 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
 
     __CC_VERSION_MAPPING = {
-                12: "2015",
-                13: "2016",
-                14: "2017",
-                15: "2018",
-                16: "2019"
-            }
+        12: "2015",
+        13: "2016",
+        14: "2017",
+        15: "2018",
+        16: "2019"
+    }
 
-                                        
     __IS_SEQUENCE_REGEX = re.compile(u"[\[]?([#@]+|[%]0\dd)[\]]?")
 
     ############################################################################
@@ -178,8 +177,8 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         self.__settings_manager = settings.UserSettings(self)
 
         # connect the retriever signals
-        self.__sg_data.work_completed.connect( self.__on_worker_signal)
-        self.__sg_data.work_failure.connect( self.__on_worker_failure)
+        self.__sg_data.work_completed.connect(self.__on_worker_signal)
+        self.__sg_data.work_failure.connect(self.__on_worker_failure)
 
         # context request uids. we keep track of these to make sure we're only
         # processing the current requests.
@@ -331,7 +330,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
         doc_obj = self.adobe.app.project.file
         doc_path = ""
-        if doc_obj != None:
+        if doc_obj is not None:
             doc_path = doc_obj.fsName
         return doc_path
 
@@ -460,7 +459,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         :param collection_item: the after-effects collection item to iter
         :yields: the next child item of the collection
         """
-        for i in xrange(1, collection_item.length+1):
+        for i in xrange(1, collection_item.length + 1):
             yield collection_item[i]
 
     def get_render_files(self, path, queue_item):
@@ -491,7 +490,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         padding = len(match.group(1))
 
         test_path = path.replace(match.group(0), "%%0%dd" % padding)
-        for frame_no in xrange(start_time, start_time+frame_numbers, skip_frames):
+        for frame_no in xrange(start_time, start_time + frame_numbers, skip_frames):
             yield test_path % frame_no, frame_no
 
     def import_filepath(self, path):
@@ -543,7 +542,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         footage = []
         for item in self.iter_collection(item_collection):
             if self.is_item_of_type(item, self.AdobeItemTypes.FOLDER_ITEM):
-                folder.append(item)
+                folders.append(item)
             elif self.is_item_of_type(item, self.AdobeItemTypes.COMP_ITEM):
                 comps.append(item)
             elif self.is_item_of_type(item, self.AdobeItemTypes.FOOTAGE_ITEM):
@@ -590,16 +589,21 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
             self.logger.debug("Start rendering..")
             self.adobe.app.project.renderQueue.render()
         except Exception as e:
-            self.logger.error(("Skipping item due to an error "
-                    "while rendering: {}").format(e))
+            self.logger.error(
+                ("Skipping item due to an error "
+                    "while rendering: {}").format(e)
+            )
         finally:
+            acceptable_states = [
+                self.adobe.RQItemStatus.DONE,
+                self.adobe.RQItemStatus.ERR_STOPPED,
+                self.adobe.RQItemStatus.RENDERING
+            ]
             # reverting the original queued state for all
             # unprocessed items
             while queue_item_state_cache:
                 item, status = queue_item_state_cache.pop(0)
-                if item.status not in [self.adobe.RQItemStatus.DONE,
-                                self.adobe.RQItemStatus.ERR_STOPPED,
-                                self.adobe.RQItemStatus.RENDERING]:
+                if item.status not in acceptable_states:
                     item.render = status
 
         # we check for success if the render queue item status
@@ -714,7 +718,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                     )
                     self._handle_active_document_change(active_document_path)
                 else:
-                   self.logger.debug(
+                    self.logger.debug(
                         "There is no active document, so there is no need to change context."
                     )
 
@@ -1209,7 +1213,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         show_dialog & show_modal.
         """
         # determine the parent widget to use:
-        from tank.platform.qt import QtGui, QtCore
+        from tank.platform.qt import QtGui
 
         if not self._DIALOG_PARENT:
             if sys.platform == "win32":
@@ -1584,7 +1588,6 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         from sgtk.platform.qt import QtGui, QtCore
         url = self.context.shotgun_url
         QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
-
 
     def _jump_to_fs(self):
         """

@@ -13,6 +13,7 @@ import unittest
 from .basic import TestAdobeRPC
 from .aftereffects import TestAfterEffectsRPC
 
+
 def get_tests_by_app_id(app_id, adobe):
     """
     Constructs the appropriate test suite for the app_id that is

@@ -77,7 +77,7 @@ class AfterEffectsActions(HookBaseClass):
         try:
             # call base class first
             action_instances += HookBaseClass.generate_actions(self, sg_publish_data, actions, ui_area)
-        except AttributeError, e:
+        except AttributeError:
             # base class doesn't have the method, so ignore and continue
             pass
 
@@ -153,10 +153,10 @@ class AfterEffectsActions(HookBaseClass):
         path = self.get_publish_path(sg_publish_data).decode('utf-8')
 
         if self.parent.engine.is_adobe_sequence(path):
-           frame_range = self.parent.engine.find_sequence_range(path)
-           if frame_range:
-               glob_path = re.sub("[\[]?([#@]+|%0\d+d)[\]]?", "*{}".format(frame_range[0]), path)
-               for each_path in sorted(glob.glob(glob_path)):
+            frame_range = self.parent.engine.find_sequence_range(path)
+            if frame_range:
+                glob_path = re.sub("[\[]?([#@]+|%0\d+d)[\]]?", "*{}".format(frame_range[0]), path)
+                for each_path in sorted(glob.glob(glob_path)):
                     path = each_path
                     break
 

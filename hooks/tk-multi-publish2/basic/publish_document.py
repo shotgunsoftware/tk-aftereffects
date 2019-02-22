@@ -16,7 +16,8 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class ProjectUnsavedError(Exception): pass
+class ProjectUnsavedError(Exception):
+    pass
 
 
 class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
@@ -335,11 +336,12 @@ class AfterEffectsCCProjectPublishPlugin(HookBaseClass):
 
         path = item.properties["path"]
 
-        # we need the path to be saved for this project.
-        save_callback = lambda path, e=self.parent.engine: e.save(path)
-
         # bump the project path to the next version
-        self._save_to_next_version(path, item, save_callback)
+        self._save_to_next_version(
+            path,
+            item,
+            lambda path, e=self.parent.engine: e.save(path)
+        )
 
     def _get_version_entity(self, item):
         """

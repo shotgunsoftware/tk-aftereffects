@@ -57,7 +57,7 @@ class SceneOperation(HookClass):
 
         if operation == "current_path":
             file_obj = adobe.app.project.file
-            if file_obj != None:
+            if file_obj is not None:
                 return file_obj.fsName
             return ''
 

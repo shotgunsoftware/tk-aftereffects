@@ -232,7 +232,6 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
             "A version number has been added to the After Effects project...")
         self.logger.info("  After Effects project path: %s" % (version_path,))
 
-
     def finalize(self, settings, item):
         """
         Execute the finalization pass. This pass executes once

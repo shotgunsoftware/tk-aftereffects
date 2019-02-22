@@ -8,7 +8,6 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-import imp
 import os
 import sys
 
@@ -101,11 +100,13 @@ class AfterEffectsLauncher(SoftwareLauncher):
         all_sw_versions = []
 
         for executable_path, tokens in self._glob_and_match(
-                    self.EXECUTABLE_MATCH_TEMPLATES[sys.platform],
-                    self.COMPONENT_REGEX_LOOKUP):
-            self.logger.debug("Processing %s with tokens %s",
-                        executable_path,
-                        tokens)
+                self.EXECUTABLE_MATCH_TEMPLATES[sys.platform],
+                self.COMPONENT_REGEX_LOOKUP):
+            self.logger.debug(
+                "Processing %s with tokens %s",
+                executable_path,
+                tokens
+            )
             # extract the components (default to None if not included). but
             # version is in all templates, so should be there.
             executable_version = tokens.get("version")
@@ -137,9 +138,11 @@ class AfterEffectsLauncher(SoftwareLauncher):
 
         framework_location = self.__get_adobe_framework_location()
         if framework_location is None:
-            raise EngineConfigurationError(("The tk-framework-adobe "
-                    "could not be found in the current environment. "
-                    "Please check the log for more information."))
+            raise EngineConfigurationError(
+                ("The tk-framework-adobe "
+                 "could not be found in the current environment. "
+                 "Please check the log for more information.")
+            )
 
         self.__ensure_framework_is_installed(framework_location)
 
@@ -179,39 +182,41 @@ class AfterEffectsLauncher(SoftwareLauncher):
             configured under the tk-multi-launchapp
         """
 
-        engine =sgtk.platform.current_engine()
+        engine = sgtk.platform.current_engine()
         env_name = engine.environment.get("name")
         if env_name is None:
-            self.logger.warn(("The current environment of engine {!r} "
-                "seems to be invalid. No name found. Environment: "
-                "{!r}").format(engine.name, engine.environment))
+            self.logger.warn(
+                ("The current environment of engine {!r} "
+                 "seems to be invalid. No name found. Environment: "
+                 "{!r}").format(engine.name, engine.environment))
             return
 
         env = engine.tank.pipeline_configuration.get_environment(env_name)
         engine_desc = env.get_engine_descriptor("tk-aftereffectscc")
         if env_name is None:
-            self.logger.warn(("The current environment {!r} "
-                "is not configured to run the tk-aftereffectscc "
-                "engine. Please add the engine to your env-file: "
-                "{!r}").format(env, env.disk_location))
+            self.logger.warn(
+                ("The current environment {!r} "
+                 "is not configured to run the tk-aftereffectscc "
+                 "engine. Please add the engine to your env-file: "
+                 "{!r}").format(env, env.disk_location))
             return
 
         framework_name = None
         for req_framework in engine_desc.get_required_frameworks():
             if req_framework.get("name") == "tk-framework-adobe":
                 name_parts = [req_framework["name"]]
-                if req_framework.has_key("version"):
+                if "version" in req_framework:
                     name_parts.append(req_framework["version"])
                 framework_name = "_".join(name_parts)
                 break
         else:
-            self.logger.warn(("The engine tk-aftereffectscc must have "
-                "the tk-framework-adobe configured in order to run"))
+            self.logger.warn(
+                ("The engine tk-aftereffectscc must have "
+                 "the tk-framework-adobe configured in order to run"))
             return
 
         desc = env.get_framework_descriptor(framework_name)
         return desc.get_path()
-
 
     def __ensure_framework_is_installed(self, framework_location):
         """

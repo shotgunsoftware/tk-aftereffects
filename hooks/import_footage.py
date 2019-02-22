@@ -19,8 +19,8 @@ class ImportFootage(HookBaseClass):
             # the following dict allows to set default values
             # for specific file types
             self.__DEFAULT_IMPORT_TYPES = {
-                    ".mov": self.adobe.ImportAsType.FOOTAGE
-                    }
+                ".mov": self.adobe.ImportAsType.FOOTAGE
+            }
         return self.__DEFAULT_IMPORT_TYPES
 
     def __get_import_type(self, import_options):
@@ -48,11 +48,11 @@ class ImportFootage(HookBaseClass):
         # Note: this order is important as we skip as soon as we can
         #       import a piece of footage in a certain way
         import_types = [
-                self.adobe.ImportAsType.PROJECT,  # aep
-                self.adobe.ImportAsType.COMP,  # psd, aep
-                self.adobe.ImportAsType.COMP_CROPPED_LAYERS,  # aep, psd fallback
-                self.adobe.ImportAsType.FOOTAGE,  # jpg
-            ]
+            self.adobe.ImportAsType.PROJECT,  # aep
+            self.adobe.ImportAsType.COMP,  # psd, aep
+            self.adobe.ImportAsType.COMP_CROPPED_LAYERS,  # aep, psd fallback
+            self.adobe.ImportAsType.FOOTAGE,  # jpg
+        ]
 
         for each_type in import_types:
             if import_options.canImportAs(each_type):
@@ -61,13 +61,13 @@ class ImportFootage(HookBaseClass):
 
     def set_import_options(self, import_options):
         self.adobe = self.parent.adobe
+        path = import_options.file.fsName
         import_type = self.__get_import_type(import_options)
         if import_type is None:
             self.logger.warn("Filepath {!r} cannot be imported.".format(path))
             return []
         import_options.importAs = import_type
 
-        path = import_options.file.fsName
         sequence_range = self.parent.find_sequence_range(path)
         if sequence_range and sequence_range[0] != sequence_range[1]:
             import_options.sequence = True

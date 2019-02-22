@@ -8,25 +8,34 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
+import sys
 import sgtk
+
 
 adobe_bridge = sgtk.platform.import_framework(
     "tk-framework-adobe",
     "adobe_bridge"
 )
 
+
 AdobeBridge = adobe_bridge.AdobeBridge
+
 
 shotgun_data = sgtk.platform.import_framework("tk-framework-shotgunutils", "shotgun_data")
 
+
 shotgun_globals = sgtk.platform.import_framework("tk-framework-shotgunutils", "shotgun_globals")
+
 
 shotgun_settings = sgtk.platform.import_framework("tk-framework-shotgunutils", "settings")
 
-win_32_api = sgtk.platform.import_framework(
-    "tk-framework-adobe",
-    "win_32_api"
-)
+
+if sys.platform == "win32":
+    win_32_api = sgtk.platform.import_framework(
+        "tk-framework-adobe",
+        "win_32_api"
+    )
+
 
 class AdobeItemTypes:
     """

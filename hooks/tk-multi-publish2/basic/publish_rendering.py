@@ -122,9 +122,9 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
                 "checked": False
             }
         return {
-                "accepted": True,
-                "checked": True
-            }
+            "accepted": True,
+            "checked": True
+        }
 
     def validate(self, settings, item):
         """
@@ -194,12 +194,14 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
 
         if queue_item is None:
             self.logger.warn(("No queue_item was set. This is most likely due to "
-                        "a mismatch of the collector and this publish-plugin."))
+                              "a mismatch of the collector and this publish-plugin."))
             return self.REJECTED
 
         if not project_path:
-            self.logger.warn("Project has to be saved in order to allow publishing renderings",
-                    extra=self.__get_save_as_action())
+            self.logger.warn(
+                "Project has to be saved in order to allow publishing renderings",
+                extra=self.__get_save_as_action()
+            )
             return self.REJECTED
 
         return self.FULLY_ACCEPTED

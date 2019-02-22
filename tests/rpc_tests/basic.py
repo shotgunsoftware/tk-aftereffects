@@ -12,6 +12,7 @@ import unittest
 import os
 import json
 
+
 class TestAdobeRPC(unittest.TestCase):
     adobe = None
     resources = None
@@ -37,13 +38,13 @@ class TestAdobeRPC(unittest.TestCase):
             method="foo",
             id=next_uid,
             jsonrpc="2.0",
-            params=[1,2,3],
+            params=[1, 2, 3],
         )
 
         payload = self.adobe._get_payload(
             method="foo",
             proxy_object=None,
-            params=[1,2,3],
+            params=[1, 2, 3],
         )
 
         self.assertEqual(expected_payload, payload)

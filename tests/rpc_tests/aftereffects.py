@@ -10,11 +10,13 @@
 
 import os
 import tempfile
-import logging
+
 
 import sgtk
 
+
 from . import TestAdobeRPC
+
 
 class TestAfterEffectsRPC(TestAdobeRPC):
     document = None
@@ -24,7 +26,7 @@ class TestAfterEffectsRPC(TestAdobeRPC):
         TestAdobeRPC.setUpClass()
 
     def setUp(self):
-        self.project_path = os.path.join(self.resources,"simpleproject.aep")
+        self.project_path = os.path.join(self.resources, "simpleproject.aep")
         self.engine = sgtk.platform.current_engine()
         self.project = self.engine.adobe.File(self.project_path)
         self.engine.adobe.app.open(self.project)
@@ -60,11 +62,11 @@ class TestAfterEffectsRPC(TestAdobeRPC):
         Tests if the is_adobe_sequence returns True when it should
         """
         test_paths = [
-                '/this/is/a/test/path[###].jpg',
-                '/this/is/a/test/path###.jpg',
-                '/this/is/a/test/path@@.jpg',
-                '/this/is/a/test/path%03d.jpg',
-                ]
+            '/this/is/a/test/path[###].jpg',
+            '/this/is/a/test/path###.jpg',
+            '/this/is/a/test/path@@.jpg',
+            '/this/is/a/test/path%03d.jpg',
+        ]
         while test_paths:
             self.assertTrue(self.engine.is_adobe_sequence(test_paths.pop(0)))
 
@@ -73,10 +75,10 @@ class TestAfterEffectsRPC(TestAdobeRPC):
         Tests if the is_adobe_sequence returns False when it should
         """
         test_paths = [
-                '/this/is/a/test/path0.jpg',
-                '/this/is/a/test/12path.jpg',
-                '/this/is/a/test/path[123].jpg',
-                ]
+            '/this/is/a/test/path0.jpg',
+            '/this/is/a/test/12path.jpg',
+            '/this/is/a/test/path[123].jpg',
+        ]
         while test_paths:
             self.assertFalse(self.engine.is_adobe_sequence(test_paths.pop(0)))
 

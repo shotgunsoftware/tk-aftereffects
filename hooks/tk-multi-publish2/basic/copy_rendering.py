@@ -197,9 +197,9 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
                 "checked": False
             }
         return {
-                "accepted": True,
-                "checked": True
-            }
+            "accepted": True,
+            "checked": True
+        }
 
     def validate(self, settings, item):
         """
@@ -247,12 +247,12 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
 
         new_renderpaths = []
         for each_path in self.__iter_publishable_paths(
-                            queue_item,
-                            queue_item_index,
-                            render_paths,
-                            work_template,
-                            render_mov_path_template,
-                            render_seq_path_template):
+                queue_item,
+                queue_item_index,
+                render_paths,
+                work_template,
+                render_mov_path_template,
+                render_seq_path_template):
 
             new_renderpaths.append(each_path)
 
@@ -294,57 +294,58 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
 
         if queue_item is None:
             self.logger.warn(("No queue_item was set. This is most likely due to "
-                        "a mismatch of the collector and this publish-plugin."))
+                              "a mismatch of the collector and this publish-plugin."))
             return self.REJECTED
 
         if not project_path:
-            self.logger.warn("Project has to be saved in order to allow publishing renderings",
-                    extra=self.__get_save_as_action())
+            self.logger.warn(
+                "Project has to be saved in order to allow publishing renderings",
+                extra=self.__get_save_as_action())
             return self.REJECTED
 
         # check if the current configuration has templates assigned
         if not work_template:
             self.logger.warn(("Copy the render-files to the publish location"
-                    "will only work in case templates are enabled"))
+                              "will only work in case templates are enabled"))
             return self.REJECTED
 
         # we now know, that we have templates available, so we can do extended checking
 
         # check output module configuration
         om_state = self.__output_modules_acceptable(
-                        queue_item,
-                        default_mov_output_module,
-                        default_seq_output_module,
-                        check_output_module,
-                        force_output_module
-                    )
+            queue_item,
+            default_mov_output_module,
+            default_seq_output_module,
+            check_output_module,
+            force_output_module
+        )
         if om_state != self.FULLY_ACCEPTED:
             return om_state
 
         # check template configuration
         t_state = self.__templates_acceptable(
-                        work_template,
-                        render_seq_path_template,
-                        render_mov_path_template,
-                        project_path
-                    )
+            work_template,
+            render_seq_path_template,
+            render_mov_path_template,
+            project_path
+        )
         if t_state != self.FULLY_ACCEPTED:
             return t_state
 
         # in case we will render before publishing we
         # have to check if the templates are matching
         ext_state = self.__template_extension_match_render_paths(
-                        render_paths,
-                        render_seq_path_template,
-                        render_mov_path_template,
-                    )
+            render_paths,
+            render_seq_path_template,
+            render_mov_path_template,
+        )
         if ext_state != self.FULLY_ACCEPTED:
             return ext_state
 
         return self.FULLY_ACCEPTED
 
-    def __template_extension_match_render_paths(self,
-                render_paths, seq_template, mov_template):
+    def __template_extension_match_render_paths(
+            self, render_paths, seq_template, mov_template):
         """
         Helper method to verify that the template extensions are matching the
         extensions of the render paths. This helper is called during verification
@@ -370,9 +371,9 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
                 return self.REJECTED
         return self.FULLY_ACCEPTED
 
-    def __templates_acceptable(self,
-                work_template, seq_template, mov_template,
-                project_path):
+    def __templates_acceptable(
+            self, work_template, seq_template,
+            mov_template, project_path):
         """
         Helper method to verify that the configured templates are valid.
         To do this, this method checks for the missing keys when initial fields
@@ -407,9 +408,9 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
 
         return self.FULLY_ACCEPTED
 
-    def __output_modules_acceptable(self,
-                queue_item, mov_template, seq_template,
-                check=True, force=True):
+    def __output_modules_acceptable(
+            self, queue_item, mov_template,
+            seq_template, check=True, force=True):
         """
         Helper that verifies, that all the output modules are configured correctly.
         It will perform extended checking if check is True. This means, that
@@ -433,7 +434,7 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
             if not i:
                 output_module_names = list(output_module.templates)
                 msg = ("The configured output module has to exist in After Effects. "
-                    "Please configure one of: {!r}\nYou configured: {!r}")
+                       "Please configure one of: {!r}\nYou configured: {!r}")
                 if seq_template not in output_module_names:
                     self.logger.warn(msg.format(output_module_names, seq_template))
                     return self.REJECTED
@@ -444,10 +445,10 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
             # for extra security, we check, wether the output module
             # is pointing to a valid file. This should only fail in
             # race conditions
-            if output_module.file == None:
+            if output_module.file is None:
                 self.logger.warn(("There render queue item contains an "
-                        "output module, that has no output file set."
-                        "Please set a file to the output module no {}").format(i))
+                                  "output module, that has no output file set."
+                                  "Please set a file to the output module no {}").format(i))
                 return self.REJECTED
 
             # getting the template to use for this output module.
@@ -459,33 +460,41 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
             if not check or output_module.name == template_name:
                 continue
 
+            acceptable_states = [
+                adobe.RQItemStatus.DONE,
+                adobe.RQItemStatus.ERR_STOPPED,
+                adobe.RQItemStatus.RENDERING
+            ]
+
             # if the fix output module is configured, we can apply the fix
             # and continue
-            fix_output_module = lambda om=output_module, t=template_name: om.applyTemplate(t)
-            if force and queue_item.status not in [adobe.RQItemStatus.DONE,
-                            adobe.RQItemStatus.ERR_STOPPED,
-                            adobe.RQItemStatus.RENDERING]:
+
+            def fix_output_module(om=output_module, t=template_name):
+                om.applyTemplate(t)
+
+            if force and queue_item.status not in acceptable_states:
                 self.logger.info("Forcing Output Module to follow template {!r}".format(template_name))
                 fix_output_module()
                 continue
 
             self.logger.warn(
-                        ("Configuration Error: Output Module template {!r} doesn't "
-                         "match the configured one {!r}.").format(
-                                  output_module.name, template_name),
-                        extra={
-                        "action_button": {
-                            "label": "Force Output Module...",
-                            "tooltip": "Sets the template on the output module.",
-                            "callback": fix_output_module,
-                        }
-                    })
+                ("Configuration Error: Output Module template {!r} doesn't "
+                 "match the configured one {!r}.").format(
+                    output_module.name, template_name),
+                extra={
+                    "action_button": {
+                        "label": "Force Output Module...",
+                        "tooltip": "Sets the template on the output module.",
+                        "callback": fix_output_module,
+                    }
+                }
+            )
             return self.PARTIALLY_ACCEPTED
         return self.FULLY_ACCEPTED
 
-    def __iter_publishable_paths(self,
-                queue_item, queue_item_idx, render_paths,
-                work_template, mov_template, seq_template):
+    def __iter_publishable_paths(
+            self, queue_item, queue_item_idx, render_paths,
+            work_template, mov_template, seq_template):
         """
         Helper method to copy and iter all renderfiles to the configured publish location
 
@@ -502,15 +511,15 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
         # ..work-template
         project_path = self.parent.engine.project_path
         fields_from_work_template = work_template.get_fields(
-                sgtk.util.ShotgunPath.normalize(project_path))
+            sgtk.util.ShotgunPath.normalize(project_path))
 
         # ..and from the queue_item.
         comp_name = "{}rq{}".format(queue_item.comp.name, queue_item_idx)
         fields_from_work_template.update({
-                "comp": re.sub("[^0-9a-zA-Z]", "", comp_name),
-                "width": queue_item.comp.width,
-                "height": queue_item.comp.height,
-            })
+            "comp": re.sub("[^0-9a-zA-Z]", "", comp_name),
+            "width": queue_item.comp.width,
+            "height": queue_item.comp.height,
+        })
 
         for each_path in render_paths:
             # get the path in a normalized state. no trailing separator, separators

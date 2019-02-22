@@ -16,7 +16,8 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class RenderingFailed(Exception): pass
+class RenderingFailed(Exception):
+    pass
 
 
 class AfterEffectsCCRenderPlugin(HookBaseClass):
@@ -128,9 +129,9 @@ class AfterEffectsCCRenderPlugin(HookBaseClass):
                 "checked": False
             }
         return {
-                "accepted": True,
-                "checked": True
-            }
+            "accepted": True,
+            "checked": True
+        }
 
     def validate(self, settings, item):
         """
@@ -185,17 +186,18 @@ class AfterEffectsCCRenderPlugin(HookBaseClass):
         """
         queue_item = item.properties.get("queue_item")
         render_paths = item.properties.get("renderpaths")
-        work_template = item.properties.get("work_template")
         project_path = sgtk.util.ShotgunPath.normalize(self.parent.engine.project_path)
 
         if queue_item is None:
             self.logger.warn(("No queue_item was set. This is most likely due to "
-                        "a mismatch of the collector and this publish-plugin."))
+                              "a mismatch of the collector and this publish-plugin."))
             return self.REJECTED
 
         if not project_path:
-            self.logger.warn("Project has to be saved in order to allow publishing renderings",
-                    extra=self.__get_save_as_action())
+            self.logger.warn(
+                "Project has to be saved in order to allow publishing renderings",
+                extra=self.__get_save_as_action()
+            )
             return self.REJECTED
 
         # we now know, that we have templates available, so we can do extended checking
@@ -205,8 +207,7 @@ class AfterEffectsCCRenderPlugin(HookBaseClass):
 
         return self.FULLY_ACCEPTED
 
-    def __render_files_existing(self,
-                queue_item, render_paths):
+    def __render_files_existing(self, queue_item, render_paths):
         """
         Helper that verifies, that all render-files are actually existing on disk.
 
@@ -229,7 +230,7 @@ class AfterEffectsCCRenderPlugin(HookBaseClass):
             return self.PARTIALLY_ACCEPTED
 
         self.logger.info(("No rendering needed in case the render queue item "
-                    "is already rendered."))
+                          "is already rendered."))
         return self.REJECTED
 
     def __get_save_as_action(self):

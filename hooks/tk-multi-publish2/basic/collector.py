@@ -75,7 +75,7 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
         # check if the current project was saved already
         # if not we will not add a publish item for it
         parent_item = self.__get_project_publish_item(settings, parent_item)
-        if adobe.app.project.file == None:
+        if adobe.app.project.file is None:
             return
 
         work_template = self.__get_work_template_for_item(settings)
@@ -100,23 +100,25 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
                     comment = "Render, Register & Copy Images to the Publishpath"
 
             comp_item_name = "Render Queue Item #{} - {} - {}".format(
-                        i+1, queue_item.comp.name,
-                        action)
+                i + 1, queue_item.comp.name,
+                action
+            )
 
-            comp_item = self.__create_comp_publish_item(
-                        parent_item, comp_item_name, comment,
-                        queue_item, render_paths, i,
-                        work_template)
+            self.__create_comp_publish_item(
+                parent_item, comp_item_name, comment,
+                queue_item, render_paths, i,
+                work_template
+            )
 
             self.logger.info("Collected After Effects renderings: {}".format(comp_item_name))
 
     def __icon_path(self):
         return os.path.join(
-                self.disk_location,
-                os.pardir,
-                "icons",
-                "aftereffects.png"
-            )
+            self.disk_location,
+            os.pardir,
+            "icons",
+            "aftereffects.png"
+        )
 
     def __get_work_template_for_item(self, settings):
         # try to get the work-template

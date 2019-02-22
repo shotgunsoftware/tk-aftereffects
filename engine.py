@@ -330,7 +330,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
         doc_obj = self.adobe.app.project.file
         doc_path = ""
-        if doc_obj is not None:
+        if doc_obj != None:
             doc_path = doc_obj.fsName
         return doc_path
 
@@ -342,7 +342,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
 
         with self.context_changes_disabled():
-            
+
             if path is None:
                 self.adobe.app.project.save()
             else:

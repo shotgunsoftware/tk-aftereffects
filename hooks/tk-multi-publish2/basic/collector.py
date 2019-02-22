@@ -75,7 +75,7 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
         # check if the current project was saved already
         # if not we will not add a publish item for it
         parent_item = self.__get_project_publish_item(settings, parent_item)
-        if adobe.app.project.file is None:
+        if adobe.app.project.file == None:
             return
 
         work_template = self.__get_work_template_for_item(settings)

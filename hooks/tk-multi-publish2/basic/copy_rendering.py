@@ -445,7 +445,7 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
             # for extra security, we check, wether the output module
             # is pointing to a valid file. This should only fail in
             # race conditions
-            if output_module.file is None:
+            if output_module.file == None:
                 self.logger.warn(("There render queue item contains an "
                                   "output module, that has no output file set."
                                   "Please set a file to the output module no {}").format(i))

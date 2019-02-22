@@ -37,7 +37,7 @@ class SceneOperation(Hook):
 
         if operation == "current_path":
             file_obj = adobe.app.project.file
-            if file_obj is not None:
+            if file_obj != None:
                 return file_obj.fsName
             raise TankError("The active document must be saved!")
 

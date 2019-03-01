@@ -6,6 +6,9 @@
 *.lock
 profile
 Thumbs.db
+build/*
+Makefile
+make.bat
 
 # Vim
 *.swp

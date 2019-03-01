@@ -326,7 +326,10 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
     @property
     def project_path(self):
         """
-        Returns the current project path or an empty string
+        Get the active project filepath.
+
+        :returns: The current project path or an empty string
+        :rtype: str
         """
         doc_obj = self.adobe.app.project.file
         doc_path = ""
@@ -338,7 +341,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
         Save the project in place or to the given file-path
 
-        :param path: str, optional. The target file path
+        :param str path: The target file path. optional.
         """
 
         with self.context_changes_disabled():
@@ -387,7 +390,8 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         This returns a constant class that maps constants against
         adobe aftereffects internal class names.
 
-        :returns: AdobeItemTypes constants object
+        :returns: AdobeItemTypes constants object. see :class:`~python.tk_aftereffectscc.AdobeItemTypes`
+        :rtype: AdobeItemTypes
         """
         afx_module = self.import_module("tk_aftereffectscc")
         return afx_module.AdobeItemTypes
@@ -396,10 +400,11 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
         Indicates whether the given item is of the given AdobeItemType.
 
-        :param item: adobe-Item-object to be checked
-        :param adobe_type: AdobeItemType-constant. One of the constants held by engine.AdobeItemTypes
-            Like AdobeItemType.COMP_ITEM, AdobeItemType.FOLDER_ITEM or AdobeItemType.FOOTAGE_ITEM
-        :returns: bool indicating if the given item is a FolderItem
+        :param item: item to be checked.
+        :type item: `adobe.ItemObject`_
+        :param str adobe_type: AdobeItemType-constant. One of the constants held by :class:`~python.tk_aftereffectscc.AdobeItemTypes`
+        :returns: Indicating if the given item is of the given type 
+        :rtype: bool
         """
         return item.data.get("instanceof", "") == adobe_type
 
@@ -408,7 +413,8 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
         Helper getting the currently selected item in the after effects project
 
-        :returns: adobe ItemObject
+        :returns: The active item
+        :rtype: `adobe.ItemObject`_
         """
         return self.adobe.app.project.activeItem
 
@@ -418,14 +424,16 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         describing a sequence.
 
         The sequencepath must contain one of the following patterns in
-        order to be recognized:
-        ###
-        @@@
-        [###]
-        %0xd
+        order to be recognized::
 
-        :param path: str filepath to check
-        :returns: bool True if the path describes a sequence
+            ###
+            @@@
+            [###]
+            %0xd
+
+        :param str path: filepath to check
+        :returns: True if the path describes a sequence
+        :rtype: bool
         """
         if re.search(self.__IS_SEQUENCE_REGEX, path):
             return True
@@ -436,9 +444,11 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         Helper to query if all render files of a given queue item
         are actually existing.
 
-        :param path: str filepath to check
+        :param str path: filepath to check
         :param queue_item: an after effects render queue item
-        :returns: bool True if the path describes a sequence
+        :type queue_item: `adobe.RenderQueueItemObject`_
+        :returns: True if the path describes a sequence
+        :rtype: bool
         """
         for file_path, _ in self.get_render_files(path, queue_item):
             if not os.path.exists(file_path):
@@ -449,15 +459,17 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
         Helper to iter safely through an adobe-collection item
         as its index starts at 1, not 0.
+        
+        One may use this method like this::
 
-        ```
-        item_collection = engine.adobe.project.items
-        for item in engine.iter_collection(item_collection):
-            print item.name
-        ```
+            item_collection = engine.adobe.project.items
+            for item in engine.iter_collection(item_collection):
+                print item.name
 
         :param collection_item: the after-effects collection item to iter
+        :type collection_item: `adobe.ItemCollectionObject`_
         :yields: the next child item of the collection
+        :rtype: `adobe.ItemObject`_
         """
         for i in xrange(1, collection_item.length + 1):
             yield collection_item[i]
@@ -469,11 +481,13 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
         The path is needed to uniquely identify the correct output_module
 
-        :param path: str filepath to iter
+        :param str path: filepath to iter
         :param queue_item: an after effects render queue item
+        :type queue_item: `adobe.RenderQueueItemObject`_
         :yields: 2-item-tuple where the firstitem is the resolved path (str)
                 of the render file and the second item the frame-number or
                 None if the path is not an image-sequence.
+        :rtype: tuple
         """
         # is the given render-path a sequence?
         match = re.search(self.__IS_SEQUENCE_REGEX, path)
@@ -498,13 +512,16 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         Helper method to import footage into the current comp.
         This method contains logic to determine as what the given file-path
         may be imported (PROJECT, FOOTAGE, COMP etc.)
+        To influence this logic you can implement the "import_footage_hook"
+        for this engine.
         It will also collect all new items and return those in case
         the import leads to more than one (1) Item-objects to be imported.
 
-        :param path: str filepath to be imported. Sequences should give either the
+        :param str path: filepath to be imported. Sequences should give either the
                 first frame or the frames replaced by hashes (#), at (@) or the
                 percent formatting (%04d) syntax.
-        :returns: list of adobe.CompItem. All new items that were imported
+        :returns: All new items that were imported
+        :rtype: list-of-`adobe.CompItemObject`_
         """
         file_obj = self.adobe.File(path)
         import_options = self.adobe.ImportOptions()
@@ -528,9 +545,12 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         In case the collection contains only FolderItems, this method will
         recurse into the folders until one ItemObject was found.
 
-        :param item_collection: adobe.ItemCollection object to be analyzed
-        :param comp_item: adobe.CompItem that should receive the items from item_collection
-        :returns: bool indicating if an item was added or not.
+        :param item_collection: object to be analyzed
+        :type item_collection: `adobe.ItemCollectionObject`_ 
+        :param comp_item: comp that should receive the items from item_collection
+        :type comp_item: `adobe.CompItemObject`_
+        :returns: Indicating if an item was added or not.
+        :rtype: bool
         """
 
         # first we generate a list of items within
@@ -570,8 +590,10 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         and only enabling the given item. After rendering the state of the
         render-queue is reverted.
 
-        :param queue_item: the adobe.RenderQueueItem to be rendered
-        :returns: bool indicating successful rendering or not
+        :param queue_item: The render queue item to be rendered
+        :type queue_item: `adobe.RenderQueueItemObject`_
+        :returns: Indicating successful rendering or not
+        :rtype: bool
         """
 
         # save the queue state for all unrendered items
@@ -1858,8 +1880,10 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         items before importing and comparing them to the list of existing items
         after importing.
 
-        :param import_options: adobe.ImportOptions object that should be imported
-        :returns: list of adobe.CompItem. All new items that were imported
+        :param import_options: Import options object that should be imported
+        :type import_options: `adobe.ImportOptionsObject`_
+        :returns: All new items that were imported
+        :rtype: list-of-`adobe.CompItemObject`_
         """
 
         # as the return value of importFile will not

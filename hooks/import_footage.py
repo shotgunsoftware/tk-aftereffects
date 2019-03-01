@@ -60,6 +60,19 @@ class ImportFootage(HookBaseClass):
         return None
 
     def set_import_options(self, import_options):
+        """
+        This method is called in case the engines' import_filepath
+        method is called. It is used to set the correct parameters to the
+        given `adobe.ImportOptionsObject`_.
+
+        This method should modify the incoming object with the correct
+        settings for the given filepath.
+
+        The filepath can be accesssed by doing ``import_options.file.fsName``.
+
+        :param import_options: The import options as set by After Effects
+        :type import_options: `adobe.ImportOptionsObject`_.
+        """
         self.adobe = self.parent.adobe
         path = import_options.file.fsName
         import_type = self.__get_import_type(import_options)

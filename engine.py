@@ -25,7 +25,7 @@ import sgtk
 from sgtk.util.filesystem import ensure_folder_exists
 
 
-class AfterEffectsCCEngine(sgtk.platform.Engine):
+class AfterEffectsEngine(sgtk.platform.Engine):
     """
     A After Effects CC engine for Shotgun Toolkit.
     """
@@ -61,7 +61,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
     _PROXY_WIN_HWND = None
     _HEARTBEAT_DISABLED = False
     _PROJECT_CONTEXT = None
-    _CONTEXT_CACHE_KEY = "aftereffectscc_context_cache"
+    _CONTEXT_CACHE_KEY = "aftereffects_context_cache"
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
 
@@ -130,7 +130,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         any apps are loaded.
         """
         # import and keep a handle on the bundled python module
-        self.__tk_aftereffectscc = self.import_module("tk_aftereffectscc")
+        self.__tk_aftereffects = self.import_module("tk_aftereffects")
 
         # constant command uid lookups for these special commands
         self.__jump_to_sg_command_id = self.__get_command_uid()
@@ -138,7 +138,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
         # get the adobe instance. it may have been initialized already by a
         # previous instance of the engine. if not, initialize a new one.
-        self._adobe = self.__tk_aftereffectscc.AdobeBridge.get_or_create(
+        self._adobe = self.__tk_aftereffects.AdobeBridge.get_or_create(
             identifier=self.instance_name,
             port=self._SHOTGUN_ADOBE_PORT,
             logger=self.logger,
@@ -159,11 +159,11 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
         # in order to use frameworks, they have to be imported via
         # import_module. so they're exposed in the bundled python. 
-        shotgun_data = self.__tk_aftereffectscc.shotgun_data
-        settings = self.__tk_aftereffectscc.shotgun_settings
+        shotgun_data = self.__tk_aftereffects.shotgun_data
+        settings = self.__tk_aftereffects.shotgun_settings
         # keep a handle for shotgun globals as they are needed in other
         # functions as well
-        self.__shotgun_globals = self.__tk_aftereffectscc.shotgun_globals
+        self.__shotgun_globals = self.__tk_aftereffects.shotgun_globals
 
         # import here since the engine is responsible for defining Qt.
         from sgtk.platform.qt import QtCore
@@ -232,7 +232,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         # Set our parent widget back to being owned by the window manager
         # instead of After Effects's application window.
         if self._PROXY_WIN_HWND and sys.platform == "win32":
-            self.__tk_aftereffectscc.win_32_api.SetParent(self._PROXY_WIN_HWND, 0)
+            self.__tk_aftereffects.win_32_api.SetParent(self._PROXY_WIN_HWND, 0)
 
         # No longer poll for new messages from this engine.
         if self._CHECK_CONNECTION_TIMER:
@@ -288,7 +288,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
         properties = properties or dict()
         properties["uid"] = self.__get_command_uid()
-        return super(AfterEffectsCCEngine, self).register_command(
+        return super(AfterEffectsEngine, self).register_command(
             name,
             callback,
             properties,
@@ -392,10 +392,10 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         This returns a constant class that maps constants against
         adobe aftereffects internal class names.
 
-        :returns: AdobeItemTypes constants object. see :class:`~python.tk_aftereffectscc.AdobeItemTypes`
+        :returns: AdobeItemTypes constants object. see :class:`~python.tk_aftereffects.AdobeItemTypes`
         :rtype: AdobeItemTypes
         """
-        afx_module = self.import_module("tk_aftereffectscc")
+        afx_module = self.import_module("tk_aftereffects")
         return afx_module.AdobeItemTypes
 
     def is_item_of_type(self, item, adobe_type):
@@ -404,7 +404,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
         :param item: item to be checked.
         :type item: `adobe.ItemObject`_
-        :param str adobe_type: AdobeItemType-constant. One of the constants held by :class:`~python.tk_aftereffectscc.AdobeItemTypes`
+        :param str adobe_type: AdobeItemType-constant. One of the constants held by :class:`~python.tk_aftereffects.AdobeItemTypes`
         :returns: Indicating if the given item is of the given type 
         :rtype: bool
         """
@@ -934,7 +934,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
     def _run_tests(self):
         """
-        Runs the test suite for the tk-aftereffectscc bundle.
+        Runs the test suite for the tk-aftereffects bundle.
         """
         # If we don't know what the tests root directory path is
         # via the environment, then we shouldn't be here.
@@ -1067,7 +1067,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         :returns: dict
         """
         # Just call the base implementation and monkey patch QMessageBox.
-        base = super(AfterEffectsCCEngine, self)._define_qt_base()
+        base = super(AfterEffectsEngine, self)._define_qt_base()
         if not base:
             raise ImportError("Unable to find a QT Python module")
 
@@ -1132,7 +1132,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         if not self._WIN32_AFTEREFFECTS_MAIN_HWND:
             for major in sorted(self.__CC_VERSION_MAPPING.keys()):
                 for minor in xrange(10):
-                    found_hwnds = self.__tk_aftereffectscc.win_32_api.find_windows(
+                    found_hwnds = self.__tk_aftereffects.win_32_api.find_windows(
                         class_name="AE_CApplication_{}.{}".format(major, minor),
                         stop_if_found=True,
                     )
@@ -1169,7 +1169,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
             # needed to turn a Qt5 WId into an HWND is not exposed in PySide2,
             # so we can't do what we did below for Qt4.
             if QtCore.__version__.startswith("4."):
-                proxy_win_hwnd = self.__tk_aftereffectscc.win_32_api.qwidget_winid_to_hwnd(
+                proxy_win_hwnd = self.__tk_aftereffects.win_32_api.qwidget_winid_to_hwnd(
                     win32_proxy_win.winId(),
                 )
             else:
@@ -1184,7 +1184,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                 win32_proxy_win.show()
 
                 try:
-                    proxy_win_hwnd_found = self.__tk_aftereffectscc.win_32_api.find_windows(
+                    proxy_win_hwnd_found = self.__tk_aftereffects.win_32_api.find_windows(
                         stop_if_found=True,
                         class_name="Qt5QWindowIcon",
                         process_id=os.getpid(),
@@ -1214,17 +1214,17 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
             # Set the window style/flags. We don't need or want our Python
             # dialogs to notify the After Effects application window when they're
             # opened or closed, so we'll disable that behavior.
-            win_ex_style = self.__tk_aftereffectscc.win_32_api.GetWindowLong(
+            win_ex_style = self.__tk_aftereffects.win_32_api.GetWindowLong(
                 proxy_win_hwnd,
-                self.__tk_aftereffectscc.win_32_api.GWL_EXSTYLE,
+                self.__tk_aftereffects.win_32_api.GWL_EXSTYLE,
             )
 
-            self.__tk_aftereffectscc.win_32_api.SetWindowLong(
+            self.__tk_aftereffects.win_32_api.SetWindowLong(
                 proxy_win_hwnd,
-                self.__tk_aftereffectscc.win_32_api.GWL_EXSTYLE, 
-                win_ex_style | self.__tk_aftereffectscc.win_32_api.WS_EX_NOPARENTNOTIFY,
+                self.__tk_aftereffects.win_32_api.GWL_EXSTYLE, 
+                win_ex_style | self.__tk_aftereffects.win_32_api.WS_EX_NOPARENTNOTIFY,
             )
-            self.__tk_aftereffectscc.win_32_api.SetParent(proxy_win_hwnd, ps_hwnd)
+            self.__tk_aftereffects.win_32_api.SetParent(proxy_win_hwnd, ps_hwnd)
             self._PROXY_WIN_HWND = proxy_win_hwnd
 
         return win32_proxy_win

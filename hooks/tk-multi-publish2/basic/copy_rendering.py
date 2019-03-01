@@ -19,7 +19,7 @@ from sgtk.util.filesystem import ensure_folder_exists
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
+class AfterEffectsCopyRenderPlugin(HookBaseClass):
     """
     Plugin for publishing after effects renderings.
 
@@ -89,7 +89,7 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
 
         # inherit the settings from the base publish plugin
         base_settings = \
-            super(AfterEffectsCCCopyRenderPlugin, self).settings or {}
+            super(AfterEffectsCopyRenderPlugin, self).settings or {}
 
         # settings specific to this class
         aftereffects_publish_settings = {
@@ -218,7 +218,7 @@ class AfterEffectsCCCopyRenderPlugin(HookBaseClass):
             return False
 
         # run the base class validation
-        return super(AfterEffectsCCCopyRenderPlugin, self).validate(
+        return super(AfterEffectsCopyRenderPlugin, self).validate(
             settings, item)
 
     def publish(self, settings, item):

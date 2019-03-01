@@ -20,7 +20,7 @@ class ProjectUnsavedError(Exception):
     pass
 
 
-class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
+class AfterEffectsUploadProjectPlugin(HookBaseClass):
     """
     Plugin for publishing an after effects project.
 
@@ -78,7 +78,7 @@ class AfterEffectsCCUploadProjectPlugin(HookBaseClass):
 
         # inherit the settings from the base publish plugin
         base_settings = \
-            super(AfterEffectsCCUploadProjectPlugin, self).settings or {}
+            super(AfterEffectsUploadProjectPlugin, self).settings or {}
 
         return base_settings
 

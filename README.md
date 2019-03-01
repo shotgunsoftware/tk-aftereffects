@@ -104,5 +104,15 @@ And as a last resort you can hope for the best and open `Adobe Extend Script Too
 You may use the following environment variables to influence the behaviour of the After Effects Engine:
 
  - `SHOTGUN_ADOBE_NETWORK_DEBUG` - If this exists you will get more debug information in the console.
+ - `SHOTGUN_ADOBE_TESTS_ROOT` - If you set this variable to the absolute directory-path of the "tests" folder of your tk-aftereffects directory you can run the integration tests as described below.
 
 
+## Running integration tests
+
+In the Shotgun-After Effects CEP panel you can open the Shotgun Python Console and enter the following command:
+
+```
+import os
+os.environ["SHOTGUN_ADOBE_TESTS_ROOT"] = "/path/to/tk-aftereffects/tests"
+engine._run_tests()
+```

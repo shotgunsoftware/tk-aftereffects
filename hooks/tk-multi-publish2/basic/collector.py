@@ -14,7 +14,7 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class AfterEffectsCCSceneCollector(HookBaseClass):
+class AfterEffectsSceneCollector(HookBaseClass):
     """
     Collector that operates on the current After Effects document. Should inherit
     from the basic collector hook.
@@ -42,7 +42,7 @@ class AfterEffectsCCSceneCollector(HookBaseClass):
 
         # grab any base class settings
         collector_settings = \
-            super(AfterEffectsCCSceneCollector, self).settings or {}
+            super(AfterEffectsSceneCollector, self).settings or {}
 
         # settings specific to this collector
         aftereffects_session_settings = {

@@ -20,7 +20,7 @@ class RenderingFailed(Exception):
     pass
 
 
-class AfterEffectsCCRenderPlugin(HookBaseClass):
+class AfterEffectsRenderPlugin(HookBaseClass):
     """
     Plugin for publishing after effects renderings.
 
@@ -81,7 +81,7 @@ class AfterEffectsCCRenderPlugin(HookBaseClass):
 
         # inherit the settings from the base publish plugin
         base_settings = \
-            super(AfterEffectsCCRenderPlugin, self).settings or {}
+            super(AfterEffectsRenderPlugin, self).settings or {}
 
         return base_settings
 
@@ -150,7 +150,7 @@ class AfterEffectsCCRenderPlugin(HookBaseClass):
             return False
 
         # run the base class validation
-        return super(AfterEffectsCCRenderPlugin, self).validate(
+        return super(AfterEffectsRenderPlugin, self).validate(
             settings, item)
 
     def publish(self, settings, item):

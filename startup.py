@@ -24,7 +24,7 @@ class AfterEffectsLauncher(SoftwareLauncher):
     """
     Handles the launching of After Effects. Contains the logic for
     scanning for installed versions of the software and
-    how to correctly set up a launch environment for the tk-aftereffectscc
+    how to correctly set up a launch environment for the tk-aftereffects
     engine.
     """
 
@@ -149,7 +149,7 @@ class AfterEffectsLauncher(SoftwareLauncher):
         # set the interpreter with which to launch the CC integration
         env["SHOTGUN_ADOBE_PYTHON"] = sys.executable
         env["SHOTGUN_ADOBE_FRAMEWORK_LOCATION"] = framework_location
-        env["SHOTGUN_ENGINE"] = "tk-aftereffectscc"
+        env["SHOTGUN_ENGINE"] = "tk-aftereffects"
 
         # We're going to append all of this Python process's sys.path to the
         # PYTHONPATH environment variable. This will ensure that we have access
@@ -186,11 +186,11 @@ class AfterEffectsLauncher(SoftwareLauncher):
         env_name = engine.environment.get("name")
 
         env = engine.tank.pipeline_configuration.get_environment(env_name)
-        engine_desc = env.get_engine_descriptor("tk-aftereffectscc")
+        engine_desc = env.get_engine_descriptor("tk-aftereffects")
         if env_name is None:
             self.logger.warn(
                 ("The current environment {!r} "
-                 "is not configured to run the tk-aftereffectscc "
+                 "is not configured to run the tk-aftereffects "
                  "engine. Please add the engine to your env-file: "
                  "{!r}").format(env, env.disk_location))
             return
@@ -205,7 +205,7 @@ class AfterEffectsLauncher(SoftwareLauncher):
                 break
         else:
             self.logger.warn(
-                ("The engine tk-aftereffectscc must have "
+                ("The engine tk-aftereffects must have "
                  "the tk-framework-adobe configured in order to run"))
             return
 

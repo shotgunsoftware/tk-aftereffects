@@ -16,7 +16,7 @@ import sgtk
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
-class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
+class AfterEffectsRenderPublishPlugin(HookBaseClass):
     """
     Plugin for publishing after effects renderings.
 
@@ -74,7 +74,7 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
 
         # inherit the settings from the base publish plugin
         base_settings = \
-            super(AfterEffectsCCRenderPublishPlugin, self).settings or {}
+            super(AfterEffectsRenderPublishPlugin, self).settings or {}
 
         return base_settings
 
@@ -143,7 +143,7 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
             return False
 
         # run the base class validation
-        return super(AfterEffectsCCRenderPublishPlugin, self).validate(
+        return super(AfterEffectsRenderPublishPlugin, self).validate(
             settings, item)
 
     def publish(self, settings, item):
@@ -166,7 +166,7 @@ class AfterEffectsCCRenderPublishPlugin(HookBaseClass):
             if match:
                 each_path = each_path.replace(match.group(0), '%0{}d'.format(len(match.group(1))))
             item.properties["path"] = re.sub('[\[\]]', '', each_path)
-            super(AfterEffectsCCRenderPublishPlugin, self).publish(settings, item)
+            super(AfterEffectsRenderPublishPlugin, self).publish(settings, item)
             published_renderings.append(item.properties.get("sg_publish_data"))
 
     def __is_acceptable(self, settings, item):

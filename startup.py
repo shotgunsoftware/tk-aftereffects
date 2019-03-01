@@ -184,12 +184,6 @@ class AfterEffectsLauncher(SoftwareLauncher):
 
         engine = sgtk.platform.current_engine()
         env_name = engine.environment.get("name")
-        if env_name is None:
-            self.logger.warn(
-                ("The current environment of engine {!r} "
-                 "seems to be invalid. No name found. Environment: "
-                 "{!r}").format(engine.name, engine.environment))
-            return
 
         env = engine.tank.pipeline_configuration.get_environment(env_name)
         engine_desc = env.get_engine_descriptor("tk-aftereffectscc")

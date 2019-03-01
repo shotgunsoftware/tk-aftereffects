@@ -333,6 +333,8 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
         doc_obj = self.adobe.app.project.file
         doc_path = ""
+        # doc_obj will always be a ProxyWrapper instance so we cannot
+        # use the `doc_obj is not None` comparison
         if doc_obj != None:
             doc_path = doc_obj.fsName
         return doc_path
@@ -607,10 +609,13 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
 
         success = False
         queue_item.render = True
+        self.logger.debug("Start rendering..")
         try:
-            self.logger.debug("Start rendering..")
             self.adobe.app.project.renderQueue.render()
         except Exception as e:
+            # This catches errors thrown during the AfterEffects Render process.
+            # Which may return various different errors. This situation never
+            # occured during development.
             self.logger.error(
                 ("Skipping item due to an error "
                     "while rendering: {}").format(e)
@@ -1866,8 +1871,16 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         """
 
         if sys.platform == "darwin":
+            # a little action script to activate the given python process.
+            osx_activate_script = \
+                """
+                tell application "System Events"
+                  set frontmost of the first process whose unix id is {pid} to true
+                end tell
+                """.format(pid=os.getpid())
+
             # force this python process to the front
-            cmd = ["osascript", "-e", OSX_ACTIVATE_SCRIPT]
+            cmd = ["osascript", "-e", osx_activate_script]
             status = subprocess.call(cmd)
             if status:
                 self.logger.error("Could not activate python.")
@@ -1902,14 +1915,5 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
                 new_items.append(item)
 
         return new_items
-
-
-# a little action script to activate the given python process.
-OSX_ACTIVATE_SCRIPT = \
-"""
-tell application "System Events"
-  set frontmost of the first process whose unix id is {pid} to true
-end tell
-""".format(pid=os.getpid())
 
 

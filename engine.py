@@ -33,9 +33,6 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
     # the maximum size for a generated thumbnail
     MAX_THUMB_SIZE = 512
 
-    SHOTGUN_ADOBE_PORT = os.environ.get("SHOTGUN_ADOBE_PORT")
-    SHOTGUN_ADOBE_APPID = os.environ.get("SHOTGUN_ADOBE_APPID")
-
     SHOTGUN_ADOBE_HEARTBEAT_INTERVAL = 1.0
     SHOTGUN_ADOBE_HEARTBEAT_TOLERANCE = 2
     SHOTGUN_ADOBE_NETWORK_DEBUG = ("SHOTGUN_ADOBE_NETWORK_DEBUG" in os.environ)
@@ -49,6 +46,9 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         "INFO": "info",
         "DEBUG": "debug"
     }
+
+    _SHOTGUN_ADOBE_PORT = os.environ.get("SHOTGUN_ADOBE_PORT")
+    _SHOTGUN_ADOBE_APPID = os.environ.get("SHOTGUN_ADOBE_APPID")
 
     _COMMAND_UID_COUNTER = 0
     _LOCK = threading.Lock()
@@ -140,7 +140,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         # previous instance of the engine. if not, initialize a new one.
         self._adobe = self.__tk_aftereffectscc.AdobeBridge.get_or_create(
             identifier=self.instance_name,
-            port=self.SHOTGUN_ADOBE_PORT,
+            port=self._SHOTGUN_ADOBE_PORT,
             logger=self.logger,
             network_debug=self.SHOTGUN_ADOBE_NETWORK_DEBUG,
         )
@@ -1001,7 +1001,7 @@ class AfterEffectsCCEngine(sgtk.platform.Engine):
         The runtime app id. This will be a string -- something like
         PHSP for After Effects, or AEFT for After Effect.
         """
-        return self.SHOTGUN_ADOBE_APPID
+        return self._SHOTGUN_ADOBE_APPID
 
     @property
     def context_change_allowed(self):

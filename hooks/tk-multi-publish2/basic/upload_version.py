@@ -219,10 +219,17 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
             else:
                 path_to_frames = each_path
 
+        mov_output_module_template = settings.get('Movie Output Module').value
         if path_to_movie is None and path_to_frames is not None:
             self.logger.info("About to render movie...")
-            mov_output_module_template = settings.get('Movie Output Module').value
-            upload_path = self.__render_to_temp_location(path_to_frames, queue_item, mov_output_module_template)
+            upload_path = self.__render_movie_from_sequence(path_to_frames, queue_item, mov_output_module_template)
+            if not upload_path:
+                raise RenderingFailed("Rendering a movie failed. Cannot upload a version of this item.")
+        elif path_to_movie and not os.path.exists(path_to_movie):
+            self.logger.info("About to render movie...")
+            temp_queue_item = queue_item.duplicate()
+            upload_path = self.__render_to_temp_location(temp_queue_item, mov_output_module_template)
+            temp_queue_item.remove()
             if not upload_path:
                 raise RenderingFailed("Rendering a movie failed. Cannot upload a version of this item.")
 
@@ -331,7 +338,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                     "Unable to remove temp file: %s" % (upload_path,))
                 pass
 
-    def __render_to_temp_location(self, sequence_path, queue_item, mov_output_module_template):
+    def __render_movie_from_sequence(self, sequence_path, queue_item, mov_output_module_template):
 
         for first_frame, _ in self.parent.engine.get_render_files(sequence_path, queue_item):
             break
@@ -352,9 +359,18 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         )
 
         temp_item = self.parent.engine.adobe.app.project.renderQueue.items.add(new_cmp_item)
+        output_path = self.__render_to_temp_location(temp_item, mov_output_module_template)
 
+        # clean up temporary items
+        temp_item.remove()
+        new_cmp_item.remove()
+        while new_items:
+            new_items.pop().remove()
+        return output_path
+
+    def __render_to_temp_location(self, temporary_queue_item, mov_output_module_template):
         # set the output module
-        output_module = temp_item.outputModules[1]
+        output_module = temporary_queue_item.outputModules[1]
         output_module.applyTemplate(mov_output_module_template)
 
         # set the filepath to a temp location
@@ -367,13 +383,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         output_module.file = render_file
 
         # render
-        render_state = self.parent.engine.render_queue_item(temp_item)
-
-        # clean up temporary items
-        temp_item.remove()
-        new_cmp_item.remove()
-        while new_items:
-            new_items.pop().remove()
+        render_state = self.parent.engine.render_queue_item(temporary_queue_item)
 
         # return the render file path or an empty string
         if render_state:

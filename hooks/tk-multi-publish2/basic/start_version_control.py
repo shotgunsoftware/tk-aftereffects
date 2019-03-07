@@ -196,7 +196,7 @@ class AfterEffectsStartVersionControlPlugin(HookBaseClass):
                         "choose another name."
             self.logger.error(
                 error_msg,
-                extra=self._get_save_as_action()
+                extra=self.__get_save_as_action()
             )
             raise Exception(error_msg)
 

@@ -61,6 +61,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
     _PROXY_WIN_HWND = None
     _HEARTBEAT_DISABLED = False
     _PROJECT_CONTEXT = None
+    _AFX_PID = None
     _CONTEXT_CACHE_KEY = "aftereffects_context_cache"
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
@@ -229,6 +230,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         Called when the engine should tear down itself and all its apps.
         """
         self.logger.debug("Destroying engine...")
+
         # Set our parent widget back to being owned by the window manager
         # instead of After Effects's application window.
         if self._PROXY_WIN_HWND and sys.platform == "win32":
@@ -1124,6 +1126,37 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         q_message_box.question = _question_wrapper
         q_message_box.warning = _warning_wrapper
 
+    def __check_for_popups(self):
+        """
+        Method will check if a popup dialog from aftereffects was openend
+        and if so, it will raise the window to the front.
+
+        NOTE:
+            This is only done in windows.
+            TODO: Implement an equivalent method on mac
+        """
+        if sys.platform == "win32":
+            if self._AFX_PID == -1:
+                return
+            elif self._AFX_PID is None:
+                s = subprocess.Popen(
+                    ['tasklist', '/FI', 'ImageName eq AfterFX.exe', '/FO', 'CSV', '/NH'],
+                    stdout=subprocess.PIPE
+                )
+                out_string, _ = s.communicate()
+                match = re.match("[^0-9]+([0-9]+).*", out_string, re.DOTALL)
+                if not match:
+                    self._AFX_PID = -1
+                self._AFX_PID = int(match.group(1))
+
+            hwnd = self.__tk_aftereffects.win_32_api.find_windows(
+                                process_id=self._AFX_PID,
+                                class_name="#32770",
+                                stop_if_found=True,
+                            )
+            if hwnd:
+                self.__tk_aftereffects.win_32_api.bring_to_front(hwnd[0])
+
     def _win32_get_aftereffects_main_hwnd(self):
         """
         Windows specific method to find the main After Effects window
@@ -1599,6 +1632,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             )
 
             timer.timeout.connect(self._check_connection)
+            timer.timeout.connect(self.__check_for_popups)
 
             # The class variable is in seconds, so multiply to get milliseconds.
             timer.start(

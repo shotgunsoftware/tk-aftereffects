@@ -19,7 +19,8 @@ class ImportFootage(HookBaseClass):
             # the following dict allows to set default values
             # for specific file types
             self.__DEFAULT_IMPORT_TYPES = {
-                ".mov": self.adobe.ImportAsType.FOOTAGE
+                ".mov": self.adobe.ImportAsType.FOOTAGE,
+                ".avi": self.adobe.ImportAsType.FOOTAGE
             }
         return self.__DEFAULT_IMPORT_TYPES
 

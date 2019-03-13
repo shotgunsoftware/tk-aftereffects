@@ -185,6 +185,7 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
 
         queue_item = item.properties.get("queue_item")
         render_paths = item.properties.get("renderpaths")
+        work_template = item.properties.get("work_template")
         project_path = sgtk.util.ShotgunPath.normalize(self.parent.engine.project_path)
 
         # set the item path to some temporary value
@@ -195,6 +196,12 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
         if queue_item is None:
             self.logger.warn(("No queue_item was set. This is most likely due to "
                               "a mismatch of the collector and this publish-plugin."))
+            return self.REJECTED
+
+        # check if the current configuration has templates assigned
+        if not work_template and queue_item.status != adobe.RQItemStatus.DONE:
+            self.logger.warn(("Publishing an unrendered queue item is not "
+                              "supported without configured templates."))
             return self.REJECTED
 
         if not project_path:

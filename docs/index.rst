@@ -37,5 +37,6 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   contributing
    api
    hooks

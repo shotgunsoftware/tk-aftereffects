@@ -186,7 +186,7 @@ class AfterEffectsSceneCollector(HookBaseClass):
         # disable thumbnail creation for After Effects documents. for the
         # default workflow, the thumbnail will be auto-updated after the
         # version creation plugin runs
-        comp_item.thumbnail_enabled = True
+        comp_item.thumbnail_enabled = False
         comp_item.context_change_allowed = False
 
         comp_item.properties["queue_item_index"] = queue_index

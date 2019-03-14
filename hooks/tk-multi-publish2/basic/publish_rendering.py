@@ -199,7 +199,7 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
             return self.REJECTED
 
         # check if the current configuration has templates assigned
-        if not work_template and queue_item.status != adobe.RQItemStatus.DONE:
+        if not work_template and queue_item.status != self.parent.engine.adobe.RQItemStatus.DONE:
             self.logger.warn(("Publishing an unrendered queue item is not "
                               "supported without configured templates."))
             return self.REJECTED

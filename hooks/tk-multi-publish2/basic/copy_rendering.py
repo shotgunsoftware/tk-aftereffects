@@ -9,6 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 import re
 import os
+import sys
 import shutil
 
 
@@ -322,6 +323,12 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
         if om_state != self.FULLY_ACCEPTED:
             return om_state
 
+        # TODO: This is a hack to support multiple different extensions
+        # per operating system ("avi" on windows and "mov" on mac)
+        # It should go away with issue #8
+        if default_mov_output_module == "Lossless with Alpha" and "extension" in render_mov_path_template.keys:
+            render_mov_path_template.keys["extension"].default = "avi" if sys.platform == "win32" else "mov"
+
         # check template configuration
         t_state = self.__templates_acceptable(
             work_template,
@@ -361,7 +368,14 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
             if self.parent.engine.is_adobe_sequence(each_path):
                 path_template = seq_template
 
-            _, template_ext = os.path.splitext(path_template.definition)
+            # TODO: This is a hack to support multiple different extensions
+            # per operating system ("avi" on windows and "mov" on mac)
+            # It should go away with issue #8
+            template_ext = None
+            if "extension" in path_template.keys and path_template.keys["extension"].default:
+                template_ext = re.sub("^[\.]*", ".", path_template.keys["extension"].default)
+            if template_ext is None:
+                _, template_ext = os.path.splitext(path_template.definition)
             _, path_ext = os.path.splitext(each_path)
 
             if path_ext != template_ext:
@@ -395,8 +409,8 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
 
         fields_from_work_template = work_template.get_fields(project_path)
 
-        missing_seq_keys = seq_template.missing_keys(fields_from_work_template)
-        missing_mov_keys = mov_template.missing_keys(fields_from_work_template)
+        missing_seq_keys = [e for e in seq_template.missing_keys(fields_from_work_template) if seq_template.keys[e].default is None]
+        missing_mov_keys = [e for e in mov_template.missing_keys(fields_from_work_template) if mov_template.keys[e].default is None]
 
         if set(missing_seq_keys) - set(['SEQ'] + expected_missing_keys):
             self.logger.warn(msg.format('Sequence', ['SEQ'] + expected_missing_keys, missing_seq_keys))
@@ -477,17 +491,21 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
                 fix_output_module()
                 continue
 
-            self.logger.warn(
-                ("Configuration Error: Output Module template {!r} doesn't "
-                 "match the configured one {!r}.").format(
-                    output_module.name, template_name),
-                extra={
+            extra = None
+            if queue_item.status not in acceptable_states:
+                extra = {
                     "action_button": {
                         "label": "Force Output Module...",
                         "tooltip": "Sets the template on the output module.",
                         "callback": fix_output_module,
                     }
                 }
+
+            self.logger.warn(
+                ("Configuration Error: Output Module template {!r} doesn't "
+                 "match the configured one {!r}.").format(
+                    output_module.name, template_name),
+                extra=extra
             )
             return self.PARTIALLY_ACCEPTED
         return self.FULLY_ACCEPTED

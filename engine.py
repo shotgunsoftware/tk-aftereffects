@@ -62,7 +62,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
     _HEARTBEAT_DISABLED = False
     _PROJECT_CONTEXT = None
     _AFX_PID = None
-    _PROJECT_PATH_CACHE = None
     _CONTEXT_CACHE_KEY = "aftereffects_context_cache"
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
@@ -1126,16 +1125,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         q_message_box.question = _question_wrapper
         q_message_box.warning = _warning_wrapper
 
-    def __check_document(self):
-        """
-        Method checks if the active project was switched
-        and in case it was change the current context (if not disabled)
-        """
-        project_path = self.project_path
-        if project_path != self._PROJECT_PATH_CACHE:
-            self._PROJECT_PATH_CACHE = project_path
-            self._handle_active_document_change(project_path)
-
     def __check_for_popups(self):
         """
         Method will check if a popup dialog from aftereffects was openend
@@ -1643,7 +1632,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             timer.timeout.connect(self._check_connection)
             timer.timeout.connect(self.__check_for_popups)
-            timer.timeout.connect(self.__check_document)
 
             # The class variable is in seconds, so multiply to get milliseconds.
             timer.start(

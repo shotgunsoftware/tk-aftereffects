@@ -1,0 +1,342 @@
+
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Contributing &mdash; tk-aftereffects v0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="tk-aftereffects v0.1.0 documentation" href="index.html"/>
+        <link rel="next" title="Public Helper Methods" href="api.html"/>
+        <link rel="prev" title="The After Effects Engine" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+    <a href='http://developer.shotgunsoftware.com'>
+    
+        <img style='width: 191px;
+                height: 60px; 
+                margin: 2px;
+                border-radius: 0px; 
+                padding: 0px;' 
+            src='_static/logo@2x.png'/>
+    
+    </a>
+    
+
+          
+            <a href="index.html" class="icon icon-home"> tk-aftereffects
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#adobe-api">Adobe API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-specialities">Development specialities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adobe-items-are-never-none">Adobe items are never None</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#after-effects-itemcollection-objects-have-no-index-0-zero">After Effects ItemCollection-Objects have no index 0 (zero)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#environment-variables">Environment Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-integration-tests">Running integration tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Public Helper Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hooks.html">Hooks</a></li>
+</ul>
+
+            
+          
+
+    <a href='genindex.html'>Alphabetic Index</a>
+
+    <div style='margin-top: 50px;
+                margin-left: 10px;
+                margin-right: 10px;
+                padding: 10px; 
+                color: #b3b3b3; 
+                font-size: 70%;
+                border-radius: 3px;
+                background-color: #444;
+                line-height: 18px;
+                '>    
+    <style>
+        a.custom_post_menu { display: inline; 
+                             padding: 0px; 
+                             text-decoration: underline; }
+    </style>
+
+    <b>tk-aftereffects</b> v0.1.0.<br>
+    
+        This documentation is part of the Shotgun Pipeline Toolkit.
+    
+    For more information, please visit
+    <a class=custom_post_menu href='https://support.shotgunsoftware.com/home'>Shotgun Support</a>.
+    The code associated with this documentation can be found 
+    <a class=custom_post_menu href='https://github.com/shotgunsoftware/tk-aftereffects'>here</a>.
+
+    </div>
+
+
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">tk-aftereffects</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Contributing</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="adobe-api">
+<h2>Adobe API<a class="headerlink" href="#adobe-api" title="Permalink to this headline">¶</a></h2>
+<p>To see the reference of the After Effects Javascript API please visit <a class="reference external" href="http://docs.aenhancers.com/introduction/overview/">this link</a> or download <a class="reference external" href="http://blogs.adobe.com/wp-content/blogs.dir/48/files/2012/06/After-Effects-CS6-Scripting-Guide.pdf?file=2012/06/After-Effects-CS6-Scripting-Guide.pdf">this pdf</a></p>
+</div>
+<div class="section" id="development-specialities">
+<h2>Development specialities<a class="headerlink" href="#development-specialities" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="adobe-items-are-never-none">
+<h3>Adobe items are never None<a class="headerlink" href="#adobe-items-are-never-none" title="Permalink to this headline">¶</a></h3>
+<p>If you want to check if an item from Adobe is undefined, you cannot use a comparison like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">item</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">foo</span>
+<span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>As item is always a ProxyWrapper-instance. If you want to know if the item is undefined in After Effects please do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">item</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">foo</span>
+<span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="after-effects-itemcollection-objects-have-no-index-0-zero">
+<h3>After Effects ItemCollection-Objects have no index 0 (zero)<a class="headerlink" href="#after-effects-itemcollection-objects-have-no-index-0-zero" title="Permalink to this headline">¶</a></h3>
+<p>All ItemCollections in After Effects have a start-index of 1 (one). If you want to iter through such a collection please use the engines <cite>iter_collection</cite> method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">collection</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">items</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">engine</span><span class="o">.</span><span class="n">iter_collection</span><span class="p">(</span><span class="n">collection</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Note, that Arrays in After Effects have a start-index of 0 (zero), so for those you may use the normal for loop in python:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">adobeArray</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">adobeArray</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="debugging">
+<h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h2>
+<p>As the After Effects engine communicates via three different programming languages it can be sometimes difficult to debug certain situations.</p>
+<p>If you experience an error, the first place to go to is the &#8220;Console&#8221; of the Shotgun-panel in After Effects. If the communication with After Effects is working as expected, you will see your logs there.
+You can find the console by selecting the <em>burger-menu</em> of the panel and then clicking &#8220;Shot Console&#8221;.</p>
+<p>If you didn&#8217;t get enough information yet, you may now also check the log-file on Disk:</p>
+<blockquote>
+<div><ul class="simple">
+<li>On Windows: %appdata%ShotgunLogstk-adobecc.log</li>
+<li>On Mac:     ~/Library/Logs/Shotgun/tk-adobecc.log</li>
+</ul>
+</div></blockquote>
+<p>If you still couldn&#8217;t find the reason please view the debug logs of the panel itself, which will be available under:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The panel: <a class="reference external" href="http://127.0.0.1:45218">http://127.0.0.1:45218</a></li>
+<li>The manager: <a class="reference external" href="http://127.0.0.1:45228">http://127.0.0.1:45228</a></li>
+</ul>
+</div></blockquote>
+<p>These webpages only work in Chrome!</p>
+<p>And as a last resort you can hope for the best and open <cite>Adobe Extend Script Toolkit</cite>, connect to After Effects rerun the problematic code and look at the console to see if anything shows up. But this is actually very unlikely.</p>
+</div>
+<div class="section" id="environment-variables">
+<h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
+<p>You may use the following environment variables to influence the behaviour of the After Effects Engine:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>SHOTGUN_ADOBE_NETWORK_DEBUG</cite> - If this exists you will get more debug information in the console.</li>
+<li><cite>SHOTGUN_ADOBE_TESTS_ROOT</cite> - If you set this variable to the absolute directory-path of the &#8220;tests&#8221; folder of your tk-aftereffects directory you can run the integration tests as described below.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="running-integration-tests">
+<h2>Running integration tests<a class="headerlink" href="#running-integration-tests" title="Permalink to this headline">¶</a></h2>
+<p>In the Shotgun-After Effects CEP panel you can open the Shotgun Python Console and enter the following command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SHOTGUN_ADOBE_TESTS_ROOT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/path/to/tk-aftereffects/tests&quot;</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">_run_tests</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="Public Helper Methods" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="The After Effects Engine" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Autodesk.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'v0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ 
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-2114792-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+</body>
+</html>

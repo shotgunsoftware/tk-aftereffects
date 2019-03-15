@@ -314,6 +314,7 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
 
         # check output module configuration
         om_state = self.__output_modules_acceptable(
+            item,
             queue_item,
             default_mov_output_module,
             default_seq_output_module,
@@ -423,7 +424,7 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
         return self.FULLY_ACCEPTED
 
     def __output_modules_acceptable(
-            self, queue_item, mov_template,
+            self, publish_item, queue_item, mov_template,
             seq_template, check=True, force=True):
         """
         Helper that verifies, that all the output modules are configured correctly.
@@ -432,6 +433,7 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
         In case force is not set verification will fail if the latter check fails, if
         force is set, the output-module will be set to the configured template.
 
+        :param publish_item: the current publisher item
         :param queue_item: an after effects render-queue-item
         :param mov_template: str name of the output module template for movie-clips
         :param seq_template: str name of the output module template for image-sequences
@@ -483,8 +485,12 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
             # if the fix output module is configured, we can apply the fix
             # and continue
 
-            def fix_output_module(om=output_module, t=template_name):
+            def fix_output_module(om=output_module, t=template_name, qi=queue_item, itm=publish_item, e=self.parent.engine):
                 om.applyTemplate(t)
+                renderpaths = []
+                for output_module in e.iter_collection(qi.outputModules):
+                    renderpaths.append(output_module.file.fsName)
+                itm.properties["renderpaths"] = renderpaths
 
             if force and queue_item.status not in acceptable_states:
                 self.logger.info("Forcing Output Module to follow template {!r}".format(template_name))

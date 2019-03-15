@@ -380,10 +380,10 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
             _, path_ext = os.path.splitext(each_path)
 
             if path_ext != template_ext:
-                self.logger.warn(("Configuration Error: The template extension {} is not matching"
+                self.logger.error(("Configuration Error: The template extension {} is not matching"
                                   "the render output path extension {} for "
                                   "path {!r}").format(template_ext, path_ext, each_path))
-                return self.REJECTED
+                return self.PARTIALLY_ACCEPTED
         return self.FULLY_ACCEPTED
 
     def __templates_acceptable(
@@ -485,12 +485,17 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
             # if the fix output module is configured, we can apply the fix
             # and continue
 
-            def fix_output_module(om=output_module, t=template_name, qi=queue_item, itm=publish_item, e=self.parent.engine):
-                om.applyTemplate(t)
+            def fix_output_module(
+                    output_module=output_module, template=template_name, queue_item=queue_item,
+                    item=publish_item, engine=self.parent.engine):
+                """
+                local method to change the output module template of the item and update the renderpaths
+                """
+                output_module.applyTemplate(template)
                 renderpaths = []
-                for output_module in e.iter_collection(qi.outputModules):
+                for output_module in engine.iter_collection(queue_item.outputModules):
                     renderpaths.append(output_module.file.fsName)
-                itm.properties["renderpaths"] = renderpaths
+                item.properties["renderpaths"] = renderpaths
 
             if force and queue_item.status not in acceptable_states:
                 self.logger.info("Forcing Output Module to follow template {!r}".format(template_name))

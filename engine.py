@@ -63,6 +63,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
     _PROJECT_CONTEXT = None
     _AFX_PID = None
     _POPUP_CACHE = None
+    _AFX_WIN32_DIALOG_WINDOW_CLASS = "#32770" # the windows window class name used by After Effects for modal dialogs
     _CONTEXT_CACHE_KEY = "aftereffects_context_cache"
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
@@ -1143,11 +1144,19 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             if self._AFX_PID == -1:
                 return
             elif self._AFX_PID is None:
-                s = subprocess.Popen(
+                # the windows tasklist command will provide the process id
+                # of the After Effects executable. As there is always only one
+                # instance of After Effects, this should be safe to determine the
+                # process id.
+                pid_query_process = subprocess.Popen(
                     ['tasklist', '/FI', 'ImageName eq AfterFX.exe', '/FO', 'CSV', '/NH'],
                     stdout=subprocess.PIPE
                 )
-                out_string, _ = s.communicate()
+                out_string, _ = pid_query_process.communicate()
+
+                # The out_string will look like:
+                # "AfterFX.ext","1234","SessionName","SessionNum","MemoryUsage"
+                # where 1234 describes the pid of After Effects
                 match = re.match("[^0-9]+([0-9]+).*", out_string, re.DOTALL)
                 if not match:
                     self._AFX_PID = -1
@@ -1157,7 +1166,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             # dialog classes.
             hwnds = self.__tk_aftereffects.win_32_api.find_windows(
                                 process_id=self._AFX_PID,
-                                class_name="#32770",
+                                class_name=self._AFX_WIN32_DIALOG_WINDOW_CLASS,
                                 stop_if_found=True,
                             )
 

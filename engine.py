@@ -62,6 +62,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
     _HEARTBEAT_DISABLED = False
     _PROJECT_CONTEXT = None
     _AFX_PID = None
+    _POPUP_CACHE = None
     _CONTEXT_CACHE_KEY = "aftereffects_context_cache"
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
@@ -1148,13 +1149,29 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                     self._AFX_PID = -1
                 self._AFX_PID = int(match.group(1))
 
-            hwnd = self.__tk_aftereffects.win_32_api.find_windows(
+            hwnds = self.__tk_aftereffects.win_32_api.find_windows(
                                 process_id=self._AFX_PID,
                                 class_name="#32770",
                                 stop_if_found=True,
                             )
-            if hwnd:
-                self.__tk_aftereffects.win_32_api.bring_to_front(hwnd[0])
+
+            # we build a dict that maps the hwnd longs to the current hwnd pointer
+            all_hwnds = {}
+            for hwnd in hwnds:
+                all_hwnds[self.__tk_aftereffects.win_32_api.ctypes.windll.user32.GetWindow(hwnd, 5)] = hwnd
+
+            # by comparing the cached hwnd longs we find out if there is a new popup
+            new_hwnds = set(all_hwnds.keys()) - (self._POPUP_CACHE or set([]))
+            # in case there is a new popup, we bring it to front and update the cache
+            for hwnd_long in new_hwnds:
+                self.__tk_aftereffects.win_32_api.bring_to_front(all_hwnds[hwnd_long])
+                self._POPUP_CACHE = set(all_hwnds.keys())
+                return
+            # in case we found a popup but dont have a new one, we exit here
+            if all_hwnds:
+                return
+            # in all other cases, we reset the cache.
+            self._POPUP_CACHE = None
 
     def _win32_get_aftereffects_main_hwnd(self):
         """

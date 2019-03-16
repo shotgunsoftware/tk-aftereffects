@@ -1136,6 +1136,10 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             TODO: Implement an equivalent method on mac
         """
         if sys.platform == "win32":
+
+            # to get all dialogs from After Effects, we have to query the
+            # After Effects process id first. As this code runs inside a
+            # separate python process, we use a subprocess for this.
             if self._AFX_PID == -1:
                 return
             elif self._AFX_PID is None:
@@ -1149,28 +1153,41 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                     self._AFX_PID = -1
                 self._AFX_PID = int(match.group(1))
 
+            # with the process id of After Effects, we can get all HWNDS that point to
+            # dialog classes.
             hwnds = self.__tk_aftereffects.win_32_api.find_windows(
                                 process_id=self._AFX_PID,
                                 class_name="#32770",
                                 stop_if_found=True,
                             )
 
+            # To avoid raising a dialog, that we raised before,
+            # we will compare the list of visible dialog-hwnds with the list
+            # that we already raised.
+            # As we cannot compare the hwnd-pointers directly, we need to compare
+            # the integer value (hwnd long) of the hwnd pointers.
+
             # we build a dict that maps the hwnd longs to the current hwnd pointer
             all_hwnds = {}
             for hwnd in hwnds:
                 all_hwnds[self.__tk_aftereffects.win_32_api.ctypes.windll.user32.GetWindow(hwnd, 5)] = hwnd
 
-            # by comparing the cached hwnd longs we find out if there is a new popup
+            # by comparing the cached hwnd longs with the current list of hwnd longs,
+            # we find out which hwnds are actually pointing to new (unraised) dialogs.
             new_hwnds = set(all_hwnds.keys()) - (self._POPUP_CACHE or set([]))
-            # in case there is a new popup, we bring it to front and update the cache
+
+            # in case there is a new dialog, we bring it to front and update the cache
             for hwnd_long in new_hwnds:
                 self.__tk_aftereffects.win_32_api.bring_to_front(all_hwnds[hwnd_long])
                 self._POPUP_CACHE = set(all_hwnds.keys())
                 return
-            # in case we found a popup but dont have a new one, we exit here
+
+            # in case there are open dialogs, but we already raised them,
+            # we do nothing.
             if all_hwnds:
+
                 return
-            # in all other cases, we reset the cache.
+            # In case there is no open dialog, we will reset the cache to None
             self._POPUP_CACHE = None
 
     def _win32_get_aftereffects_main_hwnd(self):

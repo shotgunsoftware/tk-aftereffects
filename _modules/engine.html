@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>engine &mdash; tk-aftereffects v0.1.0 documentation</title>
+  <title>engine &mdash; tk-aftereffects v0.1.1 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="tk-aftereffects v0.1.0 documentation" href="../index.html"/>
+    <link rel="top" title="tk-aftereffects v0.1.1 documentation" href="../index.html"/>
         <link rel="up" title="Module code" href="index.html"/> 
 
   
@@ -115,7 +115,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.1.0.<br>
+    <b>tk-aftereffects</b> v0.1.1.<br>
     
         This documentation is part of the Shotgun Pipeline Toolkit.
     
@@ -173,10 +173,10 @@
 <span class="c1">#</span>
 <span class="c1"># CONFIDENTIAL AND PROPRIETARY</span>
 <span class="c1">#</span>
-<span class="c1"># This work is provided &quot;AS IS&quot; and subject to the Shotgun Pipeline Toolkit </span>
+<span class="c1"># This work is provided &quot;AS IS&quot; and subject to the Shotgun Pipeline Toolkit</span>
 <span class="c1"># Source Code License included in this distribution package. See LICENSE.</span>
-<span class="c1"># By accessing, using, copying or modifying this work you indicate your </span>
-<span class="c1"># agreement to the Shotgun Pipeline Toolkit Source Code License. All rights </span>
+<span class="c1"># By accessing, using, copying or modifying this work you indicate your</span>
+<span class="c1"># agreement to the Shotgun Pipeline Toolkit Source Code License. All rights</span>
 <span class="c1"># not expressly granted therein are reserved by Shotgun Software Inc.</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -198,7 +198,7 @@
 
 <div class="viewcode-block" id="AfterEffectsEngine"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine">[docs]</a><span class="k">class</span> <span class="nc">AfterEffectsEngine</span><span class="p">(</span><span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">Engine</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A After Effects CC engine for Shotgun Toolkit.</span>
+<span class="sd">    An After Effects CC engine for Shotgun Toolkit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># the maximum size for a generated thumbnail</span>
@@ -233,6 +233,9 @@
     <span class="n">_HEARTBEAT_DISABLED</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="n">_PROJECT_CONTEXT</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_AFX_PID</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_POPUP_CACHE</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_AFX_WIN32_DIALOG_WINDOW_CLASS</span> <span class="o">=</span> <span class="s2">&quot;#32770&quot;</span> <span class="c1"># the windows window class name used by After Effects for modal dialogs</span>
+    <span class="n">__WIN32_GW_CHILD</span> <span class="o">=</span> <span class="mi">5</span>
     <span class="n">_CONTEXT_CACHE_KEY</span> <span class="o">=</span> <span class="s2">&quot;aftereffects_context_cache&quot;</span>
 
     <span class="n">_HAS_CHECKED_CONTEXT_POST_LAUNCH</span> <span class="o">=</span> <span class="bp">False</span>
@@ -330,7 +333,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">state_requested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__send_state</span><span class="p">)</span>
 
         <span class="c1"># in order to use frameworks, they have to be imported via</span>
-        <span class="c1"># import_module. so they&#39;re exposed in the bundled python. </span>
+        <span class="c1"># import_module. so they&#39;re exposed in the bundled python.</span>
         <span class="n">shotgun_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">shotgun_data</span>
         <span class="n">settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">shotgun_settings</span>
         <span class="c1"># keep a handle for shotgun globals as they are needed in other</span>
@@ -578,7 +581,7 @@
 <span class="sd">        :param item: item to be checked.</span>
 <span class="sd">        :type item: `adobe.ItemObject`_</span>
 <span class="sd">        :param str adobe_type: AdobeItemType-constant. One of the constants held by :class:`~python.tk_aftereffects.AdobeItemTypes`</span>
-<span class="sd">        :returns: Indicating if the given item is of the given type </span>
+<span class="sd">        :returns: Indicating if the given item is of the given type</span>
 <span class="sd">        :rtype: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;instanceof&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">adobe_type</span></div>
@@ -634,7 +637,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper to iter safely through an adobe-collection item</span>
 <span class="sd">        as its index starts at 1, not 0.</span>
-<span class="sd">        </span>
+
 <span class="sd">        One may use this method like this::</span>
 
 <span class="sd">            item_collection = engine.adobe.project.items</span>
@@ -721,7 +724,7 @@
 <span class="sd">        recurse into the folders until one ItemObject was found.</span>
 
 <span class="sd">        :param item_collection: object to be analyzed</span>
-<span class="sd">        :type item_collection: `adobe.ItemCollectionObject`_ </span>
+<span class="sd">        :type item_collection: `adobe.ItemCollectionObject`_</span>
 <span class="sd">        :param comp_item: comp that should receive the items from item_collection</span>
 <span class="sd">        :type comp_item: `adobe.CompItemObject`_</span>
 <span class="sd">        :returns: Indicating if an item was added or not.</span>
@@ -774,7 +777,7 @@
         <span class="c1"># save the queue state for all unrendered items</span>
         <span class="n">queue_item_state_cache</span> <span class="o">=</span> <span class="p">[(</span><span class="n">queue_item</span><span class="p">,</span> <span class="n">queue_item</span><span class="o">.</span><span class="n">render</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_collection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">renderQueue</span><span class="o">.</span><span class="n">items</span><span class="p">):</span>
-            <span class="c1"># one cannot change the status on </span>
+            <span class="c1"># one cannot change the status on</span>
             <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">RQItemStatus</span><span class="o">.</span><span class="n">QUEUED</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">queue_item_state_cache</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">item</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">render</span><span class="p">))</span>
@@ -817,8 +820,8 @@
 <span class="sd">        frame number of a sequence. This assumes some sort of common convention</span>
 <span class="sd">        for the file names, where the frame number is an integer at the end of</span>
 <span class="sd">        the basename, just ahead of the file extension, such as</span>
-<span class="sd">        file.0001.jpg, or file_001.jpg. We also check for input file names with</span>
-<span class="sd">        abstracted frame number tokens, such as file.####.jpg, or file.%04d.jpg.</span>
+<span class="sd">        ``file.0001.jpg``, or ``file_001.jpg``. We also check for input file names with</span>
+<span class="sd">        abstracted frame number tokens, such as ``file.####.jpg`` or ``file.%04d.jpg``.</span>
 
 <span class="sd">        :param str path: The file path to parse.</span>
 
@@ -1306,26 +1309,70 @@
 <span class="sd">            TODO: Implement an equivalent method on mac</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+
+            <span class="c1"># to get all dialogs from After Effects, we have to query the</span>
+            <span class="c1"># After Effects process id first. As this code runs inside a</span>
+            <span class="c1"># separate python process, we use a subprocess for this.</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_AFX_PID</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="k">return</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_AFX_PID</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">s</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+                <span class="c1"># the windows tasklist command will provide the process id</span>
+                <span class="c1"># of the After Effects executable. As there is always only one</span>
+                <span class="c1"># instance of After Effects, this should be safe to determine the</span>
+                <span class="c1"># process id.</span>
+                <span class="n">pid_query_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
                     <span class="p">[</span><span class="s1">&#39;tasklist&#39;</span><span class="p">,</span> <span class="s1">&#39;/FI&#39;</span><span class="p">,</span> <span class="s1">&#39;ImageName eq AfterFX.exe&#39;</span><span class="p">,</span> <span class="s1">&#39;/FO&#39;</span><span class="p">,</span> <span class="s1">&#39;CSV&#39;</span><span class="p">,</span> <span class="s1">&#39;/NH&#39;</span><span class="p">],</span>
                     <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span>
                 <span class="p">)</span>
-                <span class="n">out_string</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+                <span class="n">out_string</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pid_query_process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+                <span class="c1"># The out_string will look like:</span>
+                <span class="c1"># &quot;AfterFX.ext&quot;,&quot;1234&quot;,&quot;SessionName&quot;,&quot;SessionNum&quot;,&quot;MemoryUsage&quot;</span>
+                <span class="c1"># where 1234 describes the pid of After Effects</span>
                 <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;[^0-9]+([0-9]+).*&quot;</span><span class="p">,</span> <span class="n">out_string</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_AFX_PID</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_AFX_PID</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
-            <span class="n">hwnd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">find_windows</span><span class="p">(</span>
+            <span class="c1"># with the process id of After Effects, we can get all HWNDS that point to</span>
+            <span class="c1"># dialog classes.</span>
+            <span class="n">hwnds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">find_windows</span><span class="p">(</span>
                                 <span class="n">process_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_AFX_PID</span><span class="p">,</span>
-                                <span class="n">class_name</span><span class="o">=</span><span class="s2">&quot;#32770&quot;</span><span class="p">,</span>
+                                <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_AFX_WIN32_DIALOG_WINDOW_CLASS</span><span class="p">,</span>
                                 <span class="n">stop_if_found</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                             <span class="p">)</span>
-            <span class="k">if</span> <span class="n">hwnd</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">bring_to_front</span><span class="p">(</span><span class="n">hwnd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="c1"># To avoid raising a dialog, that we raised before,</span>
+            <span class="c1"># we will compare the list of visible dialog-hwnds with the list</span>
+            <span class="c1"># that we already raised.</span>
+            <span class="c1"># As we cannot compare the hwnd-pointers directly, we need to compare</span>
+            <span class="c1"># the integer value (hwnd long) of the hwnd pointers.</span>
+
+            <span class="c1"># we build a dict that maps the hwnd longs to the current hwnd pointer</span>
+            <span class="n">all_hwnds</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">GetWindow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">windll</span><span class="o">.</span><span class="n">user32</span><span class="o">.</span><span class="n">GetWindow</span>
+            <span class="k">for</span> <span class="n">hwnd</span> <span class="ow">in</span> <span class="n">hwnds</span><span class="p">:</span>
+                <span class="c1"># GetWindow with GW_CHILD is used to get the hwnd long that identifies the child window</span>
+                <span class="c1"># at the top of the Z order, of the specified parent window pointer.</span>
+                <span class="n">all_hwnds</span><span class="p">[</span><span class="n">GetWindow</span><span class="p">(</span><span class="n">hwnd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__WIN32_GW_CHILD</span><span class="p">)]</span> <span class="o">=</span> <span class="n">hwnd</span>
+
+            <span class="c1"># by comparing the cached hwnd longs with the current list of hwnd longs,</span>
+            <span class="c1"># we find out which hwnds are actually pointing to new (unraised) dialogs.</span>
+            <span class="n">new_hwnds</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">all_hwnds</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_POPUP_CACHE</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">([]))</span>
+
+            <span class="c1"># in case there is a new dialog, we bring it to front and update the cache</span>
+            <span class="k">for</span> <span class="n">hwnd_long</span> <span class="ow">in</span> <span class="n">new_hwnds</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">bring_to_front</span><span class="p">(</span><span class="n">all_hwnds</span><span class="p">[</span><span class="n">hwnd_long</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_POPUP_CACHE</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">all_hwnds</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="k">return</span>
+
+            <span class="c1"># in case there are open dialogs, but we already raised them,</span>
+            <span class="c1"># we do nothing.</span>
+            <span class="k">if</span> <span class="n">all_hwnds</span><span class="p">:</span>
+
+                <span class="k">return</span>
+            <span class="c1"># In case there is no open dialog, we will reset the cache to None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_POPUP_CACHE</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">_win32_get_aftereffects_main_hwnd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1424,7 +1471,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">SetWindowLong</span><span class="p">(</span>
                 <span class="n">proxy_win_hwnd</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">GWL_EXSTYLE</span><span class="p">,</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">GWL_EXSTYLE</span><span class="p">,</span>
                 <span class="n">win_ex_style</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">WS_EX_NOPARENTNOTIFY</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">SetParent</span><span class="p">(</span><span class="n">proxy_win_hwnd</span><span class="p">,</span> <span class="n">ps_hwnd</span><span class="p">)</span>
@@ -2153,7 +2200,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.1.0',
+            VERSION:'v0.1.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

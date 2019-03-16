@@ -64,6 +64,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
     _AFX_PID = None
     _POPUP_CACHE = None
     _AFX_WIN32_DIALOG_WINDOW_CLASS = "#32770" # the windows window class name used by After Effects for modal dialogs
+    __WIN32_GW_CHILD = 5
     _CONTEXT_CACHE_KEY = "aftereffects_context_cache"
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
@@ -1178,8 +1179,11 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             # we build a dict that maps the hwnd longs to the current hwnd pointer
             all_hwnds = {}
+            GetWindow = self.__tk_aftereffects.win_32_api.ctypes.windll.user32.GetWindow
             for hwnd in hwnds:
-                all_hwnds[self.__tk_aftereffects.win_32_api.ctypes.windll.user32.GetWindow(hwnd, 5)] = hwnd
+                # GetWindow with GW_CHILD is used to get the hwnd long that identifies the child window
+                # at the top of the Z order, of the specified parent window pointer.
+                all_hwnds[GetWindow(hwnd, self.__WIN32_GW_CHILD)] = hwnd
 
             # by comparing the cached hwnd longs with the current list of hwnd longs,
             # we find out which hwnds are actually pointing to new (unraised) dialogs.

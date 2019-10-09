@@ -17,6 +17,8 @@ import glob
 
 
 import sgtk
+from sgtk.platform.qt import QtGui, QtCore
+from sgtk.platform.qt.tankqdialog import TankQDialog
 
 
 HookBaseClass = sgtk.get_hook_baseclass()
@@ -147,26 +149,54 @@ class AfterEffectsActions(HookBaseClass):
         app.log_debug("Execute action called for action %s. "
                       "Parameters: %s. Publish Data: %s" % (name, params, sg_publish_data))
 
-        # resolve path
-        # toolkit uses utf-8 encoded strings internally and the After Effects API expects unicode
-        # so convert the path to ensure filenames containing complex characters are supported
-        path = self.get_publish_path(sg_publish_data).decode('utf-8')
+        # If the loader2 dialog is closed during processing it causes some stability problems
+        # on Windows and OSX. We'll just not allow it to be closed while we're working.
+        top_level_widgets = [w for w in QtGui.QApplication.topLevelWidgets() if isinstance(w, TankQDialog)]
+        top_level_widgets_flags = [(w, w.windowFlags()) for w in top_level_widgets]
 
-        if self.parent.engine.is_adobe_sequence(path):
-            frame_range = self.parent.engine.find_sequence_range(path)
-            if frame_range:
-                glob_path = re.sub("[\[]?([#@]+|%0\d+d)[\]]?", "*{}".format(frame_range[0]), path)
-                for each_path in sorted(glob.glob(glob_path)):
-                    path = each_path
-                    break
+        try:
+            # We don't have an easy way from here to get the current loader2 widget, but it's
+            # not the end of the world if we just disable the close button for all top level
+            # dialogs that we know came from sgtk while we're in progress.
+            #
+            # https://stackoverflow.com/questions/3211272/qt-hide-minimize-maximize-and-close-buttons#
+            #
+            for widget in top_level_widgets:
+                if widget.isVisible():
+                    widget.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.WindowTitleHint | QtCore.Qt.CustomizeWindowHint)
+                    # Changing the window flags hides the dialog, so we re-show it. Doing these in quick succession
+                    # doesn't appear to cause any visual flicker.
+                    widget.show()
 
-        if not os.path.exists(path):
-            raise IOError("File not found on disk - '%s'" % path)
+            # Make sure the window flag change is visible to the user before we move on.
+            QtCore.QCoreApplication.processEvents()
 
-        if name == _ADD_TO_COMP:
-            self._add_to_comp(path)
-        if name == _ADD_TO_PROJECT:
-            self.parent.engine.import_filepath(path)
+            # resolve path
+            # toolkit uses utf-8 encoded strings internally and the After Effects API expects unicode
+            # so convert the path to ensure filenames containing complex characters are supported
+            path = self.get_publish_path(sg_publish_data).decode('utf-8')
+
+            if self.parent.engine.is_adobe_sequence(path):
+                frame_range = self.parent.engine.find_sequence_range(path)
+                if frame_range:
+                    glob_path = re.sub("[\[]?([#@]+|%0\d+d)[\]]?", "*{}".format(frame_range[0]), path)
+                    for each_path in sorted(glob.glob(glob_path)):
+                        path = each_path
+                        break
+
+            if not os.path.exists(path):
+                raise IOError("File not found on disk - '%s'" % path)
+
+            if name == _ADD_TO_COMP:
+                self._add_to_comp(path)
+            if name == _ADD_TO_PROJECT:
+                self.parent.engine.import_filepath(path)
+        finally:
+            # Set back the original window flags.
+            for widget, window_flags in top_level_widgets_flags:
+                if widget.isVisible():
+                    widget.setWindowFlags(window_flags)
+                    widget.show()
 
     ###########################################################################
     # helper methods

@@ -368,7 +368,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         for new_item in new_items:
             new_cmp_item.layers.add(new_item)
 
-        self.logger.debug("Adding the comp to the render queue: %s" % new_cmp_item)
+        self.logger.debug("Adding the comp %s to the render queue" % new_cmp_item)
         temp_item = self.parent.engine.adobe.app.project.renderQueue.items.add(new_cmp_item)
         output_path = self.__render_to_temp_location(temp_item, mov_output_module_template)
 
@@ -389,7 +389,6 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
 
         allocate_file = tempfile.NamedTemporaryFile(suffix=ext)
         allocate_file.close()
-
         self.logger.debug("Setting temporary location to: %s" % allocate_file.name)
 
         render_file = self.parent.engine.adobe.File(allocate_file.name)

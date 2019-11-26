@@ -75,6 +75,10 @@ class AfterEffectsLauncher(SoftwareLauncher):
         std_env = self.get_standard_plugin_environment()
         required_env.update(std_env)
 
+        # populate the file to open env.
+        if file_to_open:
+            required_env["SGTK_FILE_TO_OPEN"] = file_to_open
+
         return LaunchInformation(exec_path, args, required_env)
 
     def scan_software(self):

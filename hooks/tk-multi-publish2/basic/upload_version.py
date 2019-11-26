@@ -340,15 +340,22 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
 
     def __render_movie_from_sequence(self, sequence_path, queue_item, mov_output_module_template):
 
+        self.logger.debug("Sequence path: %s" % sequence_path)
+
         for first_frame, _ in self.parent.engine.get_render_files(sequence_path, queue_item):
             break
 
+        self.logger.debug("First frame: %s" % first_frame)
+        self.logger.debug("Importing footage...")
         # import the footage and add it to the render queue
         new_items = self.parent.engine.import_filepath(first_frame)
+        self.logger.debug("Imported footage items: %s" % new_items)
         for new_item in new_items:
             break
         else:
             return ''
+
+        self.logger.debug("Adding new comp: %s" % new_item)
         new_cmp_item = self.parent.engine.adobe.app.project.items.addComp(
             new_item.name,
             new_item.width,
@@ -361,6 +368,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         for new_item in new_items:
             new_cmp_item.layers.add(new_item)
 
+        self.logger.debug("Adding the comp %s to the render queue" % new_cmp_item)
         temp_item = self.parent.engine.adobe.app.project.renderQueue.items.add(new_cmp_item)
         output_path = self.__render_to_temp_location(temp_item, mov_output_module_template)
 
@@ -381,13 +389,16 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
 
         allocate_file = tempfile.NamedTemporaryFile(suffix=ext)
         allocate_file.close()
+        self.logger.debug("Setting temporary location to: %s" % allocate_file.name)
 
         render_file = self.parent.engine.adobe.File(allocate_file.name)
         output_module.file = render_file
 
+        self.logger.debug("Rendering the queue item")
         # render
         render_state = self.parent.engine.render_queue_item(temporary_queue_item)
 
+        self.logger.debug("Render state: %s" % render_state)
         # return the render file path or an empty string
         if render_state:
             return allocate_file.name

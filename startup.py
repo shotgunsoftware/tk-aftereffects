@@ -43,12 +43,25 @@ class AfterEffectsLauncher(SoftwareLauncher):
     # with an appropriate glob or regex string. As Adobe adds modifies the
     # install path on a given OS for a new release, a new template will need
     # to be added here.
-    EXECUTABLE_MATCH_TEMPLATES = {
-        # /Applications/Adobe After Effects CC 2017/After Effects CC 2017.app
-        "darwin": "/Applications/Adobe After Effects CC {version}/Adobe After Effects CC {version_back}.app",
-        # C:\program files\Adobe\Adobe After Effects CC 2017\AfterFX.exe
-        "win32": "C:/Program Files/Adobe/Adobe After Effects CC {version}/Support Files/AfterFX.exe"
-    }
+    #
+    # For the 2020 release cycle, Adobe changed conventions and removed the
+    # "CC" part of the path.
+    EXECUTABLE_MATCH_TEMPLATES = [
+        {
+            # /Applications/Adobe After Effects 2020/After Effects 2020.app
+            "darwin": "/Applications/Adobe After Effects {version}/Adobe After Effects {version_back}.app",
+            # C:\program files\Adobe\Adobe After Effects 2020\AfterFX.exe
+            "win32": "C:/Program Files/Adobe/Adobe After Effects {version}/Support Files/AfterFX.exe"
+        },
+        {
+            # /Applications/Adobe After Effects CC 2017/After Effects CC 2017.app
+            "darwin": "/Applications/Adobe After Effects CC {version}/Adobe After Effects CC {version_back}.app",
+            # C:\program files\Adobe\Adobe After Effects CC 2017\AfterFX.exe
+            "win32": "C:/Program Files/Adobe/Adobe After Effects CC {version}/Support Files/AfterFX.exe"
+        },
+    ]
+
+    SUPPORTED_PLATFORMS = ["darwin", "win32"]
 
     @property
     def minimum_supported_version(self):
@@ -97,35 +110,36 @@ class AfterEffectsLauncher(SoftwareLauncher):
         )
         self.logger.debug("Using icon path: %s" % (icon_path,))
 
-        if sys.platform not in self.EXECUTABLE_MATCH_TEMPLATES:
+        if sys.platform not in self.SUPPORTED_PLATFORMS:
             self.logger.debug("After Effects not supported on this platform.")
             return []
 
         all_sw_versions = []
 
-        for executable_path, tokens in self._glob_and_match(
-                self.EXECUTABLE_MATCH_TEMPLATES[sys.platform],
-                self.COMPONENT_REGEX_LOOKUP):
-            self.logger.debug(
-                "Processing %s with tokens %s",
-                executable_path,
-                tokens
-            )
-            # extract the components (default to None if not included). but
-            # version is in all templates, so should be there.
-            executable_version = tokens.get("version")
+        for match_template_set in self.EXECUTABLE_MATCH_TEMPLATES:
+            for executable_path, tokens in self._glob_and_match(
+                    match_template_set[sys.platform],
+                    self.COMPONENT_REGEX_LOOKUP):
+                self.logger.debug(
+                    "Processing %s with tokens %s",
+                    executable_path,
+                    tokens
+                )
+                # extract the components (default to None if not included). but
+                # version is in all templates, so should be there.
+                executable_version = tokens.get("version")
 
-            sw_version = SoftwareVersion(
-                executable_version,
-                "After Effects CC",
-                executable_path,
-                icon_path
-            )
-            supported, reason = self._is_supported(sw_version)
-            if supported:
-                all_sw_versions.append(sw_version)
-            else:
-                self.logger.debug(reason)
+                sw_version = SoftwareVersion(
+                    executable_version,
+                    "After Effects CC",
+                    executable_path,
+                    icon_path
+                )
+                supported, reason = self._is_supported(sw_version)
+                if supported:
+                    all_sw_versions.append(sw_version)
+                else:
+                    self.logger.debug(reason)
 
         return all_sw_versions
 

@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>engine &mdash; tk-aftereffects v0.1.2 documentation</title>
+  <title>engine &mdash; tk-aftereffects v0.1.4 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="tk-aftereffects v0.1.2 documentation" href="../index.html"/>
+    <link rel="top" title="tk-aftereffects v0.1.4 documentation" href="../index.html"/>
         <link rel="up" title="Module code" href="index.html"/> 
 
   
@@ -115,7 +115,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.1.2.<br>
+    <b>tk-aftereffects</b> v0.1.4.<br>
     
         This documentation is part of the Shotgun Pipeline Toolkit.
     
@@ -398,6 +398,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_CONTEXT_CACHE_KEY</span><span class="p">,</span>
             <span class="nb">dict</span><span class="p">(),</span>
         <span class="p">)</span>
+
+        <span class="c1"># Normally the bootstrap logic would handle the file open, but since the bootstrap logic is handled by</span>
+        <span class="c1"># the adobe framework, and is generic, we should handle it here.</span>
+        <span class="n">file_to_open</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SGTK_FILE_TO_OPEN&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">file_to_open</span><span class="p">:</span>
+            <span class="c1"># open the specified script</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">file_to_open</span><span class="p">))</span>
+            <span class="c1"># clear the environment variable after loading so that it doesn&#39;t get reopened on an engine restart.</span>
+            <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SGTK_FILE_TO_OPEN&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">destroy_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2200,7 +2210,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.1.2',
+            VERSION:'v0.1.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

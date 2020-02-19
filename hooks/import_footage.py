@@ -20,7 +20,7 @@ class ImportFootage(HookBaseClass):
             # for specific file types
             self.__DEFAULT_IMPORT_TYPES = {
                 ".mov": self.adobe.ImportAsType.FOOTAGE,
-                ".avi": self.adobe.ImportAsType.FOOTAGE
+                ".avi": self.adobe.ImportAsType.FOOTAGE,
             }
         return self.__DEFAULT_IMPORT_TYPES
 
@@ -86,5 +86,3 @@ class ImportFootage(HookBaseClass):
         if sequence_range and sequence_range[0] != sequence_range[1]:
             import_options.sequence = True
             import_options.forceAlphabetical = True
-
-

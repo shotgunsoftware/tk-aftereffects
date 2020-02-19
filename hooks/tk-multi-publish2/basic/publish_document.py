@@ -1,11 +1,11 @@
 # Copyright (c) 2019 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 import os
 
@@ -81,7 +81,9 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         A file can be published multiple times however only the most recent
         publish will be available to other users. Warnings will be provided
         during validation if there are previous publishes.
-        """ % (loader_url,)
+        """ % (
+            loader_url,
+        )
 
     @property
     def settings(self):
@@ -104,8 +106,7 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         """
 
         # inherit the settings from the base publish plugin
-        base_settings = \
-            super(AfterEffectsProjectPublishPlugin, self).settings or {}
+        base_settings = super(AfterEffectsProjectPublishPlugin, self).settings or {}
 
         # settings specific to this class
         aftereffects_publish_settings = {
@@ -113,8 +114,8 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
                 "type": "template",
                 "default": None,
                 "description": "Template path for published work files. Should"
-                               "correspond to a template defined in "
-                               "templates.yml.",
+                "correspond to a template defined in "
+                "templates.yml.",
             }
         }
 
@@ -161,7 +162,7 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         """
         path = self.parent.engine.project_path
 
-        # if a publish template is configured, disable context change. 
+        # if a publish template is configured, disable context change.
         if settings.get("Publish Template").value:
             item.context_change_allowed = False
 
@@ -171,17 +172,11 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
             # validation will succeed.
             self.logger.warn(
                 "The After Effects project has not been saved.",
-                extra=self.__get_save_as_action()
+                extra=self.__get_save_as_action(),
             )
 
-        self.logger.info(
-            "After Effects '%s' plugin accepted." %
-            (self.name,)
-        )
-        return {
-            "accepted": True,
-            "checked": True
-        }
+        self.logger.info("After Effects '%s' plugin accepted." % (self.name,))
+        return {"accepted": True, "checked": True}
 
     def validate(self, settings, item):
         """
@@ -204,12 +199,10 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         if not path:
             # the project still requires saving. provide a save button.
             # validation fails.
-            error_msg = "The After Effects project '%s' has not been saved." % \
-                        (item.name,)
-            self.logger.error(
-                error_msg,
-                extra=self.__get_save_as_action()
+            error_msg = "The After Effects project '%s' has not been saved." % (
+                item.name,
             )
+            self.logger.error(error_msg, extra=self.__get_save_as_action())
             raise ProjectUnsavedError(error_msg)
 
         # ---- check the project against any attached work template
@@ -232,15 +225,14 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
                         "action_button": {
                             "label": "Save File",
                             "tooltip": "Save the current After Effects project"
-                                       "to a different file name",
+                            "to a different file name",
                             # will launch wf2 if configured
-                            "callback": self.__get_save_as_action()
+                            "callback": self.__get_save_as_action(),
                         }
-                    }
+                    },
                 )
             else:
-                self.logger.debug(
-                    "Work template configured and matches project path.")
+                self.logger.debug("Work template configured and matches project path.")
         else:
             self.logger.debug("No work template configured.")
 
@@ -249,15 +241,15 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         # check to see if the next version of the work file already exists on
         # disk. if so, warn the user and provide the ability to jump to save
         # to that version now
-        (next_version_path, version) = self._get_next_version_info(path,
-                                                                   item)
+        (next_version_path, version) = self._get_next_version_info(path, item)
         if next_version_path and os.path.exists(next_version_path):
 
             # determine the next available version_number. just keep asking for
             # the next one until we get one that doesn't exist.
             while os.path.exists(next_version_path):
                 (next_version_path, version) = self._get_next_version_info(
-                    next_version_path, item)
+                    next_version_path, item
+                )
 
             error_msg = "The next version of this file already exists on disk."
             self.logger.error(
@@ -266,10 +258,10 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
                     "action_button": {
                         "label": "Save to v%s" % (version,),
                         "tooltip": "Save to the next available version number, "
-                                   "v%s" % (version,),
-                        "callback": lambda: self.parent.engine.save(next_version_path)
+                        "v%s" % (version,),
+                        "callback": lambda: self.parent.engine.save(next_version_path),
                     }
-                }
+                },
             )
             raise ProjectUnsavedError(error_msg)
 
@@ -278,7 +270,8 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         # populate the publish template on the item if found
         publish_template_setting = settings.get("Publish Template")
         publish_template = self.parent.engine.get_template_by_name(
-            publish_template_setting.value)
+            publish_template_setting.value
+        )
         if publish_template:
             item.properties["publish_template"] = publish_template
 
@@ -289,8 +282,7 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         item.properties["path"] = path
 
         # run the base class validation
-        return super(AfterEffectsProjectPublishPlugin, self).validate(
-            settings, item)
+        return super(AfterEffectsProjectPublishPlugin, self).validate(settings, item)
 
     def publish(self, settings, item):
         """
@@ -338,9 +330,7 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
 
         # bump the project path to the next version
         self._save_to_next_version(
-            path,
-            item,
-            lambda path, e=self.parent.engine: e.save(path)
+            path, item, lambda path, e=self.parent.engine: e.save(path)
         )
 
     def _get_version_entity(self, item):
@@ -375,8 +365,6 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
             "action_button": {
                 "label": "Save As...",
                 "tooltip": "Save the active project",
-                "callback": callback
+                "callback": callback,
             }
         }
-
-

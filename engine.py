@@ -35,7 +35,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
     SHOTGUN_ADOBE_HEARTBEAT_INTERVAL = 1.0
     SHOTGUN_ADOBE_HEARTBEAT_TOLERANCE = 2
-    SHOTGUN_ADOBE_NETWORK_DEBUG = ("SHOTGUN_ADOBE_NETWORK_DEBUG" in os.environ)
+    SHOTGUN_ADOBE_NETWORK_DEBUG = "SHOTGUN_ADOBE_NETWORK_DEBUG" in os.environ
 
     TEST_SCRIPT_BASENAME = "run_tests.py"
 
@@ -44,7 +44,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         "ERROR": "error",
         "WARNING": "warn",
         "INFO": "info",
-        "DEBUG": "debug"
+        "DEBUG": "debug",
     }
 
     _SHOTGUN_ADOBE_PORT = os.environ.get("SHOTGUN_ADOBE_PORT")
@@ -63,19 +63,13 @@ class AfterEffectsEngine(sgtk.platform.Engine):
     _PROJECT_CONTEXT = None
     _AFX_PID = None
     _POPUP_CACHE = None
-    _AFX_WIN32_DIALOG_WINDOW_CLASS = "#32770" # the windows window class name used by After Effects for modal dialogs
+    _AFX_WIN32_DIALOG_WINDOW_CLASS = "#32770"  # the windows window class name used by After Effects for modal dialogs
     __WIN32_GW_CHILD = 5
     _CONTEXT_CACHE_KEY = "aftereffects_context_cache"
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
 
-    __CC_VERSION_MAPPING = {
-        12: "2015",
-        13: "2016",
-        14: "2017",
-        15: "2018",
-        16: "2019"
-    }
+    __CC_VERSION_MAPPING = {12: "2015", 13: "2016", 14: "2017", 15: "2018", 16: "2019"}
 
     __IS_SEQUENCE_REGEX = re.compile(u"[\[]?([#@]+|[%]0\dd)[\]]?")
 
@@ -109,8 +103,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # will run the callback immediately if already cached so this is likely
         # very quick.
         self.__shotgun_globals.run_on_schema_loaded(
-            _on_schema_loaded,
-            project_id=project_id
+            _on_schema_loaded, project_id=project_id
         )
 
         # go ahead and start the process of sending the current state back to js
@@ -149,8 +142,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             network_debug=self.SHOTGUN_ADOBE_NETWORK_DEBUG,
         )
 
-        self.logger.debug(
-            "Network debug logging is %s" % self._adobe.network_debug)
+        self.logger.debug("Network debug logging is %s" % self._adobe.network_debug)
 
         self.logger.debug("%s: Initializing..." % (self,))
 
@@ -205,6 +197,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         if not self.adobe.event_processor:
             try:
                 from sgtk.platform.qt import QtGui
+
                 self.adobe.event_processor = QtGui.QApplication.processEvents
             except ImportError:
                 pass
@@ -224,8 +217,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         self.logger.debug("Single document found, clearing stored context cache.")
 
         self.__settings_manager.store(
-            self._CONTEXT_CACHE_KEY,
-            dict(),
+            self._CONTEXT_CACHE_KEY, dict(),
         )
 
         # Normally the bootstrap logic would handle the file open, but since the bootstrap logic is handled by
@@ -274,7 +266,9 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # from the adobe bridge.
         self.adobe.logging_received.disconnect(self._handle_logging)
         self.adobe.command_received.disconnect(self._handle_command)
-        self.adobe.active_document_changed.disconnect(self._handle_active_document_change)
+        self.adobe.active_document_changed.disconnect(
+            self._handle_active_document_change
+        )
         self.adobe.run_tests_request_received.disconnect(self._run_tests)
         self.adobe.state_requested.disconnect(self.__send_state)
 
@@ -286,6 +280,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # We need to have the RPC API call processEvents during its response
         # wait loop. This will keep that loop from blocking the UI thread.
         from sgtk.platform.qt import QtGui
+
         self.adobe.event_processor = QtGui.QApplication.processEvents
 
         # Since this is running in our own Qt event loop, we'll use the bundled
@@ -304,9 +299,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         properties = properties or dict()
         properties["uid"] = self.__get_command_uid()
         return super(AfterEffectsEngine, self).register_command(
-            name,
-            callback,
-            properties,
+            name, callback, properties,
         )
 
     @property
@@ -329,7 +322,9 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # and use it instead if available.
         m = re.search("([0-9]+[\.]?[0-9]*)", unicode(version))
         if m:
-            cc_version = self.__CC_VERSION_MAPPING.get(math.floor(float(m.group(1))), version)
+            cc_version = self.__CC_VERSION_MAPPING.get(
+                math.floor(float(m.group(1))), version
+            )
         return {
             "name": "AfterFX",
             "version": cc_version,
@@ -388,7 +383,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             parent=self._get_dialog_parent(),
             caption="Save As",
             directory=doc_path,
-            filter="After Effects Documents (*.aep, *.aepx)"
+            filter="After Effects Documents (*.aep, *.aepx)",
         )
         file_dialog.setLabelText(QtGui.QFileDialog.Accept, "Save")
         file_dialog.setLabelText(QtGui.QFileDialog.Reject, "Cancel")
@@ -546,9 +541,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         import_options.sequence = False
 
         self.execute_hook_method(
-            "import_footage_hook",
-            "set_import_options",
-            import_options=import_options
+            "import_footage_hook", "set_import_options", import_options=import_options
         )
 
         return self.__import_file(import_options)
@@ -632,14 +625,13 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             # Which may return various different errors. This situation never
             # occured during development.
             self.logger.error(
-                ("Skipping item due to an error "
-                    "while rendering: {}").format(e)
+                ("Skipping item due to an error " "while rendering: {}").format(e)
             )
         finally:
             acceptable_states = [
                 self.adobe.RQItemStatus.DONE,
                 self.adobe.RQItemStatus.ERR_STOPPED,
-                self.adobe.RQItemStatus.RENDERING
+                self.adobe.RQItemStatus.RENDERING,
             ]
             # reverting the original queued state for all
             # unprocessed items
@@ -650,7 +642,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         # we check for success if the render queue item status
         # has changed to DONE
-        success = (queue_item.status == self.adobe.RQItemStatus.DONE)
+        success = queue_item.status == self.adobe.RQItemStatus.DONE
         return success
 
     def find_sequence_range(self, path):
@@ -690,10 +682,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         # We need to get all files that match the pattern from disk so that we
         # can determine what the min and max frame number is.
-        glob_path = "%s%s" % (
-            re.sub(frame_pattern, r"\1*", root),
-            ext,
-        )
+        glob_path = "%s%s" % (re.sub(frame_pattern, r"\1*", root), ext,)
         files = glob.glob(glob_path)
 
         # Our pattern from above matches against the file root, so we need
@@ -722,6 +711,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         except Exception:
             if self._FAILED_PINGS >= self.SHOTGUN_ADOBE_HEARTBEAT_TOLERANCE:
                 from sgtk.platform.qt import QtCore
+
                 QtCore.QCoreApplication.instance().quit()
             else:
                 self._FAILED_PINGS += 1
@@ -799,10 +789,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             # we don't use the handler's format method here because the adobe
             # side expects a certain format.
-            msg_str = "[%s]: %s" % (
-                record.levelname,
-                record.message
-            )
+            msg_str = "[%s]: %s" % (record.levelname, record.message)
 
             sys.stdout.write(msg_str)
             sys.stdout.flush()
@@ -853,8 +840,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             else:
                 try:
                     context = self.tank.context_from_path(
-                        active_document_path,
-                        previous_context=self.context,
+                        active_document_path, previous_context=self.context,
                     )
                     self.__add_to_context_cache(active_document_path, context)
                 except Exception:
@@ -870,8 +856,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                     # SGTK control.
                     if self._PROJECT_CONTEXT is None:
                         self._PROJECT_CONTEXT = sgtk.Context(
-                            tk=self.context.sgtk,
-                            project=self.context.project,
+                            tk=self.context.sgtk, project=self.context.project,
                         )
 
                     context = self._PROJECT_CONTEXT
@@ -884,8 +869,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 return False
             elif not context.project:
                 context = self.tank.context_from_entity(
-                    self.context.project["type"],
-                    self.context.project["id"]
+                    self.context.project["type"], self.context.project["id"]
                 )
 
             if context and context != self.context:
@@ -918,7 +902,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 for command in self.commands.values():
                     if command.get("properties", dict()).get("uid") == uid:
                         self.logger.debug(
-                            "Executing callback for command: %s" % (command,))
+                            "Executing callback for command: %s" % (command,)
+                        )
                         result = command["callback"]()
                         if isinstance(result, QtGui.QWidget):
                             # if the callback returns a widget, keep a handle on it
@@ -935,11 +920,13 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # manually create a record to log to the standard file handler.
         # we format it to match the regular logs, but tack on the '.js' to
         # indicate that it came from javascript.
-        record = logging.makeLogRecord({
-            "levelname": level.upper(),
-            "name": "%s.js" % (self.logger.name,),
-            "msg": message,
-        })
+        record = logging.makeLogRecord(
+            {
+                "levelname": level.upper(),
+                "name": "%s.js" % (self.logger.name,),
+                "msg": message,
+            }
+        )
 
         # forward this message to the base file handler so that it is logged
         # appropriately.
@@ -997,6 +984,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             # wrong in the test suite. We'll just trap that and print it
             # as an error without letting it bubble up any farther.
             import traceback
+
             self.logger.error(
                 "Tests raised the following:\n%s" % traceback.format_exc(exc)
             )
@@ -1160,8 +1148,15 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 # instance of After Effects, this should be safe to determine the
                 # process id.
                 pid_query_process = subprocess.Popen(
-                    ['tasklist', '/FI', 'ImageName eq AfterFX.exe', '/FO', 'CSV', '/NH'],
-                    stdout=subprocess.PIPE
+                    [
+                        "tasklist",
+                        "/FI",
+                        "ImageName eq AfterFX.exe",
+                        "/FO",
+                        "CSV",
+                        "/NH",
+                    ],
+                    stdout=subprocess.PIPE,
                 )
                 out_string, _ = pid_query_process.communicate()
 
@@ -1176,10 +1171,10 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             # with the process id of After Effects, we can get all HWNDS that point to
             # dialog classes.
             hwnds = self.__tk_aftereffects.win_32_api.find_windows(
-                                process_id=self._AFX_PID,
-                                class_name=self._AFX_WIN32_DIALOG_WINDOW_CLASS,
-                                stop_if_found=True,
-                            )
+                process_id=self._AFX_PID,
+                class_name=self._AFX_WIN32_DIALOG_WINDOW_CLASS,
+                stop_if_found=True,
+            )
 
             # To avoid raising a dialog, that we raised before,
             # we will compare the list of visible dialog-hwnds with the list
@@ -1304,8 +1299,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             # dialogs to notify the After Effects application window when they're
             # opened or closed, so we'll disable that behavior.
             win_ex_style = self.__tk_aftereffects.win_32_api.GetWindowLong(
-                proxy_win_hwnd,
-                self.__tk_aftereffects.win_32_api.GWL_EXSTYLE,
+                proxy_win_hwnd, self.__tk_aftereffects.win_32_api.GWL_EXSTYLE,
             )
 
             self.__tk_aftereffects.win_32_api.SetWindowLong(
@@ -1368,10 +1362,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         # create the dialog:
         dialog, widget = self._create_dialog_with_widget(
-            title,
-            bundle,
-            widget_class,
-            *args, **kwargs
+            title, bundle, widget_class, *args, **kwargs
         )
 
         # Note - the base engine implementation will try to clean up
@@ -1412,16 +1403,13 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         if not self.has_ui:
             self.logger.error(
                 "Sorry, this environment does not support UI display! Cannot "
-                "show the requested window '%s'." % title)
+                "show the requested window '%s'." % title
+            )
             return
 
         # create the dialog:
         dialog, widget = self._create_dialog_with_widget(
-            title,
-            bundle,
-            widget_class,
-            *args,
-            **kwargs
+            title, bundle, widget_class, *args, **kwargs
         )
 
         # Note - the base engine implementation will try to clean up
@@ -1597,11 +1585,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         jump_commands = []
 
         # the icon to use for the command. bundled with the engine
-        sg_icon = os.path.join(
-            self.disk_location,
-            "resources",
-            "shotgun_logo.png"
-        )
+        sg_icon = os.path.join(self.disk_location, "resources", "shotgun_logo.png")
 
         jump_commands.append(
             dict(
@@ -1617,9 +1601,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             # the icon to use for the command. bundled with the engine
             fs_icon = os.path.join(
-                self.disk_location,
-                "resources",
-                "shotgun_folder.png"
+                self.disk_location, "resources", "shotgun_folder.png"
             )
 
             jump_commands.append(
@@ -1642,8 +1624,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # force the Jump to Shotgun and Jump to Filesystem commands onto the
         # front of the list to match other integrations.
         context_menu_cmds = jump_commands + sorted(
-            context_menu_cmds,
-            key=lambda d: d["display_name"],
+            context_menu_cmds, key=lambda d: d["display_name"],
         )
 
         # ---- populate the state structure to hand over to adobe
@@ -1683,17 +1664,13 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             from sgtk.platform.qt import QtCore
 
-            timer = QtCore.QTimer(
-                parent=QtCore.QCoreApplication.instance(),
-            )
+            timer = QtCore.QTimer(parent=QtCore.QCoreApplication.instance(),)
 
             timer.timeout.connect(self._check_connection)
             timer.timeout.connect(self.__check_for_popups)
 
             # The class variable is in seconds, so multiply to get milliseconds.
-            timer.start(
-                self.SHOTGUN_ADOBE_HEARTBEAT_INTERVAL * 1000.0,
-            )
+            timer.start(self.SHOTGUN_ADOBE_HEARTBEAT_INTERVAL * 1000.0,)
 
             self._CHECK_CONNECTION_TIMER = timer
             self.log_debug("Connection timer created and started.")
@@ -1703,6 +1680,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         Jump to shotgun, launch web browser
         """
         from sgtk.platform.qt import QtGui, QtCore
+
         url = self.context.shotgun_url
         QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
 
@@ -1720,11 +1698,11 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             # run the app
             if system == "linux2":
-                cmd = "xdg-open \"%s\"" % disk_location
+                cmd = 'xdg-open "%s"' % disk_location
             elif system == "darwin":
-                cmd = "open \"%s\"" % disk_location
+                cmd = 'open "%s"' % disk_location
             elif system == "win32":
-                cmd = "cmd.exe /C start \"Folder\" \"%s\"" % disk_location
+                cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
             else:
                 raise Exception("Platform '%s' is not supported." % system)
 
@@ -1801,7 +1779,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         fields = self.execute_hook_method(
             "context_fields_display_hook",
             "get_entity_fields",
-            entity_type=entity["type"]
+            entity_type=entity["type"],
         )
 
         # always try to query the image for the entity
@@ -1813,7 +1791,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         # kick off an async request to query the necessary fields
         self.__context_find_uid = self.__sg_data.execute_find_one(
-            entity_type, [["id", "is", entity_id]], fields)
+            entity_type, [["id", "is", entity_id]], fields
+        )
 
     def __on_worker_failure(self, uid, msg):
         """
@@ -1876,14 +1855,14 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             else:
                 if context_entity["type"] in ["Asset", "Project", "Shot", "Task"]:
                     thumb_path = "../images/default_%s_thumb_dark.png" % (
-                        context_entity["type"])
+                        context_entity["type"]
+                    )
                     data["thumb_path"] = thumb_path
                 else:
                     thumb_path = "../images/default_Entity_thumb_dark.png"
 
                 data = dict(
-                    thumb_path=thumb_path,
-                    url=self.get_entity_url(context_entity),
+                    thumb_path=thumb_path, url=self.get_entity_url(context_entity),
                 )
                 self.adobe.send_context_thumbnail(data)
 
@@ -1934,8 +1913,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
     def get_entity_url(self, entity):
         """Helper method to return a SG url for the supplied entity."""
-        return "%s/detail/%s/%d" % (
-            self.sgtk.shotgun_url, entity["type"], entity["id"])
+        return "%s/detail/%s/%d" % (self.sgtk.shotgun_url, entity["type"], entity["id"])
 
     def get_panel_link(self, url, text):
         """
@@ -1943,17 +1921,15 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         will launch the supplied url in the default browser.
         """
 
-        return \
-            """
+        return """
             <a
               href='#'
               class='sg_value_link'
               onclick='sg_panel.Panel.open_external_url("{url}")'
             >{text}</a>
             """.format(
-                url=url,
-                text=text,
-            )
+            url=url, text=text,
+        )
 
     def __activate_python(self):
         """
@@ -1962,12 +1938,13 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         if sys.platform == "darwin":
             # a little action script to activate the given python process.
-            osx_activate_script = \
-                """
+            osx_activate_script = """
                 tell application "System Events"
                   set frontmost of the first process whose unix id is {pid} to true
                 end tell
-                """.format(pid=os.getpid())
+                """.format(
+                pid=os.getpid()
+            )
 
             # force this python process to the front
             cmd = ["osascript", "-e", osx_activate_script]
@@ -2005,5 +1982,3 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 new_items.append(item)
 
         return new_items
-
-

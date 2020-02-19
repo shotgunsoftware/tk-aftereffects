@@ -1,11 +1,11 @@
 # Copyright (c) 2019 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 import os
 
@@ -39,12 +39,7 @@ class AfterEffectsUploadProjectPlugin(HookBaseClass):
         """
 
         # look for icon one level up from this hook's folder in "icons" folder
-        return os.path.join(
-            self.disk_location,
-            os.pardir,
-            "icons",
-            "review.png"
-        )
+        return os.path.join(self.disk_location, os.pardir, "icons", "review.png")
 
     @property
     def description(self):
@@ -77,8 +72,7 @@ class AfterEffectsUploadProjectPlugin(HookBaseClass):
         """
 
         # inherit the settings from the base publish plugin
-        base_settings = \
-            super(AfterEffectsUploadProjectPlugin, self).settings or {}
+        base_settings = super(AfterEffectsUploadProjectPlugin, self).settings or {}
 
         return base_settings
 
@@ -92,7 +86,7 @@ class AfterEffectsUploadProjectPlugin(HookBaseClass):
         ["maya.*", "file.maya"]
         """
         return ["aftereffects.project"]
-
+
     def accept(self, settings, item):
         """
         Method called by the publisher to determine if an item is of any
@@ -126,15 +120,11 @@ class AfterEffectsUploadProjectPlugin(HookBaseClass):
             # validation will succeed.
             self.logger.warn(
                 "The After Effects project has not been saved.",
-                extra=self.__get_save_as_action()
+                extra=self.__get_save_as_action(),
             )
 
-        self.logger.info(
-            "After Effects 'Upload Project Version' plugin accepted.")
-        return {
-            "accepted": True,
-            "checked": True
-        }
+        self.logger.info("After Effects 'Upload Project Version' plugin accepted.")
+        return {"accepted": True, "checked": True}
 
     def validate(self, settings, item):
         """
@@ -157,12 +147,10 @@ class AfterEffectsUploadProjectPlugin(HookBaseClass):
         if not path:
             # the project still requires saving. provide a save button.
             # validation fails.
-            error_msg = "The After Effects project '%s' has not been saved." % \
-                        (item.name,)
-            self.logger.error(
-                error_msg,
-                extra=self.__get_save_as_action()
+            error_msg = "The After Effects project '%s' has not been saved." % (
+                item.name,
             )
+            self.logger.error(error_msg, extra=self.__get_save_as_action())
             raise ProjectUnsavedError(error_msg)
 
         # ---- check the project against any attached work template
@@ -185,15 +173,14 @@ class AfterEffectsUploadProjectPlugin(HookBaseClass):
                         "action_button": {
                             "label": "Save File",
                             "tooltip": "Save the current After Effects project"
-                                       "to a different file name",
+                            "to a different file name",
                             # will launch wf2 if configured
-                            "callback": self.__get_save_as_action()
+                            "callback": self.__get_save_as_action(),
                         }
-                    }
+                    },
                 )
             else:
-                self.logger.debug(
-                    "Work template configured and matches project path.")
+                self.logger.debug("Work template configured and matches project path.")
         else:
             self.logger.debug("No work template configured.")
 
@@ -239,7 +226,7 @@ class AfterEffectsUploadProjectPlugin(HookBaseClass):
             "code": os.path.basename(path),
             "description": item.description,
             "entity": self._get_version_entity(item),
-            "sg_task": item.context.task
+            "sg_task": item.context.task,
         }
 
         published_data = item.properties.get("sg_publish_data")
@@ -282,7 +269,6 @@ class AfterEffectsUploadProjectPlugin(HookBaseClass):
             "action_button": {
                 "label": "Save As...",
                 "tooltip": "Save the active project",
-                "callback": callback
+                "callback": callback,
             }
         }
-

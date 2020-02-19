@@ -19,7 +19,16 @@ class SceneOperation(HookClass):
     current scene
     """
 
-    def execute(self, operation, file_path, context, parent_action, file_version, read_only, **kwargs):
+    def execute(
+        self,
+        operation,
+        file_path,
+        context,
+        parent_action,
+        file_version,
+        read_only,
+        **kwargs
+    ):
         """
         Main hook entry point
 
@@ -59,7 +68,7 @@ class SceneOperation(HookClass):
             file_obj = adobe.app.project.file
             if file_obj != None:
                 return file_obj.fsName
-            return ''
+            return ""
 
         elif operation == "open":
             # open the specified script
@@ -78,4 +87,3 @@ class SceneOperation(HookClass):
 
         elif operation == "prepare_new":
             adobe.app.newProject()
-

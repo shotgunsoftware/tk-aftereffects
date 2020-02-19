@@ -39,50 +39,41 @@ class ContextFieldsDisplay(HookBaseClass):
 
         # supported by most entities
         std_fields = base_fields
-        std_fields.extend([
-            "code",
-            "project",
-            "sg_status_list",
-            "description",
-        ])
+        std_fields.extend(
+            ["code", "project", "sg_status_list", "description",]
+        )
 
         # ---- fields for specific entity contexts
 
         if entity_type == "Project":
             fields = base_fields
-            fields.extend([
-                "name",
-                "sg_status",
-                "sg_description"
-            ])
+            fields.extend(["name", "sg_status", "sg_description"])
 
         elif entity_type == "Asset":
             fields = std_fields
-            fields.extend([
-                "sg_asset_type",
-            ])
+            fields.extend(
+                ["sg_asset_type",]
+            )
 
         elif entity_type == "Shot":
             fields = std_fields
-            fields.extend([
-                "sg_cut_in",
-                "sg_cut_out",
-                "sg_head_in",
-                "sg_tail_out",
-                "sg_sequence",
-            ])
+            fields.extend(
+                ["sg_cut_in", "sg_cut_out", "sg_head_in", "sg_tail_out", "sg_sequence",]
+            )
 
         elif entity_type == "Task":
             fields = base_fields
-            fields.extend([
-                "task_assignees",
-                "due_date",
-                "entity",
-                "step",
-                "sg_status_list",
-                "project",
-                "content",
-            ])
+            fields.extend(
+                [
+                    "task_assignees",
+                    "due_date",
+                    "entity",
+                    "step",
+                    "sg_status_list",
+                    "project",
+                    "content",
+                ]
+            )
 
         else:
             fields = std_fields
@@ -156,8 +147,7 @@ class ContextFieldsDisplay(HookBaseClass):
         site_display = site_url.split("//")[-1]
         site_link = self.parent.get_panel_link(site_url, site_display)
 
-        return \
-            """
+        return """
             <table>
               <tr>
                 <td class='sg_label_td'>Site:</td>
@@ -165,8 +155,8 @@ class ContextFieldsDisplay(HookBaseClass):
               </tr>
             </table>
             """.format(
-                name=site_link,
-            )
+            name=site_link,
+        )
 
     def _get_asset_html(self, entity, sg_globals):
         """Returns html for displaying an asset context."""
@@ -174,13 +164,11 @@ class ContextFieldsDisplay(HookBaseClass):
         asset_link = self._get_entity_sg_link(entity["code"], entity)
 
         status = sg_globals.get_status_display_name(
-            entity["sg_status_list"],
-            project_id=entity["project"]["id"]
+            entity["sg_status_list"], project_id=entity["project"]["id"]
         )
 
         # always include name, type, and status
-        html = \
-            """
+        html = """
             <table>
               <tr>
                 <td class='sg_label_td'>Asset:</td>
@@ -195,35 +183,31 @@ class ContextFieldsDisplay(HookBaseClass):
                 <td class='sg_value_td'>{status}</td>
               </tr>
             """.format(
-                name=asset_link,
-                type=entity["sg_asset_type"],
-                status=status,
-            )
+            name=asset_link, type=entity["sg_asset_type"], status=status,
+        )
 
         # tags if there are any
         if entity["tag_list"]:
             tag_display = ", ".join(entity["tag_list"])
-            html += \
-                """
+            html += """
                 <tr>
                   <td class='sg_label_td'>Tags:</td>
                   <td class='sg_value_td'>{tags}</td>
                 </tr>
                 """.format(
-                    tags=tag_display,
-                )
+                tags=tag_display,
+            )
 
         # description if there is one
         if entity["description"]:
-            html += \
-                """
+            html += """
                 <tr>
                   <td class='sg_label_td'>Desc:</td>
                   <td class='sg_value_td'>{desc}</td>
                 </tr>
                 """.format(
-                    desc=entity["description"]
-                )
+                desc=entity["description"]
+            )
 
         # close up the table
         html += "</table>"
@@ -236,8 +220,7 @@ class ContextFieldsDisplay(HookBaseClass):
         shot_link = self._get_entity_sg_link(entity["code"], entity)
 
         status = sg_globals.get_status_display_name(
-            entity["sg_status_list"],
-            project_id=entity["project"]["id"]
+            entity["sg_status_list"], project_id=entity["project"]["id"]
         )
 
         # by default show the shot url
@@ -249,17 +232,14 @@ class ContextFieldsDisplay(HookBaseClass):
         if seq:
             seq_name = seq["name"]
             seq_link = self._get_entity_sg_link(seq_name, seq)
-            shot_display = \
-                """
+            shot_display = """
                 {name}&nbsp;<span class='sg_label'>({seq_name})</span>
                 """.format(
-                    name=shot_link,
-                    seq_name=seq_link,
-                )
+                name=shot_link, seq_name=seq_link,
+            )
 
         # always include name, type, and status
-        html = \
-            """
+        html = """
             <table>
               <tr>
                 <td class='sg_label_td'>Shot:</td>
@@ -270,22 +250,20 @@ class ContextFieldsDisplay(HookBaseClass):
                 <td class='sg_value_td'>{status}</td>
               </tr>
             """.format(
-                name=shot_display,
-                status=status,
-            )
+            name=shot_display, status=status,
+        )
 
         # tags if there are any
         if entity["tag_list"]:
             tag_display = ", ".join(entity["tag_list"])
-            html += \
-                """
+            html += """
                 <tr>
                   <td class='sg_label_td'>Tags:</td>
                   <td class='sg_value_td'>{tags}</td>
                 </tr>
                 """.format(
-                    tags=tag_display,
-                )
+                tags=tag_display,
+            )
 
         # ---- show some cut info if available
 
@@ -293,52 +271,49 @@ class ContextFieldsDisplay(HookBaseClass):
 
         # cut in/out
         if entity["sg_cut_in"] is not None and entity["sg_cut_out"] is not None:
-            cut_display = \
-                """
+            cut_display = """
                     {cut_in} - {cut_out}
                 """.format(
-                    cut_in=entity["sg_cut_in"],
-                    cut_out=entity["sg_cut_out"]
-                )
+                cut_in=entity["sg_cut_in"], cut_out=entity["sg_cut_out"]
+            )
 
         # include head/tail if set
-        if cut_display and \
-           entity["sg_head_in"] is not None and \
-           entity["sg_tail_out"] is not None:
+        if (
+            cut_display
+            and entity["sg_head_in"] is not None
+            and entity["sg_tail_out"] is not None
+        ):
 
-            cut_display = \
-                """
+            cut_display = """
                     <small><span class='sg_label'>{head_in} | </span></small>
                     {cut_display}
                     <small><span class='sg_label'> | {tail_out}</span></small>
                 """.format(
-                    head_in=entity["sg_head_in"],
-                    cut_display=cut_display,
-                    tail_out=entity["sg_tail_out"]
-                )
+                head_in=entity["sg_head_in"],
+                cut_display=cut_display,
+                tail_out=entity["sg_tail_out"],
+            )
 
         if cut_display:
-            html += \
-                """
+            html += """
                 <tr>
                   <td class='sg_label_td'>Cut:</td>
                   <td class='sg_value_td'>{cut_display}</td>
                 </tr>
                 """.format(
-                    cut_display=cut_display,
-                )
+                cut_display=cut_display,
+            )
 
         # description if there is one
         if entity["description"]:
-            html += \
-                """
+            html += """
                 <tr>
                   <td class='sg_label_td'>Desc:</td>
                   <td class='sg_value_td'>{desc}</td>
                 </tr>
                 """.format(
-                    desc=entity["description"]
-                )
+                desc=entity["description"]
+            )
 
         # close up the table
         html += "</table>"
@@ -351,8 +326,7 @@ class ContextFieldsDisplay(HookBaseClass):
         task_link = self._get_entity_sg_link(entity["content"], entity)
 
         status = sg_globals.get_status_display_name(
-            entity["sg_status_list"],
-            project_id=entity["project"]["id"]
+            entity["sg_status_list"], project_id=entity["project"]["id"]
         )
 
         # by default show the shot url
@@ -364,23 +338,22 @@ class ContextFieldsDisplay(HookBaseClass):
         if step:
             step_name = step["name"]
             if step_name != entity["content"]:
-                task_display = \
-                    """
+                task_display = """
                     {name}&nbsp;<span class='sg_label'>({step_name})</span>
                     """.format(
-                        name=task_display,
-                        step_name=step_name,
-                    )
+                    name=task_display, step_name=step_name,
+                )
 
         # always include name
-        html = \
-            """
+        html = """
             <table>
               <tr>
                 <td class='sg_label_td'>Task:</td>
                 <td class='sg_value_td'>{name}</td>
               </tr>
-            """.format(name=task_display)
+            """.format(
+            name=task_display
+        )
 
         # entity
         if entity["entity"]:
@@ -391,26 +364,26 @@ class ContextFieldsDisplay(HookBaseClass):
                 linked_entity_display = linked_entity["code"]
 
             linked_entity_link = self._get_entity_sg_link(
-                linked_entity_display, linked_entity)
-            html += \
-                """
+                linked_entity_display, linked_entity
+            )
+            html += """
                   <tr>
                     <td class='sg_label_td'>{entity_type}:</td>
                     <td class='sg_value_td'>{name}</td>
                   </tr>
                 """.format(
-                    entity_type=linked_entity["type"],
-                    name=linked_entity_link,
-                )
+                entity_type=linked_entity["type"], name=linked_entity_link,
+            )
 
         # always show the status
-        html += \
-            """
+        html += """
               <tr>
                 <td class='sg_label_td'>Status:</td>
                 <td class='sg_value_td'>{status}</td>
               </tr>
-            """.format(status=status)
+            """.format(
+            status=status
+        )
 
         # artist
         if entity["task_assignees"]:
@@ -422,30 +395,26 @@ class ContextFieldsDisplay(HookBaseClass):
                     self._get_entity_sg_link(asignee_name, assignee_entity)
                 )
             assignee_display = ", ".join(assignee_links)
-            assignee_label = "Artists" \
-                if len(assignee_entities) > 1 else "Artist"
-            html += \
-                """
+            assignee_label = "Artists" if len(assignee_entities) > 1 else "Artist"
+            html += """
                   <tr>
                     <td class='sg_label_td'>{label}:</td>
                     <td class='sg_value_td'>{name}</td>
                   </tr>
                 """.format(
-                    label=assignee_label,
-                    name=assignee_display,
-                )
+                label=assignee_label, name=assignee_display,
+            )
 
         # due date
         if entity["due_date"]:
-            html += \
-                """
+            html += """
                   <tr>
                     <td class='sg_label_td'>Due:</td>
                     <td class='sg_value_td'>{date}</td>
                   </tr>
                 """.format(
-                    date=entity["due_date"],
-                )
+                date=entity["due_date"],
+            )
 
         # close up the table
         html += "</table>"
@@ -461,51 +430,46 @@ class ContextFieldsDisplay(HookBaseClass):
         entity_type = entity["type"]
 
         # always include type/name
-        html = \
-            """
+        html = """
             <table>
               <tr>
                 <td class='sg_label_td'>{entity_type}:</td>
                 <td class='sg_value_td'>{name}</td>
               </tr>
             """.format(
-                entity_type=entity_type,
-                name=entity_link,
-            )
+            entity_type=entity_type, name=entity_link,
+        )
 
         # show a status if one can be determined
         status = None
         if "sg_status_list" in entity:
             status = sg_globals.get_status_display_name(
-                entity["sg_status_list"],
-                project_id=entity.get("project", {}).get("id")
+                entity["sg_status_list"], project_id=entity.get("project", {}).get("id")
             )
         elif "sg_status" in entity:
             status = entity["sg_status"]
 
         if status:
-            html += \
-                """
+            html += """
                   <tr>
                     <td class='sg_label_td'>Status:</td>
                     <td class='sg_value_td'>{status}</td>
                   </tr>
                 """.format(
-                    status=status,
-                )
+                status=status,
+            )
 
         # tags if there are any
         if entity["tag_list"]:
             tag_display = ", ".join(entity["tag_list"])
-            html += \
-                """
+            html += """
                 <tr>
                   <td class='sg_label_td'>Tags:</td>
                   <td class='sg_value_td'>{tags}</td>
                 </tr>
                 """.format(
-                    tags=tag_display,
-                )
+                tags=tag_display,
+            )
 
         # description if there is one
         desc = None
@@ -515,13 +479,14 @@ class ContextFieldsDisplay(HookBaseClass):
             desc = entity["sg_description"]
 
         if desc:
-            html += \
-                """
+            html += """
                 <tr>
                   <td class='sg_label_td'>Desc:</td>
                   <td class='sg_value_td'>{desc}</td>
                 </tr>
-                """.format(desc=desc)
+                """.format(
+                desc=desc
+            )
 
         # close up the table
         html += "</table>"
@@ -534,8 +499,9 @@ class ContextFieldsDisplay(HookBaseClass):
         """
 
         url = "%s/detail/%s/%d" % (
-            self.parent.sgtk.shotgun_url, entity["type"], entity["id"])
+            self.parent.sgtk.shotgun_url,
+            entity["type"],
+            entity["id"],
+        )
 
         return self.parent.get_panel_link(url, text)
-
-

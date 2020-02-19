@@ -1,11 +1,11 @@
 # Copyright (c) 2019 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 import re
 
@@ -50,7 +50,9 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
         A file can be published multiple times however only the most recent
         publish will be available to other users. Warnings will be provided
         during validation if there are previous publishes.
-        """ % (loader_url,)
+        """ % (
+            loader_url,
+        )
 
     @property
     def settings(self):
@@ -73,8 +75,7 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
         """
 
         # inherit the settings from the base publish plugin
-        base_settings = \
-            super(AfterEffectsRenderPublishPlugin, self).settings or {}
+        base_settings = super(AfterEffectsRenderPublishPlugin, self).settings or {}
 
         return base_settings
 
@@ -117,14 +118,8 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
         if self.__is_acceptable(settings, item) is self.REJECTED:
             return {"accepted": False}
         elif self.__is_acceptable(settings, item) is self.PARTIALLY_ACCEPTED:
-            return {
-                "accepted": True,
-                "checked": False
-            }
-        return {
-            "accepted": True,
-            "checked": True
-        }
+            return {"accepted": True, "checked": False}
+        return {"accepted": True, "checked": True}
 
     def validate(self, settings, item):
         """
@@ -143,8 +138,7 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
             return False
 
         # run the base class validation
-        return super(AfterEffectsRenderPublishPlugin, self).validate(
-            settings, item)
+        return super(AfterEffectsRenderPublishPlugin, self).validate(settings, item)
 
     def publish(self, settings, item):
         """
@@ -162,10 +156,12 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
         # we will register whatever paths
         # are set in the render_queue item
         for each_path in render_paths:
-            match = re.search('[\[]?([#@]+)[\]]?', each_path)
+            match = re.search("[\[]?([#@]+)[\]]?", each_path)
             if match:
-                each_path = each_path.replace(match.group(0), '%0{}d'.format(len(match.group(1))))
-            item.properties["path"] = re.sub('[\[\]]', '', each_path)
+                each_path = each_path.replace(
+                    match.group(0), "%0{}d".format(len(match.group(1)))
+                )
+            item.properties["path"] = re.sub("[\[\]]", "", each_path)
             super(AfterEffectsRenderPublishPlugin, self).publish(settings, item)
             published_renderings.append(item.properties.get("sg_publish_data"))
 
@@ -190,24 +186,35 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
 
         # set the item path to some temporary value
         for each_path in render_paths:
-            item.properties["path"] = re.sub('[\[\]]', '', each_path)
+            item.properties["path"] = re.sub("[\[\]]", "", each_path)
             break
 
         if queue_item is None:
-            self.logger.warn(("No queue_item was set. This is most likely due to "
-                              "a mismatch of the collector and this publish-plugin."))
+            self.logger.warn(
+                (
+                    "No queue_item was set. This is most likely due to "
+                    "a mismatch of the collector and this publish-plugin."
+                )
+            )
             return self.REJECTED
 
         # check if the current configuration has templates assigned
-        if not work_template and queue_item.status != self.parent.engine.adobe.RQItemStatus.DONE:
-            self.logger.warn(("Publishing an unrendered queue item is not "
-                              "supported without configured templates."))
+        if (
+            not work_template
+            and queue_item.status != self.parent.engine.adobe.RQItemStatus.DONE
+        ):
+            self.logger.warn(
+                (
+                    "Publishing an unrendered queue item is not "
+                    "supported without configured templates."
+                )
+            )
             return self.REJECTED
 
         if not project_path:
             self.logger.warn(
                 "Project has to be saved in order to allow publishing renderings",
-                extra=self.__get_save_as_action()
+                extra=self.__get_save_as_action(),
             )
             return self.REJECTED
 
@@ -233,7 +240,6 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
             "action_button": {
                 "label": "Save As...",
                 "tooltip": "Save the active project",
-                "callback": callback
+                "callback": callback,
             }
         }
-

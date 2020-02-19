@@ -1053,7 +1053,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         try:
             self.logger.debug("Pausing heartbeat...")
             self._HEARTBEAT_DISABLED = True
-        except Exception, e:
+        except Exception as e:
             self.logger.debug("Unable to pause heartbeat as requested.")
             self.logger.error(str(e))
         else:

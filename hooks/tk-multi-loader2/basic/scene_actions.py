@@ -17,6 +17,7 @@ import glob
 
 
 import sgtk
+from tank_vendor import six
 
 
 HookBaseClass = sgtk.get_hook_baseclass()
@@ -70,7 +71,7 @@ class AfterEffectsActions(HookBaseClass):
         :returns List of dictionaries, each with keys name, params, caption and description
         """
         app = self.parent
-        app.log_debug(
+        app.logger.debug(
             "Generate actions called for UI element %s. "
             "Actions: %s. Publish Data: %s" % (ui_area, actions, sg_publish_data)
         )
@@ -158,7 +159,7 @@ class AfterEffectsActions(HookBaseClass):
                                 publish fields.
         """
         app = self.parent
-        app.log_debug(
+        app.logger.debug(
             "Execute action called for action %s. "
             "Parameters: %s. Publish Data: %s" % (name, params, sg_publish_data)
         )
@@ -166,7 +167,7 @@ class AfterEffectsActions(HookBaseClass):
         # resolve path
         # toolkit uses utf-8 encoded strings internally and the After Effects API expects unicode
         # so convert the path to ensure filenames containing complex characters are supported
-        path = self.get_publish_path(sg_publish_data).decode("utf-8")
+        path = six.ensure_text(self.get_publish_path(sg_publish_data))
 
         if self.parent.engine.is_adobe_sequence(path):
             frame_range = self.parent.engine.find_sequence_range(path)

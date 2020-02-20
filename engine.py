@@ -23,6 +23,7 @@ from contextlib import contextmanager
 
 import sgtk
 from sgtk.util.filesystem import ensure_folder_exists
+from tank_vendor import six
 
 
 class AfterEffectsEngine(sgtk.platform.Engine):
@@ -238,7 +239,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         # Set our parent widget back to being owned by the window manager
         # instead of After Effects's application window.
-        if self._PROXY_WIN_HWND and sys.platform == "win32":
+        if self._PROXY_WIN_HWND and sgtk.util.is_windows():
             self.__tk_aftereffects.win_32_api.SetParent(self._PROXY_WIN_HWND, 0)
 
         # No longer poll for new messages from this engine.
@@ -320,7 +321,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # which gives something like:
         # Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....
         # and use it instead if available.
-        m = re.search("([0-9]+[\.]?[0-9]*)", unicode(version))
+        m = re.search("([0-9]+[\.]?[0-9]*)", six.ensure_str(version))
         if m:
             cc_version = self.__CC_VERSION_MAPPING.get(
                 math.floor(float(m.group(1))), version
@@ -483,7 +484,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         :yields: the next child item of the collection
         :rtype: `adobe.ItemObject`_
         """
-        for i in xrange(1, collection_item.length + 1):
+        for i in range(1, collection_item.length + 1):
             yield collection_item[i]
 
     def get_render_files(self, path, queue_item):
@@ -516,7 +517,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         padding = len(match.group(1))
 
         test_path = path.replace(match.group(0), "%%0%dd" % padding)
-        for frame_no in xrange(start_time, start_time + frame_numbers, skip_frames):
+        for frame_no in range(start_time, start_time + frame_numbers, skip_frames):
             yield test_path % frame_no, frame_no
 
     def import_filepath(self, path):
@@ -814,8 +815,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # Make sure we have a properly-encoded string for the path. We can
         # possibly get a file path/name that contains unicode, and we don't
         # want to deal with that later on.
-        if isinstance(active_document_path, unicode):
-            active_document_path = active_document_path.encode("utf-8")
+        if active_document_path is not None:
+            active_document_path = six.ensure_str(active_document_path)
 
         # This will be True if the context_changes_disabled context manager is
         # used. We're just in a temporary state of not allowing context changes,
@@ -839,7 +840,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 self.logger.debug("Document found in context cache: %r" % context)
             else:
                 try:
-                    context = self.tank.context_from_path(
+                    context = self.sgtk.context_from_path(
                         active_document_path, previous_context=self.context,
                     )
                     self.__add_to_context_cache(active_document_path, context)
@@ -868,7 +869,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 )
                 return False
             elif not context.project:
-                context = self.tank.context_from_entity(
+                context = self.sgtk.context_from_entity(
                     self.context.project["type"], self.context.project["id"]
                 )
 
@@ -1135,7 +1136,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             This is only done in windows.
             TODO: Implement an equivalent method on mac
         """
-        if sys.platform == "win32":
+        if sgtk.util.is_windows():
 
             # to get all dialogs from After Effects, we have to query the
             # After Effects process id first. As this code runs inside a
@@ -1215,7 +1216,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         """
         if not self._WIN32_AFTEREFFECTS_MAIN_HWND:
             for major in sorted(self.__CC_VERSION_MAPPING.keys()):
-                for minor in xrange(10):
+                for minor in range(10):
                     found_hwnds = self.__tk_aftereffects.win_32_api.find_windows(
                         class_name="AE_CApplication_{}.{}".format(major, minor),
                         stop_if_found=True,
@@ -1241,7 +1242,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         proxy_win_hwnd = None
 
         if ps_hwnd:
-            from tank.platform.qt import QtGui, QtCore
+            from sgtk.platform.qt import QtGui, QtCore
 
             # Create the proxy QWidget.
             win32_proxy_win = QtGui.QWidget()
@@ -1323,10 +1324,10 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         show_dialog & show_modal.
         """
         # determine the parent widget to use:
-        from tank.platform.qt import QtGui
+        from sgtk.platform.qt import QtGui
 
         if not self._DIALOG_PARENT:
-            if sys.platform == "win32":
+            if sgtk.util.is_windows():
                 # for windows, we create a proxy window parented to the
                 # main application window that we can then set as the owner
                 # for all Toolkit dialogs
@@ -1538,7 +1539,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         # iterate over all the registered commands and gather the necessary info
         # to display them in adobe
-        for (command_name, command_info) in self.commands.iteritems():
+        for (command_name, command_info) in self.commands.items():
 
             # commands come with a dict of properties that may or may not
             # contain certain data.
@@ -1648,10 +1649,10 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                            if a timer already exists, it will be stopped.
         """
         if self._CHECK_CONNECTION_TIMER is None or force:
-            self.log_debug("Creating connection timer...")
+            self.logger.debug("Creating connection timer...")
 
             if self._CHECK_CONNECTION_TIMER:
-                self.log_debug(
+                self.logger.debug(
                     "Connection timer already exists, so it will be stopped."
                 )
 
@@ -1673,7 +1674,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             timer.start(self.SHOTGUN_ADOBE_HEARTBEAT_INTERVAL * 1000.0,)
 
             self._CHECK_CONNECTION_TIMER = timer
-            self.log_debug("Connection timer created and started.")
+            self.logger.debug("Connection timer created and started.")
 
     def _jump_to_sg(self):
         """
@@ -1693,18 +1694,15 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         self.logger.debug("FS paths: %s" % (str(paths),))
         for disk_location in paths:
 
-            # get the setting
-            system = sys.platform
-
             # run the app
-            if system == "linux2":
-                cmd = 'xdg-open "%s"' % disk_location
-            elif system == "darwin":
+            if sgtk.util.is_macos():
                 cmd = 'open "%s"' % disk_location
-            elif system == "win32":
+            elif sgtk.util.is_windows():
                 cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
+            elif sgtk.util.is_linux():
+                cmd = 'xdg-open "%s"' % disk_location
             else:
-                raise Exception("Platform '%s' is not supported." % system)
+                raise Exception("Platform '%s' is not supported." % sys.platform)
 
             exit_code = os.system(cmd)
             if exit_code != 0:
@@ -1732,7 +1730,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             self._CONTEXT_CACHE[path] = context
 
             serial_cache = dict()
-            for k, v in self._CONTEXT_CACHE.iteritems():
+            for k, v in self._CONTEXT_CACHE.items():
                 serial_cache[k] = v.serialize()
 
             self.logger.debug("Storing context cache: %s" % serial_cache)
@@ -1936,7 +1934,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         Do the Os-specific thing to show this process above all others.
         """
 
-        if sys.platform == "darwin":
+        if sgtk.util.is_macos():
             # a little action script to activate the given python process.
             osx_activate_script = """
                 tell application "System Events"
@@ -1951,7 +1949,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             status = subprocess.call(cmd)
             if status:
                 self.logger.error("Could not activate python.")
-        elif sys.platform == "win32":
+        elif sgtk.util.is_windows():
             pass
 
     def __import_file(self, import_options):

@@ -173,7 +173,7 @@ class AfterEffectsActions(HookBaseClass):
             frame_range = self.parent.engine.find_sequence_range(path)
             if frame_range:
                 glob_path = re.sub(
-                    "[\[]?([#@]+|%0\d+d)[\]]?", "*{}".format(frame_range[0]), path
+                    r"[\[]?([#@]+|%0\d+d)[\]]?", "*{}".format(frame_range[0]), path
                 )
                 for each_path in sorted(glob.glob(glob_path)):
                     path = each_path

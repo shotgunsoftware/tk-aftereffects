@@ -294,7 +294,7 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
 
         # set the item path to some temporary value
         for each_path in render_paths:
-            item.properties["path"] = re.sub("\[#\+]", "#", each_path)
+            item.properties["path"] = re.sub(r"\[#\+]", "#", each_path)
             break
 
         if queue_item is None:
@@ -395,7 +395,7 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
                 and path_template.keys["extension"].default
             ):
                 template_ext = re.sub(
-                    "^[\.]*", ".", path_template.keys["extension"].default
+                    r"^[\.]*", ".", path_template.keys["extension"].default
                 )
             if template_ext is None:
                 _, template_ext = os.path.splitext(path_template.definition)

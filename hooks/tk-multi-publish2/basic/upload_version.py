@@ -423,7 +423,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         out_dict["sg_last_frame"] = max(frame_numbers)
         out_dict["frame_range"] = "{}-{}".format(min(frame_numbers), max(frame_numbers))
         out_dict["frame_count"] = len(frame_numbers)
-        match = re.search("[\[]?([#@]+)[\]]?", path_to_frames)
+        match = re.search(r"[\[]?([#@]+)[\]]?", path_to_frames)
         if match:
             path_to_frames = path_to_frames.replace(
                 match.group(0), "%0{}d".format(len(match.group(1)))

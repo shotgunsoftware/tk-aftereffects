@@ -156,12 +156,12 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
         # we will register whatever paths
         # are set in the render_queue item
         for each_path in render_paths:
-            match = re.search("[\[]?([#@]+)[\]]?", each_path)
+            match = re.search(r"[\[]?([#@]+)[\]]?", each_path)
             if match:
                 each_path = each_path.replace(
                     match.group(0), "%0{}d".format(len(match.group(1)))
                 )
-            item.properties["path"] = re.sub("[\[\]]", "", each_path)
+            item.properties["path"] = re.sub(r"[\[\]]", "", each_path)
             super(AfterEffectsRenderPublishPlugin, self).publish(settings, item)
             published_renderings.append(item.properties.get("sg_publish_data"))
 
@@ -186,7 +186,7 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
 
         # set the item path to some temporary value
         for each_path in render_paths:
-            item.properties["path"] = re.sub("[\[\]]", "", each_path)
+            item.properties["path"] = re.sub(r"[\[\]]", "", each_path)
             break
 
         if queue_item is None:

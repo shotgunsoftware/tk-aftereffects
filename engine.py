@@ -321,7 +321,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # which gives something like:
         # Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....
         # and use it instead if available.
-        m = re.search("([0-9]+[\.]?[0-9]*)", six.ensure_str(version))
+        m = re.search(r"([0-9]+\.?[0-9]*)", six.ensure_str(version))
         if m:
             cc_version = self.__CC_VERSION_MAPPING.get(
                 math.floor(float(m.group(1))), version

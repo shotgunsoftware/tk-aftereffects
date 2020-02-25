@@ -40,3 +40,6 @@ variables:
 # Launch into the build pipeline.
 jobs:
 - template: build-pipeline.yml@templates
+  parameters:
+    # After Effects does have tests, but they must be run from After Effects.
+    skip_tests: true

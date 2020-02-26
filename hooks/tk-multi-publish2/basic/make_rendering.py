@@ -1,11 +1,11 @@
 # Copyright (c) 2019 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 import os
 
@@ -40,12 +40,7 @@ class AfterEffectsRenderPlugin(HookBaseClass):
         Path to an png icon on disk
         """
         # look for icon one level up from this hook's folder in "icons" folder
-        return os.path.join(
-            self.disk_location,
-            os.pardir,
-            "icons",
-            "rendering.png"
-        )
+        return os.path.join(self.disk_location, os.pardir, "icons", "rendering.png")
 
     @property
     def description(self):
@@ -80,8 +75,7 @@ class AfterEffectsRenderPlugin(HookBaseClass):
         """
 
         # inherit the settings from the base publish plugin
-        base_settings = \
-            super(AfterEffectsRenderPlugin, self).settings or {}
+        base_settings = super(AfterEffectsRenderPlugin, self).settings or {}
 
         return base_settings
 
@@ -124,14 +118,8 @@ class AfterEffectsRenderPlugin(HookBaseClass):
         if self.__is_acceptable(settings, item) is self.REJECTED:
             return {"accepted": False}
         elif self.__is_acceptable(settings, item) is self.PARTIALLY_ACCEPTED:
-            return {
-                "accepted": True,
-                "checked": False
-            }
-        return {
-            "accepted": True,
-            "checked": True
-        }
+            return {"accepted": True, "checked": False}
+        return {"accepted": True, "checked": True}
 
     def validate(self, settings, item):
         """
@@ -150,8 +138,7 @@ class AfterEffectsRenderPlugin(HookBaseClass):
             return False
 
         # run the base class validation
-        return super(AfterEffectsRenderPlugin, self).validate(
-            settings, item)
+        return super(AfterEffectsRenderPlugin, self).validate(settings, item)
 
     def publish(self, settings, item):
         """
@@ -169,7 +156,9 @@ class AfterEffectsRenderPlugin(HookBaseClass):
         # render the queue item
         render_success = self.parent.engine.render_queue_item(queue_item)
         if not render_success:
-            raise RenderingFailed("Rendering the render queue item {} failed.".format(queue_item_index))
+            raise RenderingFailed(
+                "Rendering the render queue item {} failed.".format(queue_item_index)
+            )
 
     def __is_acceptable(self, settings, item):
         """
@@ -189,14 +178,18 @@ class AfterEffectsRenderPlugin(HookBaseClass):
         project_path = sgtk.util.ShotgunPath.normalize(self.parent.engine.project_path)
 
         if queue_item is None:
-            self.logger.warn(("No queue_item was set. This is most likely due to "
-                              "a mismatch of the collector and this publish-plugin."))
+            self.logger.warn(
+                (
+                    "No queue_item was set. This is most likely due to "
+                    "a mismatch of the collector and this publish-plugin."
+                )
+            )
             return self.REJECTED
 
         if not project_path:
             self.logger.warn(
                 "Project has to be saved in order to allow publishing renderings",
-                extra=self.__get_save_as_action()
+                extra=self.__get_save_as_action(),
             )
             return self.REJECTED
 
@@ -216,21 +209,32 @@ class AfterEffectsRenderPlugin(HookBaseClass):
         """
 
         if not render_paths:
-            self.logger.warn("No render path for the queue item. Please add at least one output module")
+            self.logger.warn(
+                "No render path for the queue item. Please add at least one output module"
+            )
             return self.REJECTED
 
         has_incomplete_renderings = False
         for each_path in render_paths:
             if not self.parent.engine.check_sequence(each_path, queue_item):
                 has_incomplete_renderings = True
-            self.logger.info(("Render Queue item %s has incomplete renderings, "
-                              "but status is DONE. "
-                              "Rerendering is needed.") % (queue_item.comp.name,))
+            self.logger.info(
+                (
+                    "Render Queue item %s has incomplete renderings, "
+                    "but status is DONE. "
+                    "Rerendering is needed."
+                )
+                % (queue_item.comp.name,)
+            )
         if has_incomplete_renderings:
             return self.PARTIALLY_ACCEPTED
 
-        self.logger.info(("No rendering needed in case the render queue item "
-                          "is already rendered."))
+        self.logger.info(
+            (
+                "No rendering needed in case the render queue item "
+                "is already rendered."
+            )
+        )
         return self.REJECTED
 
     def __get_save_as_action(self):
@@ -253,8 +257,6 @@ class AfterEffectsRenderPlugin(HookBaseClass):
             "action_button": {
                 "label": "Save As...",
                 "tooltip": "Save the active project",
-                "callback": callback
+                "callback": callback,
             }
         }
-
-

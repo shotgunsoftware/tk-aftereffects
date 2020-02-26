@@ -51,13 +51,13 @@ class AfterEffectsLauncher(SoftwareLauncher):
             # /Applications/Adobe After Effects 2020/After Effects 2020.app
             "darwin": "/Applications/Adobe After Effects {version}/Adobe After Effects {version_back}.app",
             # C:\program files\Adobe\Adobe After Effects 2020\AfterFX.exe
-            "win32": "C:/Program Files/Adobe/Adobe After Effects {version}/Support Files/AfterFX.exe"
+            "win32": "C:/Program Files/Adobe/Adobe After Effects {version}/Support Files/AfterFX.exe",
         },
         {
             # /Applications/Adobe After Effects CC 2017/After Effects CC 2017.app
             "darwin": "/Applications/Adobe After Effects CC {version}/Adobe After Effects CC {version_back}.app",
             # C:\program files\Adobe\Adobe After Effects CC 2017\AfterFX.exe
-            "win32": "C:/Program Files/Adobe/Adobe After Effects CC {version}/Support Files/AfterFX.exe"
+            "win32": "C:/Program Files/Adobe/Adobe After Effects CC {version}/Support Files/AfterFX.exe",
         },
     ]
 
@@ -104,10 +104,7 @@ class AfterEffectsLauncher(SoftwareLauncher):
         self.logger.debug("Scanning for After Effects executables...")
 
         # use the bundled icon
-        icon_path = os.path.join(
-            self.disk_location,
-            "icon_256.png"
-        )
+        icon_path = os.path.join(self.disk_location, "icon_256.png")
         self.logger.debug("Using icon path: %s" % (icon_path,))
 
         if sys.platform not in self.SUPPORTED_PLATFORMS:
@@ -118,22 +115,17 @@ class AfterEffectsLauncher(SoftwareLauncher):
 
         for match_template_set in self.EXECUTABLE_MATCH_TEMPLATES:
             for executable_path, tokens in self._glob_and_match(
-                    match_template_set[sys.platform],
-                    self.COMPONENT_REGEX_LOOKUP):
+                match_template_set[sys.platform], self.COMPONENT_REGEX_LOOKUP
+            ):
                 self.logger.debug(
-                    "Processing %s with tokens %s",
-                    executable_path,
-                    tokens
+                    "Processing %s with tokens %s", executable_path, tokens
                 )
                 # extract the components (default to None if not included). but
                 # version is in all templates, so should be there.
                 executable_version = tokens.get("version")
 
                 sw_version = SoftwareVersion(
-                    executable_version,
-                    "After Effects CC",
-                    executable_path,
-                    icon_path
+                    executable_version, "After Effects CC", executable_path, icon_path
                 )
                 supported, reason = self._is_supported(sw_version)
                 if supported:
@@ -157,9 +149,11 @@ class AfterEffectsLauncher(SoftwareLauncher):
         framework_location = self.__get_adobe_framework_location()
         if framework_location is None:
             raise EngineConfigurationError(
-                ("The tk-framework-adobe "
-                 "could not be found in the current environment. "
-                 "Please check the log for more information.")
+                (
+                    "The tk-framework-adobe "
+                    "could not be found in the current environment. "
+                    "Please check the log for more information."
+                )
             )
 
         self.__ensure_framework_is_installed(framework_location)
@@ -177,8 +171,7 @@ class AfterEffectsLauncher(SoftwareLauncher):
         # we don't want to stomp on any PYTHONPATH that might already exist that
         # we want to persist when the Python subprocess is spawned.
         sgtk.util.append_path_to_env_var(
-            "PYTHONPATH",
-            os.pathsep.join(sys.path),
+            "PYTHONPATH", os.pathsep.join(sys.path),
         )
         env["PYTHONPATH"] = os.environ["PYTHONPATH"]
 
@@ -207,10 +200,13 @@ class AfterEffectsLauncher(SoftwareLauncher):
         engine_desc = env.get_engine_descriptor("tk-aftereffects")
         if env_name is None:
             self.logger.warn(
-                ("The current environment {!r} "
-                 "is not configured to run the tk-aftereffects "
-                 "engine. Please add the engine to your env-file: "
-                 "{!r}").format(env, env.disk_location))
+                (
+                    "The current environment {!r} "
+                    "is not configured to run the tk-aftereffects "
+                    "engine. Please add the engine to your env-file: "
+                    "{!r}"
+                ).format(env, env.disk_location)
+            )
             return
 
         framework_name = None
@@ -223,8 +219,11 @@ class AfterEffectsLauncher(SoftwareLauncher):
                 break
         else:
             self.logger.warn(
-                ("The engine tk-aftereffects must have "
-                 "the tk-framework-adobe configured in order to run"))
+                (
+                    "The engine tk-aftereffects must have "
+                    "the tk-framework-adobe configured in order to run"
+                )
+            )
             return
 
         desc = env.get_framework_descriptor(framework_name)
@@ -243,6 +242,7 @@ class AfterEffectsLauncher(SoftwareLauncher):
 
         sys.path.insert(0, bootstrap_python_path)
         import tk_framework_adobe_utils.startup as startup_utils
+
         sys.path.remove(bootstrap_python_path)
 
         # installing the CEP extension.

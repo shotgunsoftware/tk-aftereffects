@@ -1,11 +1,11 @@
 # Copyright (c) 2019 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 from sgtk import Hook
 from sgtk import TankError
@@ -13,7 +13,7 @@ from sgtk import TankError
 
 class SceneOperation(Hook):
     """
-    Hook called to perform an operation with the 
+    Hook called to perform an operation with the
     current scene
     """
 
@@ -48,5 +48,3 @@ class SceneOperation(Hook):
         elif operation == "save":
             # save the current script
             adobe.app.project.save()
-
-

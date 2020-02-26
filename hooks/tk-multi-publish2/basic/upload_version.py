@@ -1,11 +1,11 @@
 # Copyright (c) 2019 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 import re
 import os
@@ -40,12 +40,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         """
 
         # look for icon one level up from this hook's folder in "icons" folder
-        return os.path.join(
-            self.disk_location,
-            os.pardir,
-            "icons",
-            "review.png"
-        )
+        return os.path.join(self.disk_location, os.pardir, "icons", "review.png")
 
     @property
     def name(self):
@@ -74,7 +69,11 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         copy of the file will be attached to it. The file can then be reviewed
         via the project's <a href='%s'>Media</a> page, <a href='%s'>RV</a>, or
         the <a href='%s'>Shotgun Review</a> mobile app.
-        """ % (media_page_url, review_url, review_url)
+        """ % (
+            media_page_url,
+            review_url,
+            review_url,
+        )
 
     @property
     def settings(self):
@@ -100,9 +99,9 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                 "type": "str",
                 "default": "Lossless with Alpha",
                 "description": "The output module to be chosen "
-                               "in case no output module has "
-                               "been set. This will control the "
-                               "rendersettings.",
+                "in case no output module has "
+                "been set. This will control the "
+                "rendersettings.",
             }
         }
 
@@ -153,17 +152,11 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
             # validation will succeed.
             self.logger.warn(
                 "The After Effects project has not been saved.",
-                extra=self.__get_save_as_action()
+                extra=self.__get_save_as_action(),
             )
 
-        self.logger.info(
-            "After Effects '%s' plugin accepted." %
-            (self.name,)
-        )
-        return {
-            "accepted": True,
-            "checked": True
-        }
+        self.logger.info("After Effects '%s' plugin accepted." % (self.name,))
+        return {"accepted": True, "checked": True}
 
     def validate(self, settings, item):
         """
@@ -185,10 +178,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
             # the project still requires saving. provide a save button.
             # validation fails.
             error_msg = "The After Effects project has not been saved."
-            self.logger.error(
-                error_msg,
-                extra=self.__get_save_as_action()
-            )
+            self.logger.error(error_msg, extra=self.__get_save_as_action())
             raise ProjectUnsavedError(error_msg)
 
         return True
@@ -219,29 +209,41 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
             else:
                 path_to_frames = each_path
 
-        mov_output_module_template = settings.get('Movie Output Module').value
+        mov_output_module_template = settings.get("Movie Output Module").value
         if path_to_movie is None and path_to_frames is not None:
             self.logger.info("About to render movie...")
-            upload_path = self.__render_movie_from_sequence(path_to_frames, queue_item, mov_output_module_template)
+            upload_path = self.__render_movie_from_sequence(
+                path_to_frames, queue_item, mov_output_module_template
+            )
             if not upload_path:
-                raise RenderingFailed("Rendering a movie failed. Cannot upload a version of this item.")
+                raise RenderingFailed(
+                    "Rendering a movie failed. Cannot upload a version of this item."
+                )
         elif path_to_movie and not os.path.exists(path_to_movie):
             self.logger.info("About to render movie...")
             temp_queue_item = queue_item.duplicate()
-            upload_path = self.__render_to_temp_location(temp_queue_item, mov_output_module_template)
+            upload_path = self.__render_to_temp_location(
+                temp_queue_item, mov_output_module_template
+            )
             temp_queue_item.remove()
             if not upload_path:
-                raise RenderingFailed("Rendering a movie failed. Cannot upload a version of this item.")
+                raise RenderingFailed(
+                    "Rendering a movie failed. Cannot upload a version of this item."
+                )
 
         if upload_path is None:
             self.logger.error("No render path found")
             return
 
         # if we got a sequence, we need to set additional information
-        additional_version_data = self.__get_additional_version_data(queue_item, path_to_frames)
+        additional_version_data = self.__get_additional_version_data(
+            queue_item, path_to_frames
+        )
 
         # use the path's filename as the publish name
-        path_components = publisher.util.get_file_path_components(path_to_movie or path_to_frames)
+        path_components = publisher.util.get_file_path_components(
+            path_to_movie or path_to_frames
+        )
         publish_name = path_components["filename"]
 
         # populate the version data to send to SG
@@ -273,10 +275,9 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                 "action_show_more_info": {
                     "label": "Version Data",
                     "tooltip": "Show the complete Version data dictionary",
-                    "text": "<pre>%s</pre>" % (
-                        pprint.pformat(version_data),)
+                    "text": "<pre>%s</pre>" % (pprint.pformat(version_data),),
                 }
-            }
+            },
         )
 
         # create the version
@@ -294,10 +295,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         # upload the file to SG
         self.logger.info("Uploading content...")
         self.parent.shotgun.upload(
-            "Version",
-            version["id"],
-            upload_path,
-            "sg_uploaded_movie"
+            "Version", version["id"], upload_path, "sg_uploaded_movie"
         )
         self.logger.info("Upload complete!")
 
@@ -322,9 +320,9 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                 "action_show_in_shotgun": {
                     "label": "Show Version",
                     "tooltip": "Reveal the version in Shotgun.",
-                    "entity": version
+                    "entity": version,
                 }
-            }
+            },
         )
 
         upload_path = item.properties["upload_path"]
@@ -334,15 +332,18 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
             try:
                 os.remove(upload_path)
             except Exception:
-                self.logger.warn(
-                    "Unable to remove temp file: %s" % (upload_path,))
+                self.logger.warn("Unable to remove temp file: %s" % (upload_path,))
                 pass
 
-    def __render_movie_from_sequence(self, sequence_path, queue_item, mov_output_module_template):
+    def __render_movie_from_sequence(
+        self, sequence_path, queue_item, mov_output_module_template
+    ):
 
         self.logger.debug("Sequence path: %s" % sequence_path)
 
-        for first_frame, _ in self.parent.engine.get_render_files(sequence_path, queue_item):
+        for first_frame, _ in self.parent.engine.get_render_files(
+            sequence_path, queue_item
+        ):
             break
 
         self.logger.debug("First frame: %s" % first_frame)
@@ -353,7 +354,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         for new_item in new_items:
             break
         else:
-            return ''
+            return ""
 
         self.logger.debug("Adding new comp: %s" % new_item)
         new_cmp_item = self.parent.engine.adobe.app.project.items.addComp(
@@ -362,15 +363,19 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
             new_item.height,
             new_item.pixelAspect,
             new_item.duration,
-            new_item.frameRate or 25
+            new_item.frameRate or 25,
         )
 
         for new_item in new_items:
             new_cmp_item.layers.add(new_item)
 
         self.logger.debug("Adding the comp %s to the render queue" % new_cmp_item)
-        temp_item = self.parent.engine.adobe.app.project.renderQueue.items.add(new_cmp_item)
-        output_path = self.__render_to_temp_location(temp_item, mov_output_module_template)
+        temp_item = self.parent.engine.adobe.app.project.renderQueue.items.add(
+            new_cmp_item
+        )
+        output_path = self.__render_to_temp_location(
+            temp_item, mov_output_module_template
+        )
 
         # clean up temporary items
         temp_item.remove()
@@ -379,7 +384,9 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
             new_items.pop().remove()
         return output_path
 
-    def __render_to_temp_location(self, temporary_queue_item, mov_output_module_template):
+    def __render_to_temp_location(
+        self, temporary_queue_item, mov_output_module_template
+    ):
         # set the output module
         output_module = temporary_queue_item.outputModules[1]
         output_module.applyTemplate(mov_output_module_template)
@@ -402,7 +409,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         # return the render file path or an empty string
         if render_state:
             return allocate_file.name
-        return ''
+        return ""
 
     def __get_additional_version_data(self, queue_item, path_to_frames):
         if path_to_frames is None:
@@ -412,13 +419,15 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         frame_numbers = []
         for _, fn in self.parent.engine.get_render_files(path_to_frames, queue_item):
             frame_numbers.append(fn)
-        out_dict['sg_first_frame'] = min(frame_numbers)
-        out_dict['sg_last_frame'] = max(frame_numbers)
-        out_dict['frame_range'] = "{}-{}".format(min(frame_numbers), max(frame_numbers))
-        out_dict['frame_count'] = len(frame_numbers)
-        match = re.search('[\[]?([#@]+)[\]]?', path_to_frames)
+        out_dict["sg_first_frame"] = min(frame_numbers)
+        out_dict["sg_last_frame"] = max(frame_numbers)
+        out_dict["frame_range"] = "{}-{}".format(min(frame_numbers), max(frame_numbers))
+        out_dict["frame_count"] = len(frame_numbers)
+        match = re.search(r"[\[]?([#@]+)[\]]?", path_to_frames)
         if match:
-            path_to_frames = path_to_frames.replace(match.group(0), '%0{}d'.format(len(match.group(1))))
+            path_to_frames = path_to_frames.replace(
+                match.group(0), "%0{}d".format(len(match.group(1)))
+            )
         out_dict["sg_path_to_frames"] = path_to_frames
 
         # use the path's filename as the publish name
@@ -428,7 +437,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
 
     def __check_rendered_item(self, item):
         queue_item = item.properties.get("queue_item")
-        idx = item.properties.get("queue_item_index", '0')
+        idx = item.properties.get("queue_item_index", "0")
 
         # as this plugin can only process rendered items,
         # we'll have to check if the given item is already
@@ -439,11 +448,15 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                 extra={
                     "action_button": {
                         "label": "Render Item {}".format(idx),
-                        "tooltip": ("Render the queue item {} as"
-                                    "movie, so it can be uploaded.").format(idx),
-                        "callback": lambda qi=queue_item: self.parent.engine.render_queue_item(qi)
+                        "tooltip": (
+                            "Render the queue item {} as"
+                            "movie, so it can be uploaded."
+                        ).format(idx),
+                        "callback": lambda qi=queue_item: self.parent.engine.render_queue_item(
+                            qi
+                        ),
                     }
-                }
+                },
             )
             return False
         return True
@@ -457,8 +470,10 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
                 has_incomplete_renderings = True
 
         if has_incomplete_renderings:
-            self.logger.warn("Render Queue item has incomplete renderings, "
-                             "please rerender this or duisable the queue item.")
+            self.logger.warn(
+                "Render Queue item has incomplete renderings, "
+                "please rerender this or duisable the queue item."
+            )
             return False
         return True
 
@@ -494,8 +509,6 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
             "action_button": {
                 "label": "Save As...",
                 "tooltip": "Save the active project",
-                "callback": callback
+                "callback": callback,
             }
         }
-
-

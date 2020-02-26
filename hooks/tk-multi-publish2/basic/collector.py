@@ -41,8 +41,7 @@ class AfterEffectsSceneCollector(HookBaseClass):
         """
 
         # grab any base class settings
-        collector_settings = \
-            super(AfterEffectsSceneCollector, self).settings or {}
+        collector_settings = super(AfterEffectsSceneCollector, self).settings or {}
 
         # settings specific to this collector
         aftereffects_session_settings = {
@@ -50,10 +49,10 @@ class AfterEffectsSceneCollector(HookBaseClass):
                 "type": "template",
                 "default": None,
                 "description": "Template path for artist work files. Should "
-                               "correspond to a template defined in "
-                               "templates.yml. If configured, is made available"
-                               "to publish plugins via the collected item's "
-                               "properties. ",
+                "correspond to a template defined in "
+                "templates.yml. If configured, is made available"
+                "to publish plugins via the collected item's "
+                "properties. ",
             },
         }
 
@@ -81,12 +80,19 @@ class AfterEffectsSceneCollector(HookBaseClass):
         work_template = self.__get_work_template_for_item(settings)
 
         # itering through the render queue items
-        for i, queue_item in enumerate(self.parent.engine.iter_collection(adobe.app.project.renderQueue.items)):
-            if queue_item.status not in [adobe.RQItemStatus.QUEUED, adobe.RQItemStatus.DONE]:
+        for i, queue_item in enumerate(
+            self.parent.engine.iter_collection(adobe.app.project.renderQueue.items)
+        ):
+            if queue_item.status not in [
+                adobe.RQItemStatus.QUEUED,
+                adobe.RQItemStatus.DONE,
+            ]:
                 continue
 
             render_paths = []
-            for output_module in self.parent.engine.iter_collection(queue_item.outputModules):
+            for output_module in self.parent.engine.iter_collection(
+                queue_item.outputModules
+            ):
                 render_paths.append(output_module.file.fsName)
 
             action = "register only"
@@ -100,32 +106,31 @@ class AfterEffectsSceneCollector(HookBaseClass):
                     comment = "Render, Register & Copy Images to the Publishpath"
 
             comp_item_name = "Render Queue Item #{} - {} - {}".format(
-                i + 1, queue_item.comp.name,
-                action
+                i + 1, queue_item.comp.name, action
             )
 
             self.__create_comp_publish_item(
-                parent_item, comp_item_name, comment,
-                queue_item, render_paths, i,
-                work_template
+                parent_item,
+                comp_item_name,
+                comment,
+                queue_item,
+                render_paths,
+                i,
+                work_template,
             )
 
-            self.logger.info("Collected After Effects renderings: {}".format(comp_item_name))
+            self.logger.info(
+                "Collected After Effects renderings: {}".format(comp_item_name)
+            )
 
     def __icon_path(self):
-        return os.path.join(
-            self.disk_location,
-            os.pardir,
-            "icons",
-            "aftereffects.png"
-        )
+        return os.path.join(self.disk_location, os.pardir, "icons", "aftereffects.png")
 
     def __get_work_template_for_item(self, settings):
         # try to get the work-template
         work_template_setting = settings.get("Work Template")
         if work_template_setting:
-            return self.parent.engine.get_template_by_name(
-                work_template_setting.value)
+            return self.parent.engine.get_template_by_name(work_template_setting.value)
 
     def __get_project_publish_item(self, settings, parent_item):
         """
@@ -140,12 +145,9 @@ class AfterEffectsSceneCollector(HookBaseClass):
         if path:
             project_name = self.parent.engine.adobe.app.project.file.name
         project_item = parent_item.create_item(
-            "aftereffects.project",
-            "After Effects Scene",
-            project_name
+            "aftereffects.project", "After Effects Scene", project_name
         )
-        self.logger.info(
-            "Collected After Effects document: {}".format(project_name))
+        self.logger.info("Collected After Effects document: {}".format(project_name))
 
         project_item.set_icon_from_path(self.__icon_path())
         project_item.thumbnail_enabled = True
@@ -160,7 +162,16 @@ class AfterEffectsSceneCollector(HookBaseClass):
             self.logger.debug("Work template defined for After Effects collection.")
         return project_item
 
-    def __create_comp_publish_item(self, parent_item, name, comment, queue_item, render_paths, queue_index, work_template=None):
+    def __create_comp_publish_item(
+        self,
+        parent_item,
+        name,
+        comment,
+        queue_item,
+        render_paths,
+        queue_index,
+        work_template=None,
+    ):
         """
         Will create a comp publish item.
 
@@ -175,11 +186,7 @@ class AfterEffectsSceneCollector(HookBaseClass):
         :returns: the newly created comp item
         """
         # create a publish item for the document
-        comp_item = parent_item.create_item(
-            "aftereffects.rendering",
-            comment,
-            name
-        )
+        comp_item = parent_item.create_item("aftereffects.rendering", comment, name)
 
         comp_item.set_icon_from_path(self.__icon_path())
 
@@ -212,5 +219,3 @@ class AfterEffectsSceneCollector(HookBaseClass):
             comp_item.properties["work_template"] = work_template
             self.logger.debug("Work template defined for After Effects collection.")
         return comp_item
-
-

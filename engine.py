@@ -1164,7 +1164,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 # The out_string will look like:
                 # "AfterFX.ext","1234","SessionName","SessionNum","MemoryUsage"
                 # where 1234 describes the pid of After Effects
-                match = re.match("[^0-9]+([0-9]+).*", out_string, re.DOTALL)
+                match = re.match(b"[^0-9]+([0-9]+).*", out_string, re.DOTALL)
                 if not match:
                     self._AFX_PID = -1
                 self._AFX_PID = int(match.group(1))

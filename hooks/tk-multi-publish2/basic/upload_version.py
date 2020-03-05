@@ -13,9 +13,9 @@ import pprint
 import tempfile
 import sys
 
-
 import sgtk
 
+from tank_vendor import six
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -287,10 +287,8 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         # stash the version info in the item just in case
         item.properties["sg_version_data"] = version
 
-        # on windows, ensure the path is utf-8 encoded to avoid issues with
-        # the shotgun api
-        if sys.platform.startswith("win"):
-            upload_path = upload_path.decode("utf-8")
+        # Ensure the path is utf-8 encoded to avoid issues with the Shotgun API.
+        upload_path = six.ensure_str(upload_path)
 
         # upload the file to SG
         self.logger.info("Uploading content...")

@@ -507,7 +507,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         if not match:
             # if not, we just check if the file exists
             yield path, None
-            raise StopIteration()
+            return  # Exit the iterator
 
         # if yes, we check the existence of each frame
         frame_time = queue_item.comp.frameDuration

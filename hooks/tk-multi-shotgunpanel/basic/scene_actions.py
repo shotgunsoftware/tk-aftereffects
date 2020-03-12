@@ -17,7 +17,7 @@ import os
 
 
 import sgtk
-
+from tank_vendor import six
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -70,7 +70,7 @@ class AfterEffectsActions(HookBaseClass):
         :returns List of dictionaries, each with keys name, params, caption and description
         """
         app = self.parent
-        app.log_debug(
+        app.logger.debug(
             "Generate actions called for UI element %s. "
             "Actions: %s. Publish Data: %s" % (ui_area, actions, sg_data)
         )
@@ -158,33 +158,42 @@ class AfterEffectsActions(HookBaseClass):
                                 publish fields.
         """
         app = self.parent
-        app.log_debug(
+        app.logger.debug(
             "Execute action called for action %s. "
             "Parameters: %s. Publish Data: %s" % (name, params, sg_data)
         )
 
-        # resolve path
-        # toolkit uses utf-8 encoded strings internally and the After Effects API expects unicode
-        # so convert the path to ensure filenames containing complex characters are supported
-        path = self.get_publish_path(sg_data).decode("utf-8")
+        # This hook only implements the add to comp and project logic, fall back to the
+        # base class for anything else.
+        if name in [_ADD_TO_COMP, _ADD_TO_PROJECT]:
+            # resolve path
+            # toolkit uses utf-8 encoded strings internally and the After Effects API expects unicode
+            # so convert the path to ensure filenames containing complex characters are supported
+            path = six.ensure_text(self.get_publish_path(sg_data))
 
-        if self.parent.engine.is_adobe_sequence(path):
-            frame_range = self.parent.engine.find_sequence_range(path)
-            if frame_range:
-                glob_path = re.sub(
-                    r"[\[]?([#@]+|%0\d+d)[\]]?", "*{}".format(frame_range[0]), path
-                )
-                for each_path in sorted(glob.glob(glob_path)):
-                    path = each_path
-                    break
+            if self.parent.engine.is_adobe_sequence(path):
+                frame_range = self.parent.engine.find_sequence_range(path)
+                if frame_range:
+                    glob_path = re.sub(
+                        r"[\[]?([#@]+|%0\d+d)[\]]?", "*{}".format(frame_range[0]), path
+                    )
+                    for each_path in sorted(glob.glob(glob_path)):
+                        path = each_path
+                        break
 
-        if not os.path.exists(path):
-            raise Exception("File not found on disk - '%s'" % path)
+            if not os.path.exists(path):
+                raise Exception("File not found on disk - '%s'" % path)
 
-        if name == _ADD_TO_COMP:
-            self._add_to_comp(path)
-        if name == _ADD_TO_PROJECT:
-            self.parent.engine.import_filepath(path)
+            if name == _ADD_TO_COMP:
+                self._add_to_comp(path)
+            if name == _ADD_TO_PROJECT:
+                self.parent.engine.import_filepath(path)
+        else:
+            try:
+                HookBaseClass.execute_action(self, name, params, sg_data)
+            except AttributeError:
+                # base class doesn't have the method, so ignore and continue
+                pass
 
     ###########################################################################
     # helper methods

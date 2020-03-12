@@ -61,8 +61,6 @@ class AfterEffectsLauncher(SoftwareLauncher):
         },
     ]
 
-    SUPPORTED_PLATFORMS = ["darwin", "win32"]
-
     @property
     def minimum_supported_version(self):
         """
@@ -107,7 +105,15 @@ class AfterEffectsLauncher(SoftwareLauncher):
         icon_path = os.path.join(self.disk_location, "icon_256.png")
         self.logger.debug("Using icon path: %s" % (icon_path,))
 
-        if sys.platform not in self.SUPPORTED_PLATFORMS:
+        platform = (
+            "win32"
+            if sgtk.util.is_windows()
+            else "darwin"
+            if sgtk.util.is_macos()
+            else None
+        )
+
+        if platform is None:
             self.logger.debug("After Effects not supported on this platform.")
             return []
 
@@ -115,7 +121,7 @@ class AfterEffectsLauncher(SoftwareLauncher):
 
         for match_template_set in self.EXECUTABLE_MATCH_TEMPLATES:
             for executable_path, tokens in self._glob_and_match(
-                match_template_set[sys.platform], self.COMPONENT_REGEX_LOOKUP
+                match_template_set[platform], self.COMPONENT_REGEX_LOOKUP
             ):
                 self.logger.debug(
                     "Processing %s with tokens %s", executable_path, tokens
@@ -196,7 +202,7 @@ class AfterEffectsLauncher(SoftwareLauncher):
         engine = sgtk.platform.current_engine()
         env_name = engine.environment.get("name")
 
-        env = engine.tank.pipeline_configuration.get_environment(env_name)
+        env = engine.sgtk.pipeline_configuration.get_environment(env_name)
         engine_desc = env.get_engine_descriptor("tk-aftereffects")
         if env_name is None:
             self.logger.warn(

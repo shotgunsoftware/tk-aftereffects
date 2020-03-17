@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>python.tk_aftereffects &mdash; tk-aftereffects v0.1.4 documentation</title>
+  <title>python.tk_aftereffects &mdash; tk-aftereffects v0.2.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="tk-aftereffects v0.1.4 documentation" href="../../index.html"/>
+    <link rel="top" title="tk-aftereffects v0.2.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -115,7 +115,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.1.4.<br>
+    <b>tk-aftereffects</b> v0.2.0.<br>
     
         This documentation is part of the Shotgun Pipeline Toolkit.
     
@@ -184,27 +184,31 @@
 
 
 <span class="n">adobe_bridge</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">import_framework</span><span class="p">(</span>
-    <span class="s2">&quot;tk-framework-adobe&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;tk_framework_adobe.adobe_bridge&quot;</span>
+    <span class="s2">&quot;tk-framework-adobe&quot;</span><span class="p">,</span> <span class="s2">&quot;tk_framework_adobe.adobe_bridge&quot;</span>
 <span class="p">)</span>
 
 
 <span class="n">AdobeBridge</span> <span class="o">=</span> <span class="n">adobe_bridge</span><span class="o">.</span><span class="n">AdobeBridge</span>
 
 
-<span class="n">shotgun_data</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">import_framework</span><span class="p">(</span><span class="s2">&quot;tk-framework-shotgunutils&quot;</span><span class="p">,</span> <span class="s2">&quot;shotgun_data&quot;</span><span class="p">)</span>
+<span class="n">shotgun_data</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">import_framework</span><span class="p">(</span>
+    <span class="s2">&quot;tk-framework-shotgunutils&quot;</span><span class="p">,</span> <span class="s2">&quot;shotgun_data&quot;</span>
+<span class="p">)</span>
 
 
-<span class="n">shotgun_globals</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">import_framework</span><span class="p">(</span><span class="s2">&quot;tk-framework-shotgunutils&quot;</span><span class="p">,</span> <span class="s2">&quot;shotgun_globals&quot;</span><span class="p">)</span>
+<span class="n">shotgun_globals</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">import_framework</span><span class="p">(</span>
+    <span class="s2">&quot;tk-framework-shotgunutils&quot;</span><span class="p">,</span> <span class="s2">&quot;shotgun_globals&quot;</span>
+<span class="p">)</span>
 
 
-<span class="n">shotgun_settings</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">import_framework</span><span class="p">(</span><span class="s2">&quot;tk-framework-shotgunutils&quot;</span><span class="p">,</span> <span class="s2">&quot;settings&quot;</span><span class="p">)</span>
+<span class="n">shotgun_settings</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">import_framework</span><span class="p">(</span>
+    <span class="s2">&quot;tk-framework-shotgunutils&quot;</span><span class="p">,</span> <span class="s2">&quot;settings&quot;</span>
+<span class="p">)</span>
 
 
-<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">is_windows</span><span class="p">():</span>
     <span class="n">win_32_api</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">import_framework</span><span class="p">(</span>
-        <span class="s2">&quot;tk-framework-adobe&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;tk_framework_adobe_utils.win_32_api&quot;</span>
+        <span class="s2">&quot;tk-framework-adobe&quot;</span><span class="p">,</span> <span class="s2">&quot;tk_framework_adobe_utils.win_32_api&quot;</span>
     <span class="p">)</span>
 
 
@@ -225,7 +229,6 @@
     <span class="c1">#: :obj:`str`</span>
     <span class="c1">#: The adobe.FootageItem&#39;s internal typename</span>
     <span class="n">FOOTAGE_ITEM</span> <span class="o">=</span> <span class="s2">&quot;FootageItem&quot;</span></div>
-
 </pre></div>
 
            </div>
@@ -237,7 +240,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Autodesk.
+        &copy; Copyright 2020, Autodesk.
 
     </p>
   </div> 
@@ -258,7 +261,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'v0.1.4',
+            VERSION:'v0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

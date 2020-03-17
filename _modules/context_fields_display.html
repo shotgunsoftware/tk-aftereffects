@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>context_fields_display &mdash; tk-aftereffects v0.1.4 documentation</title>
+  <title>context_fields_display &mdash; tk-aftereffects v0.2.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="tk-aftereffects v0.1.4 documentation" href="../index.html"/>
+    <link rel="top" title="tk-aftereffects v0.2.0 documentation" href="../index.html"/>
         <link rel="up" title="Module code" href="index.html"/> 
 
   
@@ -115,7 +115,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.1.4.<br>
+    <b>tk-aftereffects</b> v0.2.0.<br>
     
         This documentation is part of the Shotgun Pipeline Toolkit.
     
@@ -210,50 +210,37 @@
 
         <span class="c1"># supported by most entities</span>
         <span class="n">std_fields</span> <span class="o">=</span> <span class="n">base_fields</span>
-        <span class="n">std_fields</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-            <span class="s2">&quot;code&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;project&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;sg_status_list&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;description&quot;</span><span class="p">,</span>
-        <span class="p">])</span>
+        <span class="n">std_fields</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="s2">&quot;project&quot;</span><span class="p">,</span> <span class="s2">&quot;sg_status_list&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">])</span>
 
         <span class="c1"># ---- fields for specific entity contexts</span>
 
         <span class="k">if</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;Project&quot;</span><span class="p">:</span>
             <span class="n">fields</span> <span class="o">=</span> <span class="n">base_fields</span>
-            <span class="n">fields</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;sg_status&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;sg_description&quot;</span>
-            <span class="p">])</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;sg_status&quot;</span><span class="p">,</span> <span class="s2">&quot;sg_description&quot;</span><span class="p">])</span>
 
         <span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;Asset&quot;</span><span class="p">:</span>
             <span class="n">fields</span> <span class="o">=</span> <span class="n">std_fields</span>
-            <span class="n">fields</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-                <span class="s2">&quot;sg_asset_type&quot;</span><span class="p">,</span>
-            <span class="p">])</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;sg_asset_type&quot;</span><span class="p">])</span>
 
         <span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;Shot&quot;</span><span class="p">:</span>
             <span class="n">fields</span> <span class="o">=</span> <span class="n">std_fields</span>
-            <span class="n">fields</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-                <span class="s2">&quot;sg_cut_in&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;sg_cut_out&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;sg_head_in&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;sg_tail_out&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;sg_sequence&quot;</span><span class="p">,</span>
-            <span class="p">])</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span><span class="s2">&quot;sg_cut_in&quot;</span><span class="p">,</span> <span class="s2">&quot;sg_cut_out&quot;</span><span class="p">,</span> <span class="s2">&quot;sg_head_in&quot;</span><span class="p">,</span> <span class="s2">&quot;sg_tail_out&quot;</span><span class="p">,</span> <span class="s2">&quot;sg_sequence&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;Task&quot;</span><span class="p">:</span>
             <span class="n">fields</span> <span class="o">=</span> <span class="n">base_fields</span>
-            <span class="n">fields</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-                <span class="s2">&quot;task_assignees&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;due_date&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;entity&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;step&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;sg_status_list&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;project&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;content&quot;</span><span class="p">,</span>
-            <span class="p">])</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;task_assignees&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;due_date&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;entity&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;step&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sg_status_list&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;project&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;content&quot;</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">fields</span> <span class="o">=</span> <span class="n">std_fields</span>
@@ -327,17 +314,16 @@
         <span class="n">site_display</span> <span class="o">=</span> <span class="n">site_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;//&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">site_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">get_panel_link</span><span class="p">(</span><span class="n">site_url</span><span class="p">,</span> <span class="n">site_display</span><span class="p">)</span>
 
-        <span class="k">return</span> \
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            &lt;table&gt;</span>
-<span class="sd">              &lt;tr&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_label_td&#39;&gt;Site:&lt;/td&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
-<span class="sd">              &lt;/tr&gt;</span>
-<span class="sd">            &lt;/table&gt;</span>
-<span class="sd">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">site_link</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;table&gt;</span>
+<span class="s2">              &lt;tr&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_label_td&#39;&gt;Site:&lt;/td&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
+<span class="s2">              &lt;/tr&gt;</span>
+<span class="s2">            &lt;/table&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">site_link</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_asset_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns html for displaying an asset context.&quot;&quot;&quot;</span>
@@ -345,56 +331,50 @@
         <span class="n">asset_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">)</span>
 
         <span class="n">status</span> <span class="o">=</span> <span class="n">sg_globals</span><span class="o">.</span><span class="n">get_status_display_name</span><span class="p">(</span>
-            <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_status_list&quot;</span><span class="p">],</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;project&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+            <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_status_list&quot;</span><span class="p">],</span> <span class="n">project_id</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;project&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
         <span class="p">)</span>
 
         <span class="c1"># always include name, type, and status</span>
-        <span class="n">html</span> <span class="o">=</span> \
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            &lt;table&gt;</span>
-<span class="sd">              &lt;tr&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_label_td&#39;&gt;Asset:&lt;/td&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
-<span class="sd">              &lt;/tr&gt;</span>
-<span class="sd">              &lt;tr&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_label_td&#39;&gt;Type:&lt;/td&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_value_td&#39;&gt;{type}&lt;/td&gt;</span>
-<span class="sd">              &lt;/tr&gt;</span>
-<span class="sd">              &lt;tr&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_label_td&#39;&gt;Status:&lt;/td&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_value_td&#39;&gt;{status}&lt;/td&gt;</span>
-<span class="sd">              &lt;/tr&gt;</span>
-<span class="sd">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">asset_link</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_asset_type&quot;</span><span class="p">],</span>
-                <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;table&gt;</span>
+<span class="s2">              &lt;tr&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_label_td&#39;&gt;Asset:&lt;/td&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
+<span class="s2">              &lt;/tr&gt;</span>
+<span class="s2">              &lt;tr&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_label_td&#39;&gt;Type:&lt;/td&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;{type}&lt;/td&gt;</span>
+<span class="s2">              &lt;/tr&gt;</span>
+<span class="s2">              &lt;tr&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_label_td&#39;&gt;Status:&lt;/td&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;{status}&lt;/td&gt;</span>
+<span class="s2">              &lt;/tr&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">asset_link</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_asset_type&quot;</span><span class="p">],</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># tags if there are any</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;tag_list&quot;</span><span class="p">]:</span>
             <span class="n">tag_display</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;tag_list&quot;</span><span class="p">])</span>
-            <span class="n">html</span> <span class="o">+=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                &lt;tr&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_label_td&#39;&gt;Tags:&lt;/td&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_value_td&#39;&gt;{tags}&lt;/td&gt;</span>
-<span class="sd">                &lt;/tr&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">tags</span><span class="o">=</span><span class="n">tag_display</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;tr&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_label_td&#39;&gt;Tags:&lt;/td&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_value_td&#39;&gt;{tags}&lt;/td&gt;</span>
+<span class="s2">                &lt;/tr&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">tags</span><span class="o">=</span><span class="n">tag_display</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># description if there is one</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]:</span>
-            <span class="n">html</span> <span class="o">+=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                &lt;tr&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_label_td&#39;&gt;Desc:&lt;/td&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_value_td&#39;&gt;{desc}&lt;/td&gt;</span>
-<span class="sd">                &lt;/tr&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">desc</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span>
-                <span class="p">)</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;tr&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_label_td&#39;&gt;Desc:&lt;/td&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_value_td&#39;&gt;{desc}&lt;/td&gt;</span>
+<span class="s2">                &lt;/tr&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">desc</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
 
         <span class="c1"># close up the table</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/table&gt;&quot;</span>
@@ -407,8 +387,7 @@
         <span class="n">shot_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">)</span>
 
         <span class="n">status</span> <span class="o">=</span> <span class="n">sg_globals</span><span class="o">.</span><span class="n">get_status_display_name</span><span class="p">(</span>
-            <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_status_list&quot;</span><span class="p">],</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;project&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+            <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_status_list&quot;</span><span class="p">],</span> <span class="n">project_id</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;project&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
         <span class="p">)</span>
 
         <span class="c1"># by default show the shot url</span>
@@ -420,43 +399,38 @@
         <span class="k">if</span> <span class="n">seq</span><span class="p">:</span>
             <span class="n">seq_name</span> <span class="o">=</span> <span class="n">seq</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
             <span class="n">seq_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span><span class="n">seq_name</span><span class="p">,</span> <span class="n">seq</span><span class="p">)</span>
-            <span class="n">shot_display</span> <span class="o">=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                {name}&amp;nbsp;&lt;span class=&#39;sg_label&#39;&gt;({seq_name})&lt;/span&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">name</span><span class="o">=</span><span class="n">shot_link</span><span class="p">,</span>
-                    <span class="n">seq_name</span><span class="o">=</span><span class="n">seq_link</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="n">shot_display</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                {name}&amp;nbsp;&lt;span class=&#39;sg_label&#39;&gt;({seq_name})&lt;/span&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">shot_link</span><span class="p">,</span> <span class="n">seq_name</span><span class="o">=</span><span class="n">seq_link</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># always include name, type, and status</span>
-        <span class="n">html</span> <span class="o">=</span> \
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            &lt;table&gt;</span>
-<span class="sd">              &lt;tr&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_label_td&#39;&gt;Shot:&lt;/td&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
-<span class="sd">              &lt;/tr&gt;</span>
-<span class="sd">              &lt;tr&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_label_td&#39;&gt;Status:&lt;/td&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_value_td&#39;&gt;{status}&lt;/td&gt;</span>
-<span class="sd">              &lt;/tr&gt;</span>
-<span class="sd">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">shot_display</span><span class="p">,</span>
-                <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;table&gt;</span>
+<span class="s2">              &lt;tr&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_label_td&#39;&gt;Shot:&lt;/td&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
+<span class="s2">              &lt;/tr&gt;</span>
+<span class="s2">              &lt;tr&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_label_td&#39;&gt;Status:&lt;/td&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;{status}&lt;/td&gt;</span>
+<span class="s2">              &lt;/tr&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">shot_display</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># tags if there are any</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;tag_list&quot;</span><span class="p">]:</span>
             <span class="n">tag_display</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;tag_list&quot;</span><span class="p">])</span>
-            <span class="n">html</span> <span class="o">+=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                &lt;tr&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_label_td&#39;&gt;Tags:&lt;/td&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_value_td&#39;&gt;{tags}&lt;/td&gt;</span>
-<span class="sd">                &lt;/tr&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">tags</span><span class="o">=</span><span class="n">tag_display</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;tr&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_label_td&#39;&gt;Tags:&lt;/td&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_value_td&#39;&gt;{tags}&lt;/td&gt;</span>
+<span class="s2">                &lt;/tr&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">tags</span><span class="o">=</span><span class="n">tag_display</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># ---- show some cut info if available</span>
 
@@ -464,52 +438,49 @@
 
         <span class="c1"># cut in/out</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_in&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_out&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">cut_display</span> <span class="o">=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                    {cut_in} - {cut_out}</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">cut_in</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_in&quot;</span><span class="p">],</span>
-                    <span class="n">cut_out</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_out&quot;</span><span class="p">]</span>
-                <span class="p">)</span>
+            <span class="n">cut_display</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    {cut_in} - {cut_out}</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">cut_in</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_in&quot;</span><span class="p">],</span> <span class="n">cut_out</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_out&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
 
         <span class="c1"># include head/tail if set</span>
-        <span class="k">if</span> <span class="n">cut_display</span> <span class="ow">and</span> \
-           <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_head_in&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
-           <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_tail_out&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">cut_display</span>
+            <span class="ow">and</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_head_in&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+            <span class="ow">and</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_tail_out&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+        <span class="p">):</span>
 
-            <span class="n">cut_display</span> <span class="o">=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                    &lt;small&gt;&lt;span class=&#39;sg_label&#39;&gt;{head_in} | &lt;/span&gt;&lt;/small&gt;</span>
-<span class="sd">                    {cut_display}</span>
-<span class="sd">                    &lt;small&gt;&lt;span class=&#39;sg_label&#39;&gt; | {tail_out}&lt;/span&gt;&lt;/small&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">head_in</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_head_in&quot;</span><span class="p">],</span>
-                    <span class="n">cut_display</span><span class="o">=</span><span class="n">cut_display</span><span class="p">,</span>
-                    <span class="n">tail_out</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_tail_out&quot;</span><span class="p">]</span>
-                <span class="p">)</span>
+            <span class="n">cut_display</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;small&gt;&lt;span class=&#39;sg_label&#39;&gt;{head_in} | &lt;/span&gt;&lt;/small&gt;</span>
+<span class="s2">                    {cut_display}</span>
+<span class="s2">                    &lt;small&gt;&lt;span class=&#39;sg_label&#39;&gt; | {tail_out}&lt;/span&gt;&lt;/small&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">head_in</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_head_in&quot;</span><span class="p">],</span>
+                <span class="n">cut_display</span><span class="o">=</span><span class="n">cut_display</span><span class="p">,</span>
+                <span class="n">tail_out</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_tail_out&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">cut_display</span><span class="p">:</span>
-            <span class="n">html</span> <span class="o">+=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                &lt;tr&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_label_td&#39;&gt;Cut:&lt;/td&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_value_td&#39;&gt;{cut_display}&lt;/td&gt;</span>
-<span class="sd">                &lt;/tr&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">cut_display</span><span class="o">=</span><span class="n">cut_display</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;tr&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_label_td&#39;&gt;Cut:&lt;/td&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_value_td&#39;&gt;{cut_display}&lt;/td&gt;</span>
+<span class="s2">                &lt;/tr&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">cut_display</span><span class="o">=</span><span class="n">cut_display</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># description if there is one</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]:</span>
-            <span class="n">html</span> <span class="o">+=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                &lt;tr&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_label_td&#39;&gt;Desc:&lt;/td&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_value_td&#39;&gt;{desc}&lt;/td&gt;</span>
-<span class="sd">                &lt;/tr&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">desc</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span>
-                <span class="p">)</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;tr&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_label_td&#39;&gt;Desc:&lt;/td&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_value_td&#39;&gt;{desc}&lt;/td&gt;</span>
+<span class="s2">                &lt;/tr&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">desc</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
 
         <span class="c1"># close up the table</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/table&gt;&quot;</span>
@@ -522,8 +493,7 @@
         <span class="n">task_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">)</span>
 
         <span class="n">status</span> <span class="o">=</span> <span class="n">sg_globals</span><span class="o">.</span><span class="n">get_status_display_name</span><span class="p">(</span>
-            <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_status_list&quot;</span><span class="p">],</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;project&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+            <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_status_list&quot;</span><span class="p">],</span> <span class="n">project_id</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;project&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
         <span class="p">)</span>
 
         <span class="c1"># by default show the shot url</span>
@@ -535,23 +505,22 @@
         <span class="k">if</span> <span class="n">step</span><span class="p">:</span>
             <span class="n">step_name</span> <span class="o">=</span> <span class="n">step</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">step_name</span> <span class="o">!=</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]:</span>
-                <span class="n">task_display</span> <span class="o">=</span> \
-                    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                    {name}&amp;nbsp;&lt;span class=&#39;sg_label&#39;&gt;({step_name})&lt;/span&gt;</span>
-<span class="sd">                    &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">name</span><span class="o">=</span><span class="n">task_display</span><span class="p">,</span>
-                        <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
-                    <span class="p">)</span>
+                <span class="n">task_display</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    {name}&amp;nbsp;&lt;span class=&#39;sg_label&#39;&gt;({step_name})&lt;/span&gt;</span>
+<span class="s2">                    &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">task_display</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+                <span class="p">)</span>
 
         <span class="c1"># always include name</span>
-        <span class="n">html</span> <span class="o">=</span> \
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            &lt;table&gt;</span>
-<span class="sd">              &lt;tr&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_label_td&#39;&gt;Task:&lt;/td&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
-<span class="sd">              &lt;/tr&gt;</span>
-<span class="sd">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">task_display</span><span class="p">)</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;table&gt;</span>
+<span class="s2">              &lt;tr&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_label_td&#39;&gt;Task:&lt;/td&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
+<span class="s2">              &lt;/tr&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">task_display</span>
+        <span class="p">)</span>
 
         <span class="c1"># entity</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity&quot;</span><span class="p">]:</span>
@@ -562,26 +531,26 @@
                 <span class="n">linked_entity_display</span> <span class="o">=</span> <span class="n">linked_entity</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span>
 
             <span class="n">linked_entity_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span>
-                <span class="n">linked_entity_display</span><span class="p">,</span> <span class="n">linked_entity</span><span class="p">)</span>
-            <span class="n">html</span> <span class="o">+=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                  &lt;tr&gt;</span>
-<span class="sd">                    &lt;td class=&#39;sg_label_td&#39;&gt;{entity_type}:&lt;/td&gt;</span>
-<span class="sd">                    &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
-<span class="sd">                  &lt;/tr&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">entity_type</span><span class="o">=</span><span class="n">linked_entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
-                    <span class="n">name</span><span class="o">=</span><span class="n">linked_entity_link</span><span class="p">,</span>
-                <span class="p">)</span>
+                <span class="n">linked_entity_display</span><span class="p">,</span> <span class="n">linked_entity</span>
+            <span class="p">)</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                  &lt;tr&gt;</span>
+<span class="s2">                    &lt;td class=&#39;sg_label_td&#39;&gt;{entity_type}:&lt;/td&gt;</span>
+<span class="s2">                    &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
+<span class="s2">                  &lt;/tr&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">entity_type</span><span class="o">=</span><span class="n">linked_entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">linked_entity_link</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># always show the status</span>
-        <span class="n">html</span> <span class="o">+=</span> \
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">              &lt;tr&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_label_td&#39;&gt;Status:&lt;/td&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_value_td&#39;&gt;{status}&lt;/td&gt;</span>
-<span class="sd">              &lt;/tr&gt;</span>
-<span class="sd">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">)</span>
+        <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">              &lt;tr&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_label_td&#39;&gt;Status:&lt;/td&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;{status}&lt;/td&gt;</span>
+<span class="s2">              &lt;/tr&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">status</span>
+        <span class="p">)</span>
 
         <span class="c1"># artist</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;task_assignees&quot;</span><span class="p">]:</span>
@@ -593,30 +562,26 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span><span class="n">asignee_name</span><span class="p">,</span> <span class="n">assignee_entity</span><span class="p">)</span>
                 <span class="p">)</span>
             <span class="n">assignee_display</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">assignee_links</span><span class="p">)</span>
-            <span class="n">assignee_label</span> <span class="o">=</span> <span class="s2">&quot;Artists&quot;</span> \
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">assignee_entities</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;Artist&quot;</span>
-            <span class="n">html</span> <span class="o">+=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                  &lt;tr&gt;</span>
-<span class="sd">                    &lt;td class=&#39;sg_label_td&#39;&gt;{label}:&lt;/td&gt;</span>
-<span class="sd">                    &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
-<span class="sd">                  &lt;/tr&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">label</span><span class="o">=</span><span class="n">assignee_label</span><span class="p">,</span>
-                    <span class="n">name</span><span class="o">=</span><span class="n">assignee_display</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="n">assignee_label</span> <span class="o">=</span> <span class="s2">&quot;Artists&quot;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">assignee_entities</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;Artist&quot;</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                  &lt;tr&gt;</span>
+<span class="s2">                    &lt;td class=&#39;sg_label_td&#39;&gt;{label}:&lt;/td&gt;</span>
+<span class="s2">                    &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
+<span class="s2">                  &lt;/tr&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="n">assignee_label</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">assignee_display</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># due date</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;due_date&quot;</span><span class="p">]:</span>
-            <span class="n">html</span> <span class="o">+=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                  &lt;tr&gt;</span>
-<span class="sd">                    &lt;td class=&#39;sg_label_td&#39;&gt;Due:&lt;/td&gt;</span>
-<span class="sd">                    &lt;td class=&#39;sg_value_td&#39;&gt;{date}&lt;/td&gt;</span>
-<span class="sd">                  &lt;/tr&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">date</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;due_date&quot;</span><span class="p">],</span>
-                <span class="p">)</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                  &lt;tr&gt;</span>
+<span class="s2">                    &lt;td class=&#39;sg_label_td&#39;&gt;Due:&lt;/td&gt;</span>
+<span class="s2">                    &lt;td class=&#39;sg_value_td&#39;&gt;{date}&lt;/td&gt;</span>
+<span class="s2">                  &lt;/tr&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">date</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;due_date&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
 
         <span class="c1"># close up the table</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/table&gt;&quot;</span>
@@ -632,51 +597,46 @@
         <span class="n">entity_type</span> <span class="o">=</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
 
         <span class="c1"># always include type/name</span>
-        <span class="n">html</span> <span class="o">=</span> \
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            &lt;table&gt;</span>
-<span class="sd">              &lt;tr&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_label_td&#39;&gt;{entity_type}:&lt;/td&gt;</span>
-<span class="sd">                &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
-<span class="sd">              &lt;/tr&gt;</span>
-<span class="sd">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">entity_type</span><span class="o">=</span><span class="n">entity_type</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">entity_link</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;table&gt;</span>
+<span class="s2">              &lt;tr&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_label_td&#39;&gt;{entity_type}:&lt;/td&gt;</span>
+<span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;{name}&lt;/td&gt;</span>
+<span class="s2">              &lt;/tr&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">entity_type</span><span class="o">=</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">entity_link</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># show a status if one can be determined</span>
         <span class="n">status</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="s2">&quot;sg_status_list&quot;</span> <span class="ow">in</span> <span class="n">entity</span><span class="p">:</span>
             <span class="n">status</span> <span class="o">=</span> <span class="n">sg_globals</span><span class="o">.</span><span class="n">get_status_display_name</span><span class="p">(</span>
-                <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_status_list&quot;</span><span class="p">],</span>
-                <span class="n">project_id</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;project&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+                <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_status_list&quot;</span><span class="p">],</span> <span class="n">project_id</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;project&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="s2">&quot;sg_status&quot;</span> <span class="ow">in</span> <span class="n">entity</span><span class="p">:</span>
             <span class="n">status</span> <span class="o">=</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_status&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
-            <span class="n">html</span> <span class="o">+=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                  &lt;tr&gt;</span>
-<span class="sd">                    &lt;td class=&#39;sg_label_td&#39;&gt;Status:&lt;/td&gt;</span>
-<span class="sd">                    &lt;td class=&#39;sg_value_td&#39;&gt;{status}&lt;/td&gt;</span>
-<span class="sd">                  &lt;/tr&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                  &lt;tr&gt;</span>
+<span class="s2">                    &lt;td class=&#39;sg_label_td&#39;&gt;Status:&lt;/td&gt;</span>
+<span class="s2">                    &lt;td class=&#39;sg_value_td&#39;&gt;{status}&lt;/td&gt;</span>
+<span class="s2">                  &lt;/tr&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># tags if there are any</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;tag_list&quot;</span><span class="p">]:</span>
             <span class="n">tag_display</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;tag_list&quot;</span><span class="p">])</span>
-            <span class="n">html</span> <span class="o">+=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                &lt;tr&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_label_td&#39;&gt;Tags:&lt;/td&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_value_td&#39;&gt;{tags}&lt;/td&gt;</span>
-<span class="sd">                &lt;/tr&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">tags</span><span class="o">=</span><span class="n">tag_display</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;tr&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_label_td&#39;&gt;Tags:&lt;/td&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_value_td&#39;&gt;{tags}&lt;/td&gt;</span>
+<span class="s2">                &lt;/tr&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">tags</span><span class="o">=</span><span class="n">tag_display</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># description if there is one</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="bp">None</span>
@@ -686,13 +646,14 @@
             <span class="n">desc</span> <span class="o">=</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_description&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">desc</span><span class="p">:</span>
-            <span class="n">html</span> <span class="o">+=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                &lt;tr&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_label_td&#39;&gt;Desc:&lt;/td&gt;</span>
-<span class="sd">                  &lt;td class=&#39;sg_value_td&#39;&gt;{desc}&lt;/td&gt;</span>
-<span class="sd">                &lt;/tr&gt;</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+            <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;tr&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_label_td&#39;&gt;Desc:&lt;/td&gt;</span>
+<span class="s2">                  &lt;td class=&#39;sg_value_td&#39;&gt;{desc}&lt;/td&gt;</span>
+<span class="s2">                &lt;/tr&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">desc</span><span class="o">=</span><span class="n">desc</span>
+            <span class="p">)</span>
 
         <span class="c1"># close up the table</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/table&gt;&quot;</span>
@@ -705,11 +666,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/detail/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">sgtk</span><span class="o">.</span><span class="n">shotgun_url</span><span class="p">,</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">sgtk</span><span class="o">.</span><span class="n">shotgun_url</span><span class="p">,</span>
+            <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
+            <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">get_panel_link</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></div>
-
-
 </pre></div>
 
            </div>
@@ -721,7 +683,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Autodesk.
+        &copy; Copyright 2020, Autodesk.
 
     </p>
   </div> 
@@ -742,7 +704,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.1.4',
+            VERSION:'v0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

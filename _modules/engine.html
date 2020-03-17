@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>engine &mdash; tk-aftereffects v0.1.4 documentation</title>
+  <title>engine &mdash; tk-aftereffects v0.2.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="tk-aftereffects v0.1.4 documentation" href="../index.html"/>
+    <link rel="top" title="tk-aftereffects v0.2.0 documentation" href="../index.html"/>
         <link rel="up" title="Module code" href="index.html"/> 
 
   
@@ -115,7 +115,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.1.4.<br>
+    <b>tk-aftereffects</b> v0.2.0.<br>
     
         This documentation is part of the Shotgun Pipeline Toolkit.
     
@@ -194,6 +194,7 @@
 
 <span class="kn">import</span> <span class="nn">sgtk</span>
 <span class="kn">from</span> <span class="nn">sgtk.util.filesystem</span> <span class="kn">import</span> <span class="n">ensure_folder_exists</span>
+<span class="kn">from</span> <span class="nn">tank_vendor</span> <span class="kn">import</span> <span class="n">six</span>
 
 
 <div class="viewcode-block" id="AfterEffectsEngine"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine">[docs]</a><span class="k">class</span> <span class="nc">AfterEffectsEngine</span><span class="p">(</span><span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">Engine</span><span class="p">):</span>
@@ -206,7 +207,7 @@
 
     <span class="n">SHOTGUN_ADOBE_HEARTBEAT_INTERVAL</span> <span class="o">=</span> <span class="mf">1.0</span>
     <span class="n">SHOTGUN_ADOBE_HEARTBEAT_TOLERANCE</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">SHOTGUN_ADOBE_NETWORK_DEBUG</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SHOTGUN_ADOBE_NETWORK_DEBUG&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+    <span class="n">SHOTGUN_ADOBE_NETWORK_DEBUG</span> <span class="o">=</span> <span class="s2">&quot;SHOTGUN_ADOBE_NETWORK_DEBUG&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span>
 
     <span class="n">TEST_SCRIPT_BASENAME</span> <span class="o">=</span> <span class="s2">&quot;run_tests.py&quot;</span>
 
@@ -215,7 +216,7 @@
         <span class="s2">&quot;ERROR&quot;</span><span class="p">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
         <span class="s2">&quot;WARNING&quot;</span><span class="p">:</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
         <span class="s2">&quot;INFO&quot;</span><span class="p">:</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;DEBUG&quot;</span><span class="p">:</span> <span class="s2">&quot;debug&quot;</span>
+        <span class="s2">&quot;DEBUG&quot;</span><span class="p">:</span> <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="n">_SHOTGUN_ADOBE_PORT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SHOTGUN_ADOBE_PORT&quot;</span><span class="p">)</span>
@@ -234,19 +235,13 @@
     <span class="n">_PROJECT_CONTEXT</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_AFX_PID</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">_POPUP_CACHE</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">_AFX_WIN32_DIALOG_WINDOW_CLASS</span> <span class="o">=</span> <span class="s2">&quot;#32770&quot;</span> <span class="c1"># the windows window class name used by After Effects for modal dialogs</span>
+    <span class="n">_AFX_WIN32_DIALOG_WINDOW_CLASS</span> <span class="o">=</span> <span class="s2">&quot;#32770&quot;</span>  <span class="c1"># the windows window class name used by After Effects for modal dialogs</span>
     <span class="n">__WIN32_GW_CHILD</span> <span class="o">=</span> <span class="mi">5</span>
     <span class="n">_CONTEXT_CACHE_KEY</span> <span class="o">=</span> <span class="s2">&quot;aftereffects_context_cache&quot;</span>
 
     <span class="n">_HAS_CHECKED_CONTEXT_POST_LAUNCH</span> <span class="o">=</span> <span class="bp">False</span>
 
-    <span class="n">__CC_VERSION_MAPPING</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;2015&quot;</span><span class="p">,</span>
-        <span class="mi">13</span><span class="p">:</span> <span class="s2">&quot;2016&quot;</span><span class="p">,</span>
-        <span class="mi">14</span><span class="p">:</span> <span class="s2">&quot;2017&quot;</span><span class="p">,</span>
-        <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;2018&quot;</span><span class="p">,</span>
-        <span class="mi">16</span><span class="p">:</span> <span class="s2">&quot;2019&quot;</span>
-    <span class="p">}</span>
+    <span class="n">__CC_VERSION_MAPPING</span> <span class="o">=</span> <span class="p">{</span><span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;2015&quot;</span><span class="p">,</span> <span class="mi">13</span><span class="p">:</span> <span class="s2">&quot;2016&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">:</span> <span class="s2">&quot;2017&quot;</span><span class="p">,</span> <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;2018&quot;</span><span class="p">,</span> <span class="mi">16</span><span class="p">:</span> <span class="s2">&quot;2019&quot;</span><span class="p">}</span>
 
     <span class="n">__IS_SEQUENCE_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;[\[]?([#@]+|[%]0\dd)[\]]?&quot;</span><span class="p">)</span>
 
@@ -280,8 +275,7 @@
         <span class="c1"># will run the callback immediately if already cached so this is likely</span>
         <span class="c1"># very quick.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__shotgun_globals</span><span class="o">.</span><span class="n">run_on_schema_loaded</span><span class="p">(</span>
-            <span class="n">_on_schema_loaded</span><span class="p">,</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span>
+            <span class="n">_on_schema_loaded</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span>
         <span class="p">)</span>
 
         <span class="c1"># go ahead and start the process of sending the current state back to js</span>
@@ -320,8 +314,7 @@
             <span class="n">network_debug</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SHOTGUN_ADOBE_NETWORK_DEBUG</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Network debug logging is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adobe</span><span class="o">.</span><span class="n">network_debug</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Network debug logging is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adobe</span><span class="o">.</span><span class="n">network_debug</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: Initializing...&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,))</span>
 
@@ -376,6 +369,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">event_processor</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="kn">from</span> <span class="nn">sgtk.platform.qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
+
                 <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">event_processor</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">processEvents</span>
             <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
                 <span class="k">pass</span>
@@ -395,8 +389,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Single document found, clearing stored context cache.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__settings_manager</span><span class="o">.</span><span class="n">store</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_CONTEXT_CACHE_KEY</span><span class="p">,</span>
-            <span class="nb">dict</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_CONTEXT_CACHE_KEY</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(),</span>
         <span class="p">)</span>
 
         <span class="c1"># Normally the bootstrap logic would handle the file open, but since the bootstrap logic is handled by</span>
@@ -417,7 +410,7 @@
 
         <span class="c1"># Set our parent widget back to being owned by the window manager</span>
         <span class="c1"># instead of After Effects&#39;s application window.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PROXY_WIN_HWND</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PROXY_WIN_HWND</span> <span class="ow">and</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">is_windows</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">SetParent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_PROXY_WIN_HWND</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
         <span class="c1"># No longer poll for new messages from this engine.</span>
@@ -445,7 +438,9 @@
         <span class="c1"># from the adobe bridge.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">logging_received</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_logging</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">command_received</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_command</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">active_document_changed</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_active_document_change</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">active_document_changed</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_handle_active_document_change</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">run_tests_request_received</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_tests</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">state_requested</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__send_state</span><span class="p">)</span>
 
@@ -457,6 +452,7 @@
         <span class="c1"># We need to have the RPC API call processEvents during its response</span>
         <span class="c1"># wait loop. This will keep that loop from blocking the UI thread.</span>
         <span class="kn">from</span> <span class="nn">sgtk.platform.qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">event_processor</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">processEvents</span>
 
         <span class="c1"># Since this is running in our own Qt event loop, we&#39;ll use the bundled</span>
@@ -475,9 +471,7 @@
         <span class="n">properties</span> <span class="o">=</span> <span class="n">properties</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">properties</span><span class="p">[</span><span class="s2">&quot;uid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_command_uid</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">AfterEffectsEngine</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register_command</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span>
-            <span class="n">callback</span><span class="p">,</span>
-            <span class="n">properties</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -498,9 +492,11 @@
         <span class="c1"># which gives something like:</span>
         <span class="c1"># Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....</span>
         <span class="c1"># and use it instead if available.</span>
-        <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;([0-9]+[\.]?[0-9]*)&quot;</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([0-9]+\.?[0-9]*)&quot;</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">ensure_str</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
-            <span class="n">cc_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__CC_VERSION_MAPPING</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))),</span> <span class="n">version</span><span class="p">)</span>
+            <span class="n">cc_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__CC_VERSION_MAPPING</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))),</span> <span class="n">version</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;AfterFX&quot;</span><span class="p">,</span>
             <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">cc_version</span><span class="p">,</span>
@@ -559,7 +555,7 @@
             <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dialog_parent</span><span class="p">(),</span>
             <span class="n">caption</span><span class="o">=</span><span class="s2">&quot;Save As&quot;</span><span class="p">,</span>
             <span class="n">directory</span><span class="o">=</span><span class="n">doc_path</span><span class="p">,</span>
-            <span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;After Effects Documents (*.aep, *.aepx)&quot;</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;After Effects Documents (*.aep, *.aepx)&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">file_dialog</span><span class="o">.</span><span class="n">setLabelText</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">Accept</span><span class="p">,</span> <span class="s2">&quot;Save&quot;</span><span class="p">)</span>
         <span class="n">file_dialog</span><span class="o">.</span><span class="n">setLabelText</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">Reject</span><span class="p">,</span> <span class="s2">&quot;Cancel&quot;</span><span class="p">)</span>
@@ -659,7 +655,7 @@
 <span class="sd">        :yields: the next child item of the collection</span>
 <span class="sd">        :rtype: `adobe.ItemObject`_</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">collection_item</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">collection_item</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">collection_item</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="AfterEffectsEngine.get_render_files"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.get_render_files">[docs]</a>    <span class="k">def</span> <span class="nf">get_render_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">queue_item</span><span class="p">):</span>
@@ -682,7 +678,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
             <span class="c1"># if not, we just check if the file exists</span>
             <span class="k">yield</span> <span class="n">path</span><span class="p">,</span> <span class="bp">None</span>
-            <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">()</span>
+            <span class="k">return</span>  <span class="c1"># Exit the iterator</span>
 
         <span class="c1"># if yes, we check the existence of each frame</span>
         <span class="n">frame_time</span> <span class="o">=</span> <span class="n">queue_item</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">frameDuration</span>
@@ -692,7 +688,7 @@
         <span class="n">padding</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
         <span class="n">test_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;</span><span class="si">%%</span><span class="s2">0</span><span class="si">%d</span><span class="s2">d&quot;</span> <span class="o">%</span> <span class="n">padding</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">frame_no</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">frame_numbers</span><span class="p">,</span> <span class="n">skip_frames</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">frame_no</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">frame_numbers</span><span class="p">,</span> <span class="n">skip_frames</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">test_path</span> <span class="o">%</span> <span class="n">frame_no</span><span class="p">,</span> <span class="n">frame_no</span></div>
 
 <div class="viewcode-block" id="AfterEffectsEngine.import_filepath"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.import_filepath">[docs]</a>    <span class="k">def</span> <span class="nf">import_filepath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -717,9 +713,7 @@
         <span class="n">import_options</span><span class="o">.</span><span class="n">sequence</span> <span class="o">=</span> <span class="bp">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">execute_hook_method</span><span class="p">(</span>
-            <span class="s2">&quot;import_footage_hook&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;set_import_options&quot;</span><span class="p">,</span>
-            <span class="n">import_options</span><span class="o">=</span><span class="n">import_options</span>
+            <span class="s2">&quot;import_footage_hook&quot;</span><span class="p">,</span> <span class="s2">&quot;set_import_options&quot;</span><span class="p">,</span> <span class="n">import_options</span><span class="o">=</span><span class="n">import_options</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__import_file</span><span class="p">(</span><span class="n">import_options</span><span class="p">)</span></div>
@@ -803,14 +797,13 @@
             <span class="c1"># Which may return various different errors. This situation never</span>
             <span class="c1"># occured during development.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="p">(</span><span class="s2">&quot;Skipping item due to an error &quot;</span>
-                    <span class="s2">&quot;while rendering: {}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="p">(</span><span class="s2">&quot;Skipping item due to an error &quot;</span> <span class="s2">&quot;while rendering: {}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">acceptable_states</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">RQItemStatus</span><span class="o">.</span><span class="n">DONE</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">RQItemStatus</span><span class="o">.</span><span class="n">ERR_STOPPED</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">RQItemStatus</span><span class="o">.</span><span class="n">RENDERING</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">RQItemStatus</span><span class="o">.</span><span class="n">RENDERING</span><span class="p">,</span>
             <span class="p">]</span>
             <span class="c1"># reverting the original queued state for all</span>
             <span class="c1"># unprocessed items</span>
@@ -821,7 +814,7 @@
 
         <span class="c1"># we check for success if the render queue item status</span>
         <span class="c1"># has changed to DONE</span>
-        <span class="n">success</span> <span class="o">=</span> <span class="p">(</span><span class="n">queue_item</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">RQItemStatus</span><span class="o">.</span><span class="n">DONE</span><span class="p">)</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="n">queue_item</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">RQItemStatus</span><span class="o">.</span><span class="n">DONE</span>
         <span class="k">return</span> <span class="n">success</span></div>
 
 <div class="viewcode-block" id="AfterEffectsEngine.find_sequence_range"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.find_sequence_range">[docs]</a>    <span class="k">def</span> <span class="nf">find_sequence_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -861,10 +854,7 @@
 
         <span class="c1"># We need to get all files that match the pattern from disk so that we</span>
         <span class="c1"># can determine what the min and max frame number is.</span>
-        <span class="n">glob_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">frame_pattern</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1*&quot;</span><span class="p">,</span> <span class="n">root</span><span class="p">),</span>
-            <span class="n">ext</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">glob_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">frame_pattern</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1*&quot;</span><span class="p">,</span> <span class="n">root</span><span class="p">),</span> <span class="n">ext</span><span class="p">,)</span>
         <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">glob_path</span><span class="p">)</span>
 
         <span class="c1"># Our pattern from above matches against the file root, so we need</span>
@@ -893,6 +883,7 @@
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_FAILED_PINGS</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SHOTGUN_ADOBE_HEARTBEAT_TOLERANCE</span><span class="p">:</span>
                 <span class="kn">from</span> <span class="nn">sgtk.platform.qt</span> <span class="kn">import</span> <span class="n">QtCore</span>
+
                 <span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_FAILED_PINGS</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -970,10 +961,7 @@
 
             <span class="c1"># we don&#39;t use the handler&#39;s format method here because the adobe</span>
             <span class="c1"># side expects a certain format.</span>
-            <span class="n">msg_str</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">]: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-                <span class="n">record</span><span class="o">.</span><span class="n">levelname</span><span class="p">,</span>
-                <span class="n">record</span><span class="o">.</span><span class="n">message</span>
-            <span class="p">)</span>
+            <span class="n">msg_str</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">]: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">levelname</span><span class="p">,</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
 
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg_str</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
@@ -998,8 +986,8 @@
         <span class="c1"># Make sure we have a properly-encoded string for the path. We can</span>
         <span class="c1"># possibly get a file path/name that contains unicode, and we don&#39;t</span>
         <span class="c1"># want to deal with that later on.</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">active_document_path</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">):</span>
-            <span class="n">active_document_path</span> <span class="o">=</span> <span class="n">active_document_path</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">active_document_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">active_document_path</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">ensure_str</span><span class="p">(</span><span class="n">active_document_path</span><span class="p">)</span>
 
         <span class="c1"># This will be True if the context_changes_disabled context manager is</span>
         <span class="c1"># used. We&#39;re just in a temporary state of not allowing context changes,</span>
@@ -1023,9 +1011,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Document found in context cache: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">context</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">context_from_path</span><span class="p">(</span>
-                        <span class="n">active_document_path</span><span class="p">,</span>
-                        <span class="n">previous_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+                    <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgtk</span><span class="o">.</span><span class="n">context_from_path</span><span class="p">(</span>
+                        <span class="n">active_document_path</span><span class="p">,</span> <span class="n">previous_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">__add_to_context_cache</span><span class="p">(</span><span class="n">active_document_path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
@@ -1041,8 +1028,7 @@
                     <span class="c1"># SGTK control.</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PROJECT_CONTEXT</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_PROJECT_CONTEXT</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span>
-                            <span class="n">tk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">sgtk</span><span class="p">,</span>
-                            <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+                            <span class="n">tk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">sgtk</span><span class="p">,</span> <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
                         <span class="p">)</span>
 
                     <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PROJECT_CONTEXT</span>
@@ -1054,9 +1040,8 @@
                 <span class="p">)</span>
                 <span class="k">return</span> <span class="bp">False</span>
             <span class="k">elif</span> <span class="ow">not</span> <span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="p">:</span>
-                <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">context_from_entity</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+                <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgtk</span><span class="o">.</span><span class="n">context_from_entity</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">context</span> <span class="ow">and</span> <span class="n">context</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">:</span>
@@ -1089,7 +1074,8 @@
                 <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                     <span class="k">if</span> <span class="n">command</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;properties&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uid&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">uid</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                            <span class="s2">&quot;Executing callback for command: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">command</span><span class="p">,))</span>
+                            <span class="s2">&quot;Executing callback for command: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">command</span><span class="p">,)</span>
+                        <span class="p">)</span>
                         <span class="n">result</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="s2">&quot;callback&quot;</span><span class="p">]()</span>
                         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
                             <span class="c1"># if the callback returns a widget, keep a handle on it</span>
@@ -1106,11 +1092,13 @@
         <span class="c1"># manually create a record to log to the standard file handler.</span>
         <span class="c1"># we format it to match the regular logs, but tack on the &#39;.js&#39; to</span>
         <span class="c1"># indicate that it came from javascript.</span>
-        <span class="n">record</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">makeLogRecord</span><span class="p">({</span>
-            <span class="s2">&quot;levelname&quot;</span><span class="p">:</span> <span class="n">level</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.js&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">name</span><span class="p">,),</span>
-            <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span>
-        <span class="p">})</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">makeLogRecord</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;levelname&quot;</span><span class="p">:</span> <span class="n">level</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.js&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">name</span><span class="p">,),</span>
+                <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
 
         <span class="c1"># forward this message to the base file handler so that it is logged</span>
         <span class="c1"># appropriately.</span>
@@ -1168,6 +1156,7 @@
             <span class="c1"># wrong in the test suite. We&#39;ll just trap that and print it</span>
             <span class="c1"># as an error without letting it bubble up any farther.</span>
             <span class="kn">import</span> <span class="nn">traceback</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s2">&quot;Tests raised the following:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
             <span class="p">)</span>
@@ -1224,7 +1213,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pausing heartbeat...&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_HEARTBEAT_DISABLED</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Unable to pause heartbeat as requested.&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1318,7 +1307,7 @@
 <span class="sd">            This is only done in windows.</span>
 <span class="sd">            TODO: Implement an equivalent method on mac</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">is_windows</span><span class="p">():</span>
 
             <span class="c1"># to get all dialogs from After Effects, we have to query the</span>
             <span class="c1"># After Effects process id first. As this code runs inside a</span>
@@ -1331,15 +1320,22 @@
                 <span class="c1"># instance of After Effects, this should be safe to determine the</span>
                 <span class="c1"># process id.</span>
                 <span class="n">pid_query_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
-                    <span class="p">[</span><span class="s1">&#39;tasklist&#39;</span><span class="p">,</span> <span class="s1">&#39;/FI&#39;</span><span class="p">,</span> <span class="s1">&#39;ImageName eq AfterFX.exe&#39;</span><span class="p">,</span> <span class="s1">&#39;/FO&#39;</span><span class="p">,</span> <span class="s1">&#39;CSV&#39;</span><span class="p">,</span> <span class="s1">&#39;/NH&#39;</span><span class="p">],</span>
-                    <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span>
+                    <span class="p">[</span>
+                        <span class="s2">&quot;tasklist&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;/FI&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;ImageName eq AfterFX.exe&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;/FO&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;CSV&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;/NH&quot;</span><span class="p">,</span>
+                    <span class="p">],</span>
+                    <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">out_string</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pid_query_process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
 
                 <span class="c1"># The out_string will look like:</span>
                 <span class="c1"># &quot;AfterFX.ext&quot;,&quot;1234&quot;,&quot;SessionName&quot;,&quot;SessionNum&quot;,&quot;MemoryUsage&quot;</span>
                 <span class="c1"># where 1234 describes the pid of After Effects</span>
-                <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;[^0-9]+([0-9]+).*&quot;</span><span class="p">,</span> <span class="n">out_string</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;[^0-9]+([0-9]+).*&quot;</span><span class="p">,</span> <span class="n">out_string</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_AFX_PID</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_AFX_PID</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
@@ -1347,10 +1343,10 @@
             <span class="c1"># with the process id of After Effects, we can get all HWNDS that point to</span>
             <span class="c1"># dialog classes.</span>
             <span class="n">hwnds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">find_windows</span><span class="p">(</span>
-                                <span class="n">process_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_AFX_PID</span><span class="p">,</span>
-                                <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_AFX_WIN32_DIALOG_WINDOW_CLASS</span><span class="p">,</span>
-                                <span class="n">stop_if_found</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                            <span class="p">)</span>
+                <span class="n">process_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_AFX_PID</span><span class="p">,</span>
+                <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_AFX_WIN32_DIALOG_WINDOW_CLASS</span><span class="p">,</span>
+                <span class="n">stop_if_found</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="p">)</span>
 
             <span class="c1"># To avoid raising a dialog, that we raised before,</span>
             <span class="c1"># we will compare the list of visible dialog-hwnds with the list</span>
@@ -1391,7 +1387,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WIN32_AFTEREFFECTS_MAIN_HWND</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">major</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__CC_VERSION_MAPPING</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-                <span class="k">for</span> <span class="n">minor</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">minor</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
                     <span class="n">found_hwnds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">find_windows</span><span class="p">(</span>
                         <span class="n">class_name</span><span class="o">=</span><span class="s2">&quot;AE_CApplication_{}.{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">major</span><span class="p">,</span> <span class="n">minor</span><span class="p">),</span>
                         <span class="n">stop_if_found</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
@@ -1417,7 +1413,7 @@
         <span class="n">proxy_win_hwnd</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">if</span> <span class="n">ps_hwnd</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">tank.platform.qt</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+            <span class="kn">from</span> <span class="nn">sgtk.platform.qt</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
 
             <span class="c1"># Create the proxy QWidget.</span>
             <span class="n">win32_proxy_win</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
@@ -1475,8 +1471,7 @@
             <span class="c1"># dialogs to notify the After Effects application window when they&#39;re</span>
             <span class="c1"># opened or closed, so we&#39;ll disable that behavior.</span>
             <span class="n">win_ex_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">GetWindowLong</span><span class="p">(</span>
-                <span class="n">proxy_win_hwnd</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">GWL_EXSTYLE</span><span class="p">,</span>
+                <span class="n">proxy_win_hwnd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">GWL_EXSTYLE</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">SetWindowLong</span><span class="p">(</span>
@@ -1500,10 +1495,10 @@
 <span class="sd">        show_dialog &amp; show_modal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># determine the parent widget to use:</span>
-        <span class="kn">from</span> <span class="nn">tank.platform.qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
+        <span class="kn">from</span> <span class="nn">sgtk.platform.qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DIALOG_PARENT</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">is_windows</span><span class="p">():</span>
                 <span class="c1"># for windows, we create a proxy window parented to the</span>
                 <span class="c1"># main application window that we can then set as the owner</span>
                 <span class="c1"># for all Toolkit dialogs</span>
@@ -1539,10 +1534,7 @@
 
         <span class="c1"># create the dialog:</span>
         <span class="n">dialog</span><span class="p">,</span> <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dialog_with_widget</span><span class="p">(</span>
-            <span class="n">title</span><span class="p">,</span>
-            <span class="n">bundle</span><span class="p">,</span>
-            <span class="n">widget_class</span><span class="p">,</span>
-            <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="n">title</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="n">widget_class</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span>
 
         <span class="c1"># Note - the base engine implementation will try to clean up</span>
@@ -1583,16 +1575,13 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_ui</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s2">&quot;Sorry, this environment does not support UI display! Cannot &quot;</span>
-                <span class="s2">&quot;show the requested window &#39;</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span> <span class="n">title</span><span class="p">)</span>
+                <span class="s2">&quot;show the requested window &#39;</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span> <span class="n">title</span>
+            <span class="p">)</span>
             <span class="k">return</span>
 
         <span class="c1"># create the dialog:</span>
         <span class="n">dialog</span><span class="p">,</span> <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dialog_with_widget</span><span class="p">(</span>
-            <span class="n">title</span><span class="p">,</span>
-            <span class="n">bundle</span><span class="p">,</span>
-            <span class="n">widget_class</span><span class="p">,</span>
-            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span>
+            <span class="n">title</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="n">widget_class</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span>
 
         <span class="c1"># Note - the base engine implementation will try to clean up</span>
@@ -1721,7 +1710,7 @@
 
         <span class="c1"># iterate over all the registered commands and gather the necessary info</span>
         <span class="c1"># to display them in adobe</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">command_name</span><span class="p">,</span> <span class="n">command_info</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">command_name</span><span class="p">,</span> <span class="n">command_info</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
             <span class="c1"># commands come with a dict of properties that may or may not</span>
             <span class="c1"># contain certain data.</span>
@@ -1768,11 +1757,7 @@
         <span class="n">jump_commands</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># the icon to use for the command. bundled with the engine</span>
-        <span class="n">sg_icon</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">disk_location</span><span class="p">,</span>
-            <span class="s2">&quot;resources&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;shotgun_logo.png&quot;</span>
-        <span class="p">)</span>
+        <span class="n">sg_icon</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">disk_location</span><span class="p">,</span> <span class="s2">&quot;resources&quot;</span><span class="p">,</span> <span class="s2">&quot;shotgun_logo.png&quot;</span><span class="p">)</span>
 
         <span class="n">jump_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="nb">dict</span><span class="p">(</span>
@@ -1788,9 +1773,7 @@
 
             <span class="c1"># the icon to use for the command. bundled with the engine</span>
             <span class="n">fs_icon</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">disk_location</span><span class="p">,</span>
-                <span class="s2">&quot;resources&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;shotgun_folder.png&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">disk_location</span><span class="p">,</span> <span class="s2">&quot;resources&quot;</span><span class="p">,</span> <span class="s2">&quot;shotgun_folder.png&quot;</span>
             <span class="p">)</span>
 
             <span class="n">jump_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -1813,8 +1796,7 @@
         <span class="c1"># force the Jump to Shotgun and Jump to Filesystem commands onto the</span>
         <span class="c1"># front of the list to match other integrations.</span>
         <span class="n">context_menu_cmds</span> <span class="o">=</span> <span class="n">jump_commands</span> <span class="o">+</span> <span class="nb">sorted</span><span class="p">(</span>
-            <span class="n">context_menu_cmds</span><span class="p">,</span>
-            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;display_name&quot;</span><span class="p">],</span>
+            <span class="n">context_menu_cmds</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;display_name&quot;</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># ---- populate the state structure to hand over to adobe</span>
@@ -1838,10 +1820,10 @@
 <span class="sd">                           if a timer already exists, it will be stopped.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CHECK_CONNECTION_TIMER</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">force</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_debug</span><span class="p">(</span><span class="s2">&quot;Creating connection timer...&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Creating connection timer...&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CHECK_CONNECTION_TIMER</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log_debug</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="s2">&quot;Connection timer already exists, so it will be stopped.&quot;</span>
                 <span class="p">)</span>
 
@@ -1854,26 +1836,23 @@
 
             <span class="kn">from</span> <span class="nn">sgtk.platform.qt</span> <span class="kn">import</span> <span class="n">QtCore</span>
 
-            <span class="n">timer</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QTimer</span><span class="p">(</span>
-                <span class="n">parent</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">(),</span>
-            <span class="p">)</span>
+            <span class="n">timer</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QTimer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">(),)</span>
 
             <span class="n">timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_connection</span><span class="p">)</span>
             <span class="n">timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__check_for_popups</span><span class="p">)</span>
 
             <span class="c1"># The class variable is in seconds, so multiply to get milliseconds.</span>
-            <span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">SHOTGUN_ADOBE_HEARTBEAT_INTERVAL</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SHOTGUN_ADOBE_HEARTBEAT_INTERVAL</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_CHECK_CONNECTION_TIMER</span> <span class="o">=</span> <span class="n">timer</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log_debug</span><span class="p">(</span><span class="s2">&quot;Connection timer created and started.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Connection timer created and started.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_jump_to_sg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Jump to shotgun, launch web browser</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">sgtk.platform.qt</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">shotgun_url</span>
         <span class="n">QtGui</span><span class="o">.</span><span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QUrl</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
 
@@ -1886,18 +1865,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;FS paths: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">paths</span><span class="p">),))</span>
         <span class="k">for</span> <span class="n">disk_location</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
 
-            <span class="c1"># get the setting</span>
-            <span class="n">system</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span>
-
             <span class="c1"># run the app</span>
-            <span class="k">if</span> <span class="n">system</span> <span class="o">==</span> <span class="s2">&quot;linux2&quot;</span><span class="p">:</span>
-                <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;xdg-open </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">disk_location</span>
-            <span class="k">elif</span> <span class="n">system</span> <span class="o">==</span> <span class="s2">&quot;darwin&quot;</span><span class="p">:</span>
-                <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;open </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">disk_location</span>
-            <span class="k">elif</span> <span class="n">system</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
-                <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;cmd.exe /C start </span><span class="se">\&quot;</span><span class="s2">Folder</span><span class="se">\&quot;</span><span class="s2"> </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">disk_location</span>
+            <span class="k">if</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">is_macos</span><span class="p">():</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;open &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">disk_location</span>
+            <span class="k">elif</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">is_windows</span><span class="p">():</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;cmd.exe /C start &quot;Folder&quot; &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">disk_location</span>
+            <span class="k">elif</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">is_linux</span><span class="p">():</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;xdg-open &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">disk_location</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Platform &#39;</span><span class="si">%s</span><span class="s2">&#39; is not supported.&quot;</span> <span class="o">%</span> <span class="n">system</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Platform &#39;</span><span class="si">%s</span><span class="s2">&#39; is not supported.&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span><span class="p">)</span>
 
             <span class="n">exit_code</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">exit_code</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -1925,7 +1901,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_CONTEXT_CACHE</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span>
 
             <span class="n">serial_cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTEXT_CACHE</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTEXT_CACHE</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">serial_cache</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Storing context cache: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">serial_cache</span><span class="p">)</span>
@@ -1972,7 +1948,7 @@
         <span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_hook_method</span><span class="p">(</span>
             <span class="s2">&quot;context_fields_display_hook&quot;</span><span class="p">,</span>
             <span class="s2">&quot;get_entity_fields&quot;</span><span class="p">,</span>
-            <span class="n">entity_type</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
+            <span class="n">entity_type</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># always try to query the image for the entity</span>
@@ -1984,7 +1960,8 @@
 
         <span class="c1"># kick off an async request to query the necessary fields</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__context_find_uid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sg_data</span><span class="o">.</span><span class="n">execute_find_one</span><span class="p">(</span>
-            <span class="n">entity_type</span><span class="p">,</span> <span class="p">[[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">]],</span> <span class="n">fields</span><span class="p">)</span>
+            <span class="n">entity_type</span><span class="p">,</span> <span class="p">[[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">]],</span> <span class="n">fields</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__on_worker_failure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2047,14 +2024,14 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">context_entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Asset&quot;</span><span class="p">,</span> <span class="s2">&quot;Project&quot;</span><span class="p">,</span> <span class="s2">&quot;Shot&quot;</span><span class="p">,</span> <span class="s2">&quot;Task&quot;</span><span class="p">]:</span>
                     <span class="n">thumb_path</span> <span class="o">=</span> <span class="s2">&quot;../images/default_</span><span class="si">%s</span><span class="s2">_thumb_dark.png&quot;</span> <span class="o">%</span> <span class="p">(</span>
-                        <span class="n">context_entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+                        <span class="n">context_entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
+                    <span class="p">)</span>
                     <span class="n">data</span><span class="p">[</span><span class="s2">&quot;thumb_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thumb_path</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">thumb_path</span> <span class="o">=</span> <span class="s2">&quot;../images/default_Entity_thumb_dark.png&quot;</span>
 
                 <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-                    <span class="n">thumb_path</span><span class="o">=</span><span class="n">thumb_path</span><span class="p">,</span>
-                    <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_entity_url</span><span class="p">(</span><span class="n">context_entity</span><span class="p">),</span>
+                    <span class="n">thumb_path</span><span class="o">=</span><span class="n">thumb_path</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_entity_url</span><span class="p">(</span><span class="n">context_entity</span><span class="p">),</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">send_context_thumbnail</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
@@ -2105,8 +2082,7 @@
 
     <span class="k">def</span> <span class="nf">get_entity_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Helper method to return a SG url for the supplied entity.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/detail/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sgtk</span><span class="o">.</span><span class="n">shotgun_url</span><span class="p">,</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/detail/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgtk</span><span class="o">.</span><span class="n">shotgun_url</span><span class="p">,</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">get_panel_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2114,38 +2090,37 @@
 <span class="sd">        will launch the supplied url in the default browser.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> \
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            &lt;a</span>
-<span class="sd">              href=&#39;#&#39;</span>
-<span class="sd">              class=&#39;sg_value_link&#39;</span>
-<span class="sd">              onclick=&#39;sg_panel.Panel.open_external_url(&quot;{url}&quot;)&#39;</span>
-<span class="sd">            &gt;{text}&lt;/a&gt;</span>
-<span class="sd">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
-                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;a</span>
+<span class="s2">              href=&#39;#&#39;</span>
+<span class="s2">              class=&#39;sg_value_link&#39;</span>
+<span class="s2">              onclick=&#39;sg_panel.Panel.open_external_url(&quot;{url}&quot;)&#39;</span>
+<span class="s2">            &gt;{text}&lt;/a&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__activate_python</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Do the Os-specific thing to show this process above all others.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;darwin&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">is_macos</span><span class="p">():</span>
             <span class="c1"># a little action script to activate the given python process.</span>
-            <span class="n">osx_activate_script</span> <span class="o">=</span> \
-                <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                tell application &quot;System Events&quot;</span>
-<span class="sd">                  set frontmost of the first process whose unix id is {pid} to true</span>
-<span class="sd">                end tell</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+            <span class="n">osx_activate_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                tell application &quot;System Events&quot;</span>
+<span class="s2">                  set frontmost of the first process whose unix id is {pid} to true</span>
+<span class="s2">                end tell</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">pid</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
+            <span class="p">)</span>
 
             <span class="c1"># force this python process to the front</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;osascript&quot;</span><span class="p">,</span> <span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="n">osx_activate_script</span><span class="p">]</span>
             <span class="n">status</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not activate python.&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">is_windows</span><span class="p">():</span>
             <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">__import_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">import_options</span><span class="p">):</span>
@@ -2176,8 +2151,6 @@
                 <span class="n">new_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">new_items</span></div>
-
-
 </pre></div>
 
            </div>
@@ -2189,7 +2162,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Autodesk.
+        &copy; Copyright 2020, Autodesk.
 
     </p>
   </div> 
@@ -2210,7 +2183,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.1.4',
+            VERSION:'v0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

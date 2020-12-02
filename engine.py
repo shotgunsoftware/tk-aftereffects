@@ -1809,9 +1809,11 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 There was an error retrieving fields for this context. Please
                 see the logs for the specific error message. If this is a
                 recurring error and you need further assistance, please
-                send an email to <a href='mailto:support@shotgunsoftware.com'>
-                support@shotgunsoftware.com</a>.
-                """
+                contact our support team via <a href='{url}'>
+                {url}</a>.
+                """.format(
+                    url=sgtk.support_url
+                )
             )
             self.logger.error("Failed to query context fields: %s" % (msg,))
 

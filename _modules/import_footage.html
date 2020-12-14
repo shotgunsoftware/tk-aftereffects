@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>import_footage &mdash; tk-aftereffects v0.2.0 documentation</title>
+  <title>import_footage &mdash; tk-aftereffects v0.2.1 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="tk-aftereffects v0.2.0 documentation" href="../index.html"/>
+    <link rel="top" title="tk-aftereffects v0.2.1 documentation" href="../index.html"/>
         <link rel="up" title="Module code" href="index.html"/> 
 
   
@@ -115,7 +115,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.2.0.<br>
+    <b>tk-aftereffects</b> v0.2.1.<br>
     
         This documentation is part of the Shotgun Pipeline Toolkit.
     
@@ -182,11 +182,11 @@
 <span class="sd">    Used to control the way the current context fields are displayed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">__DEFAULT_IMPORT_TYPES</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">__DEFAULT_IMPORT_TYPES</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_default_import_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__DEFAULT_IMPORT_TYPES</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__DEFAULT_IMPORT_TYPES</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># the following dict allows to set default values</span>
             <span class="c1"># for specific file types</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__DEFAULT_IMPORT_TYPES</span> <span class="o">=</span> <span class="p">{</span>
@@ -229,7 +229,7 @@
         <span class="k">for</span> <span class="n">each_type</span> <span class="ow">in</span> <span class="n">import_types</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">import_options</span><span class="o">.</span><span class="n">canImportAs</span><span class="p">(</span><span class="n">each_type</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">each_type</span>
-        <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="ImportFootage.set_import_options"><a class="viewcode-back" href="../hooks.html#import_footage.ImportFootage.set_import_options">[docs]</a>    <span class="k">def</span> <span class="nf">set_import_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">import_options</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -248,15 +248,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">adobe</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">import_options</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">fsName</span>
         <span class="n">import_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_import_type</span><span class="p">(</span><span class="n">import_options</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">import_type</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Filepath {!r} cannot be imported.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">import_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Filepath </span><span class="si">{!r}</span><span class="s2"> cannot be imported.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
             <span class="k">return</span> <span class="p">[]</span>
         <span class="n">import_options</span><span class="o">.</span><span class="n">importAs</span> <span class="o">=</span> <span class="n">import_type</span>
 
         <span class="n">sequence_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">find_sequence_range</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">sequence_range</span> <span class="ow">and</span> <span class="n">sequence_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sequence_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-            <span class="n">import_options</span><span class="o">.</span><span class="n">sequence</span> <span class="o">=</span> <span class="bp">True</span>
-            <span class="n">import_options</span><span class="o">.</span><span class="n">forceAlphabetical</span> <span class="o">=</span> <span class="bp">True</span></div></div>
+            <span class="n">import_options</span><span class="o">.</span><span class="n">sequence</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">import_options</span><span class="o">.</span><span class="n">forceAlphabetical</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 </pre></div>
 
            </div>
@@ -289,7 +289,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.2.0',
+            VERSION:'v0.2.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

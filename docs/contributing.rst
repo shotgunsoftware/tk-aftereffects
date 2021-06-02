@@ -50,7 +50,7 @@ Debugging
 
 As the After Effects engine communicates via three different programming languages it can be sometimes difficult to debug certain situations.
 
-If you experience an error, the first place to go to is the "Console" of the Shotgun-panel in After Effects. If the communication with After Effects is working as expected, you will see your logs there.
+If you experience an error, the first place to go to is the "Console" of the ShotGrid-panel in After Effects. If the communication with After Effects is working as expected, you will see your logs there.
 You can find the console by selecting the *burger-menu* of the panel and then clicking "Shot Console".
 
 
@@ -83,7 +83,7 @@ You may use the following environment variables to influence the behaviour of th
 Running integration tests
 -------------------------
 
-In the Shotgun-After Effects CEP panel you can open the Shotgun Python Console and enter the following command::
+In the ShotGrid-After Effects CEP panel you can open the ShotGrid Python Console and enter the following command::
 
     import os
     os.environ["SHOTGUN_ADOBE_TESTS_ROOT"] = "/path/to/tk-aftereffects/tests"

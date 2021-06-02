@@ -1246,7 +1246,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             # Create the proxy QWidget.
             win32_proxy_win = QtGui.QWidget()
-            window_title = "Shotgun Toolkit Parent Widget"
+            window_title = "ShotGrid Toolkit Parent Widget"
             win32_proxy_win.setWindowTitle(window_title)
 
             # We have to take different approaches depending on whether
@@ -1591,7 +1591,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         jump_commands.append(
             dict(
                 uid=self.__jump_to_sg_command_id,
-                display_name="Jump to Shotgun",
+                display_name="Jump to ShotGrid",
                 icon_path=sg_icon,
                 description="Open the current context in a web browser.",
                 type="context_menu",

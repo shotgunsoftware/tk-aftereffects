@@ -60,7 +60,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         shotgun_url = publisher.sgtk.shotgun_url
 
         media_page_url = "%s/page/media_center" % (shotgun_url,)
-        review_url = "https://www.shotgunsoftware.com/features/#review"
+        review_url = "https://www.shotgridsoftware.com/features/#review"
 
         return """
         Upload the file to Shotgun for review.<br><br>

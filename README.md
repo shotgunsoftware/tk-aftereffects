@@ -11,4 +11,4 @@ This repository is a part of the ShotGrid Pipeline Toolkit.
 - For information about ShotGrid in general, click here: https://help.autodesk.com/view/SGSUB/ENU/
 
 ## Have a Question?
-Don't hesitate to contact us! You can find us on support@shotgunsoftware.com
+Don't hesitate to contact us! You can find us on knowledge.autodesk.com/contact-support

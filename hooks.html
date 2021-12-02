@@ -7,11 +7,10 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Hooks &mdash; tk-aftereffects v0.3.0 documentation</title>
+  <title>Hooks &mdash; tk-aftereffects v0.3.1 documentation</title>
   
 
   
@@ -24,10 +23,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -51,7 +50,7 @@
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
           
-    <a href='http://developer.shotgunsoftware.com'>
+    <a href='http://developer.shotgridsoftware.com'>
     
         <img style='width: 191px;
                 height: 60px;
@@ -124,12 +123,12 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.3.0.<br>
+    <b>tk-aftereffects</b> v0.3.1.<br>
     
         This documentation is part of the Shotgun Pipeline Toolkit.
     
     For more information, please visit
-    <a class=custom_post_menu href='https://support.shotgunsoftware.com/home'>Shotgun Support</a>.
+    <a class=custom_post_menu href='https://developer.shotgridsoftware.com'>Shotgun Support</a>.
     The code associated with this documentation can be found
     <a class=custom_post_menu href='https://github.com/shotgunsoftware/tk-aftereffects'>here</a>.
 
@@ -195,59 +194,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="hooks">
+  <div class="section" id="hooks">
 <h1>Hooks<a class="headerlink" href="#hooks" title="Permalink to this headline">¶</a></h1>
-<section id="import-footage">
+<div class="section" id="import-footage">
 <h2>Import Footage<a class="headerlink" href="#import-footage" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="import_footage.ImportFootage">
-<em class="property">class </em><code class="sig-prename descclassname">import_footage.</code><code class="sig-name descname">ImportFootage</code><span class="sig-paren">(</span><em class="sig-param">parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/import_footage.html#ImportFootage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#import_footage.ImportFootage" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">import_footage.</code><code class="descname">ImportFootage</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/import_footage.html#ImportFootage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#import_footage.ImportFootage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to control the way the current context fields are displayed.</p>
 <dl class="method">
 <dt id="import_footage.ImportFootage.set_import_options">
-<code class="sig-name descname">set_import_options</code><span class="sig-paren">(</span><em class="sig-param">import_options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/import_footage.html#ImportFootage.set_import_options"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#import_footage.ImportFootage.set_import_options" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_import_options</code><span class="sig-paren">(</span><em>import_options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/import_footage.html#ImportFootage.set_import_options"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#import_footage.ImportFootage.set_import_options" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method is called in case the engines’ import_filepath
 method is called. It is used to set the correct parameters to the
 given <a class="reference external" href="http://docs.aenhancers.com/other/importoptions/">adobe.ImportOptionsObject</a>.</p>
 <p>This method should modify the incoming object with the correct
 settings for the given filepath.</p>
 <p>The filepath can be accesssed by doing <code class="docutils literal notranslate"><span class="pre">import_options.file.fsName</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>import_options</strong> (<a class="reference external" href="http://docs.aenhancers.com/other/importoptions/">adobe.ImportOptionsObject</a>.) – The import options as set by After Effects</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>import_options</strong> (<a class="reference external" href="http://docs.aenhancers.com/other/importoptions/">adobe.ImportOptionsObject</a>.) – The import options as set by After Effects</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
 
-</section>
-<section id="context-fields-display">
+</div>
+<div class="section" id="context-fields-display">
 <h2>Context Fields Display<a class="headerlink" href="#context-fields-display" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="context_fields_display.ContextFieldsDisplay">
-<em class="property">class </em><code class="sig-prename descclassname">context_fields_display.</code><code class="sig-name descname">ContextFieldsDisplay</code><span class="sig-paren">(</span><em class="sig-param">parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">context_fields_display.</code><code class="descname">ContextFieldsDisplay</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to control the way the current context fields are displayed.</p>
 <dl class="method">
 <dt id="context_fields_display.ContextFieldsDisplay.get_entity_fields">
-<code class="sig-name descname">get_entity_fields</code><span class="sig-paren">(</span><em class="sig-param">entity_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay.get_entity_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay.get_entity_fields" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_entity_fields</code><span class="sig-paren">(</span><em>entity_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay.get_entity_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay.get_entity_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a particular entity type for the current context, return a list of
 fields to query for display in the header.</p>
 <p>Note: the thumbnail (“image” field) query/display is handled by the
 engine and is not required to be returned by this method.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>entity_type</strong> – Shotgun entity type to return fields for</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">list</span></code> of Shotgun fields</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>entity_type</strong> – Shotgun entity type to return fields for</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">list</span></code> of Shotgun fields</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="context_fields_display.ContextFieldsDisplay.get_context_html">
-<code class="sig-name descname">get_context_html</code><span class="sig-paren">(</span><em class="sig-param">entity</em>, <em class="sig-param">sg_globals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay.get_context_html"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay.get_context_html" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_context_html</code><span class="sig-paren">(</span><em>entity</em>, <em>sg_globals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay.get_context_html"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay.get_context_html" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the html used to display the supplied context entity.</p>
 <p>This method is called once the engine has queried values for the fields
 returned from the <code class="docutils literal notranslate"><span class="pre">get_entity_fields</span></code> method. The supplied entity will
@@ -256,19 +260,23 @@ be populated with the queried values for those fields.</p>
 that will display next to the entity’s thumbnail. The thumbnail query,
 download, and display is handled by the engine, so the html returned
 here will be inserted to the right of that thumbnail.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>entity</strong> – Shotgun entity to display context fields for.</p></li>
-<li><p><strong>sg_globals</strong> – A handle on the shotgun globals api provided via
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>entity</strong> – Shotgun entity to display context fields for.</li>
+<li><strong>sg_globals</strong> – A handle on the shotgun globals api provided via
 the shotgunutils framework. This is useful for querying display
-names for fields, statuses, etc.</p></li>
+names for fields, statuses, etc.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An html <code class="docutils literal notranslate"><span class="pre">str</span></code> that will be displayed in the panel.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An html <code class="docutils literal notranslate"><span class="pre">str</span></code> that will be displayed in the panel.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Here are some css classes that can be used to display text in various
 ways:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>The name of a queried field such as: &quot;Type&quot;, &quot;Name&quot;, &quot;Shot&quot;,
@@ -293,8 +301,8 @@ emphasis:
 
 </dd></dl>
 
-</section>
-</section>
+</div>
+</div>
 
 
            </div>

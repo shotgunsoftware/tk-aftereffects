@@ -72,7 +72,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
     __CC_VERSION_MAPPING = {12: "2015", 13: "2016", 14: "2017", 15: "2018", 16: "2019"}
 
-    __IS_SEQUENCE_REGEX = re.compile(u"[\[]?([#@]+|[%]0\dd)[\]]?")
+    __IS_SEQUENCE_REGEX = re.compile("[\[]?([#@]+|[%]0\dd)[\]]?")
 
     ############################################################################
     # context changing
@@ -218,7 +218,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         self.logger.debug("Single document found, clearing stored context cache.")
 
         self.__settings_manager.store(
-            self._CONTEXT_CACHE_KEY, dict(),
+            self._CONTEXT_CACHE_KEY,
+            dict(),
         )
 
         # Normally the bootstrap logic would handle the file open, but since the bootstrap logic is handled by
@@ -300,7 +301,9 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         properties = properties or dict()
         properties["uid"] = self.__get_command_uid()
         return super(AfterEffectsEngine, self).register_command(
-            name, callback, properties,
+            name,
+            callback,
+            properties,
         )
 
     @property
@@ -683,7 +686,10 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         # We need to get all files that match the pattern from disk so that we
         # can determine what the min and max frame number is.
-        glob_path = "%s%s" % (re.sub(frame_pattern, r"\1*", root), ext,)
+        glob_path = "%s%s" % (
+            re.sub(frame_pattern, r"\1*", root),
+            ext,
+        )
         files = glob.glob(glob_path)
 
         # Our pattern from above matches against the file root, so we need
@@ -841,7 +847,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             else:
                 try:
                     context = self.sgtk.context_from_path(
-                        active_document_path, previous_context=self.context,
+                        active_document_path,
+                        previous_context=self.context,
                     )
                     self.__add_to_context_cache(active_document_path, context)
                 except Exception:
@@ -857,7 +864,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                     # SGTK control.
                     if self._PROJECT_CONTEXT is None:
                         self._PROJECT_CONTEXT = sgtk.Context(
-                            tk=self.context.sgtk, project=self.context.project,
+                            tk=self.context.sgtk,
+                            project=self.context.project,
                         )
 
                     context = self._PROJECT_CONTEXT
@@ -1254,8 +1262,10 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             # needed to turn a Qt5 WId into an HWND is not exposed in PySide2,
             # so we can't do what we did below for Qt4.
             if QtCore.__version__.startswith("4."):
-                proxy_win_hwnd = self.__tk_aftereffects.win_32_api.qwidget_winid_to_hwnd(
-                    win32_proxy_win.winId(),
+                proxy_win_hwnd = (
+                    self.__tk_aftereffects.win_32_api.qwidget_winid_to_hwnd(
+                        win32_proxy_win.winId(),
+                    )
                 )
             else:
                 # With PySide2, we're required to look up our proxy parent
@@ -1269,10 +1279,12 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 win32_proxy_win.show()
 
                 try:
-                    proxy_win_hwnd_found = self.__tk_aftereffects.win_32_api.find_windows(
-                        stop_if_found=True,
-                        class_name="Qt5QWindowIcon",
-                        process_id=os.getpid(),
+                    proxy_win_hwnd_found = (
+                        self.__tk_aftereffects.win_32_api.find_windows(
+                            stop_if_found=True,
+                            class_name="Qt5QWindowIcon",
+                            process_id=os.getpid(),
+                        )
                     )
                 finally:
                     win32_proxy_win.hide()
@@ -1300,7 +1312,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             # dialogs to notify the After Effects application window when they're
             # opened or closed, so we'll disable that behavior.
             win_ex_style = self.__tk_aftereffects.win_32_api.GetWindowLong(
-                proxy_win_hwnd, self.__tk_aftereffects.win_32_api.GWL_EXSTYLE,
+                proxy_win_hwnd,
+                self.__tk_aftereffects.win_32_api.GWL_EXSTYLE,
             )
 
             self.__tk_aftereffects.win_32_api.SetWindowLong(
@@ -1625,7 +1638,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # force the Jump to Shotgun and Jump to Filesystem commands onto the
         # front of the list to match other integrations.
         context_menu_cmds = jump_commands + sorted(
-            context_menu_cmds, key=lambda d: d["display_name"],
+            context_menu_cmds,
+            key=lambda d: d["display_name"],
         )
 
         # ---- populate the state structure to hand over to adobe
@@ -1665,13 +1679,17 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             from sgtk.platform.qt import QtCore
 
-            timer = QtCore.QTimer(parent=QtCore.QCoreApplication.instance(),)
+            timer = QtCore.QTimer(
+                parent=QtCore.QCoreApplication.instance(),
+            )
 
             timer.timeout.connect(self._check_connection)
             timer.timeout.connect(self.__check_for_popups)
 
             # The class variable is in seconds, so multiply to get milliseconds.
-            timer.start(self.SHOTGUN_ADOBE_HEARTBEAT_INTERVAL * 1000.0,)
+            timer.start(
+                self.SHOTGUN_ADOBE_HEARTBEAT_INTERVAL * 1000.0,
+            )
 
             self._CHECK_CONNECTION_TIMER = timer
             self.logger.debug("Connection timer created and started.")
@@ -1862,7 +1880,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                     thumb_path = "../images/default_Entity_thumb_dark.png"
 
                 data = dict(
-                    thumb_path=thumb_path, url=self.get_entity_url(context_entity),
+                    thumb_path=thumb_path,
+                    url=self.get_entity_url(context_entity),
                 )
                 self.adobe.send_context_thumbnail(data)
 
@@ -1928,7 +1947,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
               onclick='sg_panel.Panel.open_external_url("{url}")'
             >{text}</a>
             """.format(
-            url=url, text=text,
+            url=url,
+            text=text,
         )
 
     def __activate_python(self):

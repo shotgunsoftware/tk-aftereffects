@@ -177,7 +177,8 @@ class AfterEffectsLauncher(SoftwareLauncher):
         # we don't want to stomp on any PYTHONPATH that might already exist that
         # we want to persist when the Python subprocess is spawned.
         sgtk.util.append_path_to_env_var(
-            "PYTHONPATH", os.pathsep.join(sys.path),
+            "PYTHONPATH",
+            os.pathsep.join(sys.path),
         )
         env["PYTHONPATH"] = os.environ["PYTHONPATH"]
 

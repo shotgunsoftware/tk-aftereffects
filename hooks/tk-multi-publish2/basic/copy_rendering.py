@@ -361,7 +361,9 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
         # in case we will render before publishing we
         # have to check if the templates are matching
         ext_state = self.__template_extension_match_render_paths(
-            render_paths, render_seq_path_template, render_mov_path_template,
+            render_paths,
+            render_seq_path_template,
+            render_mov_path_template,
         )
         if ext_state != self.FULLY_ACCEPTED:
             return ext_state

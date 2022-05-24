@@ -319,6 +319,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             return {"name": "AfterFX", "version": "unknown"}
 
         version = self.adobe.app.version
+        cc_version = version
         # app.aftereffects.AfterEffectsVersion just returns 18.1.1 which is not what users see in the UI
         # extract a more meaningful version from the systemInformation property
         # which gives something like:

@@ -16,6 +16,7 @@ import math
 import subprocess
 import sys
 import threading
+import uuid
 
 
 from contextlib import contextmanager
@@ -70,7 +71,18 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
 
-    __CC_VERSION_MAPPING = {12: "2015", 13: "2016", 14: "2017", 15: "2018", 16: "2019"}
+    __CC_VERSION_MAPPING = {
+        12: "2015",
+        13: "2016",
+        14: "2017",
+        15: "2018",
+        16: "2019",
+        17: "2020",
+        18: "2021",
+        22: "2022",
+        23: "2023",
+        24: "2024",
+    }
 
     __IS_SEQUENCE_REGEX = re.compile("[\[]?([#@]+|[%]0\dd)[\]]?")
 
@@ -1224,14 +1236,17 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         handle (HWND)
         """
         if not self._WIN32_AFTEREFFECTS_MAIN_HWND:
+            self.logger.debug('Attempting to locate AE window...')
             for major in sorted(self.__CC_VERSION_MAPPING.keys()):
                 for minor in range(10):
+                    class_name = "AE_CApplication_{}.{}".format(major, minor)
                     found_hwnds = self.__tk_aftereffects.win_32_api.find_windows(
-                        class_name="AE_CApplication_{}.{}".format(major, minor),
+                        class_name=class_name,
                         stop_if_found=True,
                     )
 
                     if found_hwnds:
+                        self.logger.debug("Found AE Window with class: %s", class_name)
                         self._WIN32_AFTEREFFECTS_MAIN_HWND = found_hwnds[0]
                         return self._WIN32_AFTEREFFECTS_MAIN_HWND
 
@@ -1254,9 +1269,9 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             from sgtk.platform.qt import QtGui, QtCore
 
             # Create the proxy QWidget.
+            win32_proxy_win_uuid = str(uuid.uuid4())
             win32_proxy_win = QtGui.QWidget()
-            window_title = "ShotGrid Toolkit Parent Widget"
-            win32_proxy_win.setWindowTitle(window_title)
+            win32_proxy_win.setWindowTitle(win32_proxy_win_uuid)
 
             # We have to take different approaches depending on whether
             # we're using Qt4 (PySide) or Qt5 (PySide2). The functionality
@@ -1283,8 +1298,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                     proxy_win_hwnd_found = (
                         self.__tk_aftereffects.win_32_api.find_windows(
                             stop_if_found=True,
-                            class_name="Qt5QWindowIcon",
-                            process_id=os.getpid(),
+                            window_text=win32_proxy_win_uuid,
                         )
                     )
                 finally:

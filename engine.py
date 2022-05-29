@@ -1236,7 +1236,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         handle (HWND)
         """
         if not self._WIN32_AFTEREFFECTS_MAIN_HWND:
-            self.logger.debug('Attempting to locate AE window...')
+            self.logger.debug("Attempting to locate AE window...")
             for major in sorted(self.__CC_VERSION_MAPPING.keys()):
                 for minor in range(10):
                     class_name = "AE_CApplication_{}.{}".format(major, minor)

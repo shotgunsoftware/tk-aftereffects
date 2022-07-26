@@ -16,7 +16,7 @@ import math
 import subprocess
 import sys
 import threading
-
+import uuid
 
 from contextlib import contextmanager
 
@@ -325,10 +325,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....
         # and use it instead if available.
         m = re.search(r"([0-9]+\.?[0-9]*)", six.ensure_str(version))
-        if m:
-            cc_version = self.__CC_VERSION_MAPPING.get(
-                math.floor(float(m.group(1))), version
-            )
+        cc_version = self.__CC_VERSION_MAPPING.get(math.floor(float(m.group(1))), version) if m else version
         return {
             "name": "AfterFX",
             "version": cc_version,
@@ -1254,7 +1251,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             # Create the proxy QWidget.
             win32_proxy_win = QtGui.QWidget()
-            window_title = "ShotGrid Toolkit Parent Widget"
+            window_title = f"ShotGrid Toolkit Parent Widget {uuid.uuid4()}"
             win32_proxy_win.setWindowTitle(window_title)
 
             # We have to take different approaches depending on whether
@@ -1282,8 +1279,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                     proxy_win_hwnd_found = (
                         self.__tk_aftereffects.win_32_api.find_windows(
                             stop_if_found=True,
-                            class_name="Qt5QWindowIcon",
-                            process_id=os.getpid(),
+                            window_text=window_title
                         )
                     )
                 finally:

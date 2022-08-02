@@ -324,8 +324,10 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # which gives something like:
         # Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....
         # and use it instead if available.
-        m = re.search(r"([0-9]+\.?[0-9]*)", six.ensure_str(version))
-        cc_version = self.__CC_VERSION_MAPPING.get(math.floor(float(m.group(1))), version) if m else version
+        regex = re.compile(r"(\d+\.?\d*)")
+        match = regex.search(six.ensure_str(version))
+        major = int(float(match[0]))
+        cc_version = self.__CC_VERSION_MAPPING.get(major, version)
         return {
             "name": "AfterFX",
             "version": cc_version,
@@ -1278,8 +1280,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 try:
                     proxy_win_hwnd_found = (
                         self.__tk_aftereffects.win_32_api.find_windows(
-                            stop_if_found=True,
-                            window_text=window_title
+                            stop_if_found=True, window_text=window_title
                         )
                     )
                 finally:

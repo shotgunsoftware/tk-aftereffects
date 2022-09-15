@@ -12,7 +12,6 @@ import logging
 import os
 import re
 import glob
-import math
 import subprocess
 import sys
 import threading
@@ -70,7 +69,18 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
 
-    __CC_VERSION_MAPPING = {12: "2015", 13: "2016", 14: "2017", 15: "2018", 16: "2019"}
+    __CC_VERSION_MAPPING = {
+        12: "2015",
+        13: "2016",
+        14: "2017",
+        15: "2018",
+        16: "2019",
+        17: "2020",
+        18: "2021",
+        22: "2022",
+        23: "2023",
+        24: "2024",
+    }
 
     __IS_SEQUENCE_REGEX = re.compile("[\[]?([#@]+|[%]0\dd)[\]]?")
 
@@ -348,7 +358,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         doc_path = ""
         # doc_obj will always be a ProxyWrapper instance so we cannot
         # use the `doc_obj is not None` comparison
-        if doc_obj != None:
+        if doc_obj is not None:
             doc_path = doc_obj.fsName
         return doc_path
 
@@ -364,7 +374,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             if path is None:
                 self.adobe.app.project.save()
             else:
-                # After Effects won't ensure that the folder is created when saving, so we must make sure it exists
+                # After Effects won't ensure that the folder is
+                # created when saving, so we must make sure it exists
                 ensure_folder_exists(os.path.dirname(path))
                 self.adobe.app.project.save(self.adobe.File(path))
             new_path = self.project_path
@@ -380,7 +391,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         doc_path = self.project_path
 
-        # After Effects doesn't appear to have a "save as" dialog accessible via
+        # After Effects doesn't appear to have a
+        # "save as" dialog accessible via
         # python. so open our own Qt file dialog.
         file_dialog = QtGui.QFileDialog(
             parent=self._get_dialog_parent(),
@@ -809,11 +821,12 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         :returns: True if the context changed, False if it did not.
         """
-        # If the config says to not change context on active document change, then
-        # we don't do anything here.
+        # If the config says to not change context on active document change,
+        # then we don't do anything here.
         if not self.get_setting("automatic_context_switch"):
             self.logger.debug(
-                "Engine setting automatic_context_switch is false. Not changing context."
+                "Engine setting automatic_context_switch is false."
+                "Not changing context."
             )
             return
 
@@ -914,7 +927,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                         )
                         result = command["callback"]()
                         if isinstance(result, QtGui.QWidget):
-                            # if the callback returns a widget, keep a handle on it
+                            # if the callback returns a widget
+                            # keep a handle on it
                             self.__qt_dialogs.append(result)
 
     def _handle_logging(self, level, message):

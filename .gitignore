@@ -16,3 +16,4 @@ make.bat
 # Sublime
 *.sublime-project
 *.sublime-workspace
+.idea

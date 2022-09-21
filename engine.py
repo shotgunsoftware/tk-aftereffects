@@ -12,11 +12,10 @@ import logging
 import os
 import re
 import glob
-import math
 import subprocess
 import sys
 import threading
-
+import uuid
 
 from contextlib import contextmanager
 
@@ -70,7 +69,18 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
     _HAS_CHECKED_CONTEXT_POST_LAUNCH = False
 
-    __CC_VERSION_MAPPING = {12: "2015", 13: "2016", 14: "2017", 15: "2018", 16: "2019"}
+    __CC_VERSION_MAPPING = {
+        12: "2015",
+        13: "2016",
+        14: "2017",
+        15: "2018",
+        16: "2019",
+        17: "2020",
+        18: "2021",
+        22: "2022",
+        23: "2023",
+        24: "2024",
+    }
 
     __IS_SEQUENCE_REGEX = re.compile("[\[]?([#@]+|[%]0\dd)[\]]?")
 
@@ -324,11 +334,10 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # which gives something like:
         # Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....
         # and use it instead if available.
-        m = re.search(r"([0-9]+\.?[0-9]*)", six.ensure_str(version))
-        if m:
-            cc_version = self.__CC_VERSION_MAPPING.get(
-                math.floor(float(m.group(1))), version
-            )
+        regex = re.compile(r"(\d+\.?\d*)")
+        match = regex.search(six.ensure_str(version))
+        major = int(float(match[0]))
+        cc_version = self.__CC_VERSION_MAPPING.get(major, version)
         return {
             "name": "AfterFX",
             "version": cc_version,
@@ -349,7 +358,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         doc_path = ""
         # doc_obj will always be a ProxyWrapper instance so we cannot
         # use the `doc_obj is not None` comparison
-        if doc_obj != None:
+        if doc_obj is not None:
             doc_path = doc_obj.fsName
         return doc_path
 
@@ -365,7 +374,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             if path is None:
                 self.adobe.app.project.save()
             else:
-                # After Effects won't ensure that the folder is created when saving, so we must make sure it exists
+                # After Effects won't ensure that the folder is
+                # created when saving, so we must make sure it exists
                 ensure_folder_exists(os.path.dirname(path))
                 self.adobe.app.project.save(self.adobe.File(path))
             new_path = self.project_path
@@ -381,7 +391,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         doc_path = self.project_path
 
-        # After Effects doesn't appear to have a "save as" dialog accessible via
+        # After Effects doesn't appear to have a
+        # "save as" dialog accessible via
         # python. so open our own Qt file dialog.
         file_dialog = QtGui.QFileDialog(
             parent=self._get_dialog_parent(),
@@ -810,11 +821,12 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         :returns: True if the context changed, False if it did not.
         """
-        # If the config says to not change context on active document change, then
-        # we don't do anything here.
+        # If the config says to not change context on active document change,
+        # then we don't do anything here.
         if not self.get_setting("automatic_context_switch"):
             self.logger.debug(
-                "Engine setting automatic_context_switch is false. Not changing context."
+                "Engine setting automatic_context_switch is false."
+                "Not changing context."
             )
             return
 
@@ -915,7 +927,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                         )
                         result = command["callback"]()
                         if isinstance(result, QtGui.QWidget):
-                            # if the callback returns a widget, keep a handle on it
+                            # if the callback returns a widget
+                            # keep a handle on it
                             self.__qt_dialogs.append(result)
 
     def _handle_logging(self, level, message):
@@ -1254,7 +1267,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             # Create the proxy QWidget.
             win32_proxy_win = QtGui.QWidget()
-            window_title = "ShotGrid Toolkit Parent Widget"
+            window_title = "ShotGrid Parent Widget {0}".format(uuid.uuid4().hex)
             win32_proxy_win.setWindowTitle(window_title)
 
             # We have to take different approaches depending on whether
@@ -1281,9 +1294,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 try:
                     proxy_win_hwnd_found = (
                         self.__tk_aftereffects.win_32_api.find_windows(
-                            stop_if_found=True,
-                            class_name="Qt5QWindowIcon",
-                            process_id=os.getpid(),
+                            stop_if_found=True, window_text=window_title
                         )
                     )
                 finally:

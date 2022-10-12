@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>engine &mdash; tk-aftereffects v0.3.2 documentation</title>
+  <title>engine &mdash; tk-aftereffects v0.3.3 documentation</title>
   
 
   
@@ -118,16 +118,22 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.3.2.<br>
+    <b>tk-aftereffects</b> v0.3.3.<br>
     
-        This documentation is part of the Shotgun Pipeline Toolkit.
+        This documentation is part of the ShotGrid Pipeline Toolkit.
     
     For more information, please visit
-    <a class=custom_post_menu href='https://developer.shotgridsoftware.com'>Shotgun Support</a>.
+    <a class=custom_post_menu href='https://developer.shotgridsoftware.com'>The ShotGrid developer portal.</a>.
     The code associated with this documentation can be found
     <a class=custom_post_menu href='https://github.com/shotgunsoftware/tk-aftereffects'>here</a>.
 
     </div>
+    <style>
+        p.privacy_links { margin: 4px 0px;}
+    </style>
+    <p class="privacy_links"><a data-opt-in-preferences href="javascript:;">Privacy settings</a></p>
+    <p class="privacy_links"><a data-wat-linkname="manage-ccpa-settings-footer-link" href="javascript:;">Do not sell my personal information</a></p>
+    <p class="privacy_links"><a href="https://www.autodesk.com/company/legal-notices-trademarks/privacy-statement">Privacy/Cookies</a></p>
 
 
 
@@ -204,11 +210,10 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">threading</span>
-
+<span class="kn">import</span> <span class="nn">uuid</span>
 
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
 
@@ -262,9 +267,20 @@
 
     <span class="n">_HAS_CHECKED_CONTEXT_POST_LAUNCH</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="n">__CC_VERSION_MAPPING</span> <span class="o">=</span> <span class="p">{</span><span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;2015&quot;</span><span class="p">,</span> <span class="mi">13</span><span class="p">:</span> <span class="s2">&quot;2016&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">:</span> <span class="s2">&quot;2017&quot;</span><span class="p">,</span> <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;2018&quot;</span><span class="p">,</span> <span class="mi">16</span><span class="p">:</span> <span class="s2">&quot;2019&quot;</span><span class="p">}</span>
+    <span class="n">__CC_VERSION_MAPPING</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;2015&quot;</span><span class="p">,</span>
+        <span class="mi">13</span><span class="p">:</span> <span class="s2">&quot;2016&quot;</span><span class="p">,</span>
+        <span class="mi">14</span><span class="p">:</span> <span class="s2">&quot;2017&quot;</span><span class="p">,</span>
+        <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;2018&quot;</span><span class="p">,</span>
+        <span class="mi">16</span><span class="p">:</span> <span class="s2">&quot;2019&quot;</span><span class="p">,</span>
+        <span class="mi">17</span><span class="p">:</span> <span class="s2">&quot;2020&quot;</span><span class="p">,</span>
+        <span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;2021&quot;</span><span class="p">,</span>
+        <span class="mi">22</span><span class="p">:</span> <span class="s2">&quot;2022&quot;</span><span class="p">,</span>
+        <span class="mi">23</span><span class="p">:</span> <span class="s2">&quot;2023&quot;</span><span class="p">,</span>
+        <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;2024&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
 
-    <span class="n">__IS_SEQUENCE_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;[\[]?([#@]+|[%]0\dd)[\]]?&quot;</span><span class="p">)</span>
+    <span class="n">__IS_SEQUENCE_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;[\[]?([#@]+|[%]0\dd)[\]]?&quot;</span><span class="p">)</span>
 
     <span class="c1">############################################################################</span>
     <span class="c1"># context changing</span>
@@ -410,7 +426,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Single document found, clearing stored context cache.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__settings_manager</span><span class="o">.</span><span class="n">store</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_CONTEXT_CACHE_KEY</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_CONTEXT_CACHE_KEY</span><span class="p">,</span>
+            <span class="nb">dict</span><span class="p">(),</span>
         <span class="p">)</span>
 
         <span class="c1"># Normally the bootstrap logic would handle the file open, but since the bootstrap logic is handled by</span>
@@ -492,7 +509,9 @@
         <span class="n">properties</span> <span class="o">=</span> <span class="n">properties</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">properties</span><span class="p">[</span><span class="s2">&quot;uid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_command_uid</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">AfterEffectsEngine</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register_command</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">callback</span><span class="p">,</span>
+            <span class="n">properties</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -513,11 +532,10 @@
         <span class="c1"># which gives something like:</span>
         <span class="c1"># Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....</span>
         <span class="c1"># and use it instead if available.</span>
-        <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([0-9]+\.?[0-9]*)&quot;</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">ensure_str</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
-            <span class="n">cc_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__CC_VERSION_MAPPING</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))),</span> <span class="n">version</span>
-            <span class="p">)</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\d+\.?\d*)&quot;</span><span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">ensure_str</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
+        <span class="n">major</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">cc_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__CC_VERSION_MAPPING</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">major</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;AfterFX&quot;</span><span class="p">,</span>
             <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">cc_version</span><span class="p">,</span>
@@ -538,7 +556,7 @@
         <span class="n">doc_path</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="c1"># doc_obj will always be a ProxyWrapper instance so we cannot</span>
         <span class="c1"># use the `doc_obj is not None` comparison</span>
-        <span class="k">if</span> <span class="n">doc_obj</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">doc_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">doc_path</span> <span class="o">=</span> <span class="n">doc_obj</span><span class="o">.</span><span class="n">fsName</span>
         <span class="k">return</span> <span class="n">doc_path</span>
 
@@ -554,7 +572,8 @@
             <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># After Effects won&#39;t ensure that the folder is created when saving, so we must make sure it exists</span>
+                <span class="c1"># After Effects won&#39;t ensure that the folder is</span>
+                <span class="c1"># created when saving, so we must make sure it exists</span>
                 <span class="n">ensure_folder_exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
             <span class="n">new_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_path</span>
@@ -570,7 +589,8 @@
 
         <span class="n">doc_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_path</span>
 
-        <span class="c1"># After Effects doesn&#39;t appear to have a &quot;save as&quot; dialog accessible via</span>
+        <span class="c1"># After Effects doesn&#39;t appear to have a</span>
+        <span class="c1"># &quot;save as&quot; dialog accessible via</span>
         <span class="c1"># python. so open our own Qt file dialog.</span>
         <span class="n">file_dialog</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="p">(</span>
             <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dialog_parent</span><span class="p">(),</span>
@@ -875,7 +895,10 @@
 
         <span class="c1"># We need to get all files that match the pattern from disk so that we</span>
         <span class="c1"># can determine what the min and max frame number is.</span>
-        <span class="n">glob_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">frame_pattern</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1*&quot;</span><span class="p">,</span> <span class="n">root</span><span class="p">),</span> <span class="n">ext</span><span class="p">,)</span>
+        <span class="n">glob_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">frame_pattern</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1*&quot;</span><span class="p">,</span> <span class="n">root</span><span class="p">),</span>
+            <span class="n">ext</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">glob_path</span><span class="p">)</span>
 
         <span class="c1"># Our pattern from above matches against the file root, so we need</span>
@@ -996,11 +1019,12 @@
 
 <span class="sd">        :returns: True if the context changed, False if it did not.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If the config says to not change context on active document change, then</span>
-        <span class="c1"># we don&#39;t do anything here.</span>
+        <span class="c1"># If the config says to not change context on active document change,</span>
+        <span class="c1"># then we don&#39;t do anything here.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_setting</span><span class="p">(</span><span class="s2">&quot;automatic_context_switch&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Engine setting automatic_context_switch is false. Not changing context.&quot;</span>
+                <span class="s2">&quot;Engine setting automatic_context_switch is false.&quot;</span>
+                <span class="s2">&quot;Not changing context.&quot;</span>
             <span class="p">)</span>
             <span class="k">return</span>
 
@@ -1033,7 +1057,8 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgtk</span><span class="o">.</span><span class="n">context_from_path</span><span class="p">(</span>
-                        <span class="n">active_document_path</span><span class="p">,</span> <span class="n">previous_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+                        <span class="n">active_document_path</span><span class="p">,</span>
+                        <span class="n">previous_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">__add_to_context_cache</span><span class="p">(</span><span class="n">active_document_path</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
@@ -1049,7 +1074,8 @@
                     <span class="c1"># SGTK control.</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PROJECT_CONTEXT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_PROJECT_CONTEXT</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span>
-                            <span class="n">tk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">sgtk</span><span class="p">,</span> <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+                            <span class="n">tk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">sgtk</span><span class="p">,</span>
+                            <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
                         <span class="p">)</span>
 
                     <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PROJECT_CONTEXT</span>
@@ -1099,7 +1125,8 @@
                         <span class="p">)</span>
                         <span class="n">result</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="s2">&quot;callback&quot;</span><span class="p">]()</span>
                         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
-                            <span class="c1"># if the callback returns a widget, keep a handle on it</span>
+                            <span class="c1"># if the callback returns a widget</span>
+                            <span class="c1"># keep a handle on it</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">__qt_dialogs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_handle_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
@@ -1438,7 +1465,7 @@
 
             <span class="c1"># Create the proxy QWidget.</span>
             <span class="n">win32_proxy_win</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
-            <span class="n">window_title</span> <span class="o">=</span> <span class="s2">&quot;ShotGrid Toolkit Parent Widget&quot;</span>
+            <span class="n">window_title</span> <span class="o">=</span> <span class="s2">&quot;ShotGrid Parent Widget </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">)</span>
             <span class="n">win32_proxy_win</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">window_title</span><span class="p">)</span>
 
             <span class="c1"># We have to take different approaches depending on whether</span>
@@ -1446,8 +1473,10 @@
             <span class="c1"># needed to turn a Qt5 WId into an HWND is not exposed in PySide2,</span>
             <span class="c1"># so we can&#39;t do what we did below for Qt4.</span>
             <span class="k">if</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;4.&quot;</span><span class="p">):</span>
-                <span class="n">proxy_win_hwnd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">qwidget_winid_to_hwnd</span><span class="p">(</span>
-                    <span class="n">win32_proxy_win</span><span class="o">.</span><span class="n">winId</span><span class="p">(),</span>
+                <span class="n">proxy_win_hwnd</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">qwidget_winid_to_hwnd</span><span class="p">(</span>
+                        <span class="n">win32_proxy_win</span><span class="o">.</span><span class="n">winId</span><span class="p">(),</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># With PySide2, we&#39;re required to look up our proxy parent</span>
@@ -1461,10 +1490,10 @@
                 <span class="n">win32_proxy_win</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">proxy_win_hwnd_found</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">find_windows</span><span class="p">(</span>
-                        <span class="n">stop_if_found</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                        <span class="n">class_name</span><span class="o">=</span><span class="s2">&quot;Qt5QWindowIcon&quot;</span><span class="p">,</span>
-                        <span class="n">process_id</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span>
+                    <span class="n">proxy_win_hwnd_found</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">find_windows</span><span class="p">(</span>
+                            <span class="n">stop_if_found</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">window_text</span><span class="o">=</span><span class="n">window_title</span>
+                        <span class="p">)</span>
                     <span class="p">)</span>
                 <span class="k">finally</span><span class="p">:</span>
                     <span class="n">win32_proxy_win</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
@@ -1492,7 +1521,8 @@
             <span class="c1"># dialogs to notify the After Effects application window when they&#39;re</span>
             <span class="c1"># opened or closed, so we&#39;ll disable that behavior.</span>
             <span class="n">win_ex_style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">GetWindowLong</span><span class="p">(</span>
-                <span class="n">proxy_win_hwnd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">GWL_EXSTYLE</span><span class="p">,</span>
+                <span class="n">proxy_win_hwnd</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">GWL_EXSTYLE</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">__tk_aftereffects</span><span class="o">.</span><span class="n">win_32_api</span><span class="o">.</span><span class="n">SetWindowLong</span><span class="p">(</span>
@@ -1817,7 +1847,8 @@
         <span class="c1"># force the Jump to Shotgun and Jump to Filesystem commands onto the</span>
         <span class="c1"># front of the list to match other integrations.</span>
         <span class="n">context_menu_cmds</span> <span class="o">=</span> <span class="n">jump_commands</span> <span class="o">+</span> <span class="nb">sorted</span><span class="p">(</span>
-            <span class="n">context_menu_cmds</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;display_name&quot;</span><span class="p">],</span>
+            <span class="n">context_menu_cmds</span><span class="p">,</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;display_name&quot;</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># ---- populate the state structure to hand over to adobe</span>
@@ -1857,13 +1888,17 @@
 
             <span class="kn">from</span> <span class="nn">sgtk.platform.qt</span> <span class="kn">import</span> <span class="n">QtCore</span>
 
-            <span class="n">timer</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QTimer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">(),)</span>
+            <span class="n">timer</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QTimer</span><span class="p">(</span>
+                <span class="n">parent</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">(),</span>
+            <span class="p">)</span>
 
             <span class="n">timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_connection</span><span class="p">)</span>
             <span class="n">timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__check_for_popups</span><span class="p">)</span>
 
             <span class="c1"># The class variable is in seconds, so multiply to get milliseconds.</span>
-            <span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SHOTGUN_ADOBE_HEARTBEAT_INTERVAL</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,)</span>
+            <span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">SHOTGUN_ADOBE_HEARTBEAT_INTERVAL</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_CHECK_CONNECTION_TIMER</span> <span class="o">=</span> <span class="n">timer</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Connection timer created and started.&quot;</span><span class="p">)</span>
@@ -2054,7 +2089,8 @@
                     <span class="n">thumb_path</span> <span class="o">=</span> <span class="s2">&quot;../images/default_Entity_thumb_dark.png&quot;</span>
 
                 <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-                    <span class="n">thumb_path</span><span class="o">=</span><span class="n">thumb_path</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_entity_url</span><span class="p">(</span><span class="n">context_entity</span><span class="p">),</span>
+                    <span class="n">thumb_path</span><span class="o">=</span><span class="n">thumb_path</span><span class="p">,</span>
+                    <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_entity_url</span><span class="p">(</span><span class="n">context_entity</span><span class="p">),</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">send_context_thumbnail</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
@@ -2120,7 +2156,8 @@
 <span class="s2">              onclick=&#39;sg_panel.Panel.open_external_url(&quot;</span><span class="si">{url}</span><span class="s2">&quot;)&#39;</span>
 <span class="s2">            &gt;</span><span class="si">{text}</span><span class="s2">&lt;/a&gt;</span>
 <span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__activate_python</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2214,15 +2251,14 @@
   
  
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-2114792-1', 'auto');
-  ga('send', 'pageview');
-</script>
-
+  <script type="text/javascript">
+    window.wafCCPAForceShow = true;
+    (function(a,b,c,d){
+      a='https://tags.tiqcdn.com/utag/autodesk/micro-basic/prod/utag.js';
+      b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c;d.async=true;
+      a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+    })();
+  </script>
 
 
 </body>

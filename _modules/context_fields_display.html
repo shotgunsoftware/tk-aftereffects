@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>context_fields_display &mdash; tk-aftereffects v0.3.2 documentation</title>
+  <title>context_fields_display &mdash; tk-aftereffects v0.3.3 documentation</title>
   
 
   
@@ -118,16 +118,22 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.3.2.<br>
+    <b>tk-aftereffects</b> v0.3.3.<br>
     
-        This documentation is part of the Shotgun Pipeline Toolkit.
+        This documentation is part of the ShotGrid Pipeline Toolkit.
     
     For more information, please visit
-    <a class=custom_post_menu href='https://developer.shotgridsoftware.com'>Shotgun Support</a>.
+    <a class=custom_post_menu href='https://developer.shotgridsoftware.com'>The ShotGrid developer portal.</a>.
     The code associated with this documentation can be found
     <a class=custom_post_menu href='https://github.com/shotgunsoftware/tk-aftereffects'>here</a>.
 
     </div>
+    <style>
+        p.privacy_links { margin: 4px 0px;}
+    </style>
+    <p class="privacy_links"><a data-opt-in-preferences href="javascript:;">Privacy settings</a></p>
+    <p class="privacy_links"><a data-wat-linkname="manage-ccpa-settings-footer-link" href="javascript:;">Do not sell my personal information</a></p>
+    <p class="privacy_links"><a href="https://www.autodesk.com/company/legal-notices-trademarks/privacy-statement">Privacy/Cookies</a></p>
 
 
 
@@ -371,7 +377,9 @@
 <span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;</span><span class="si">{status}</span><span class="s2">&lt;/td&gt;</span>
 <span class="s2">              &lt;/tr&gt;</span>
 <span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">asset_link</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_asset_type&quot;</span><span class="p">],</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">asset_link</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_asset_type&quot;</span><span class="p">],</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># tags if there are any</span>
@@ -423,7 +431,8 @@
             <span class="n">shot_display</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">                </span><span class="si">{name}</span><span class="s2">&amp;nbsp;&lt;span class=&#39;sg_label&#39;&gt;(</span><span class="si">{seq_name}</span><span class="s2">)&lt;/span&gt;</span>
 <span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">shot_link</span><span class="p">,</span> <span class="n">seq_name</span><span class="o">=</span><span class="n">seq_link</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">shot_link</span><span class="p">,</span>
+                <span class="n">seq_name</span><span class="o">=</span><span class="n">seq_link</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># always include name, type, and status</span>
@@ -438,7 +447,8 @@
 <span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;</span><span class="si">{status}</span><span class="s2">&lt;/td&gt;</span>
 <span class="s2">              &lt;/tr&gt;</span>
 <span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">shot_display</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">shot_display</span><span class="p">,</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># tags if there are any</span>
@@ -529,7 +539,8 @@
                 <span class="n">task_display</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">                    </span><span class="si">{name}</span><span class="s2">&amp;nbsp;&lt;span class=&#39;sg_label&#39;&gt;(</span><span class="si">{step_name}</span><span class="s2">)&lt;/span&gt;</span>
 <span class="s2">                    &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">name</span><span class="o">=</span><span class="n">task_display</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">task_display</span><span class="p">,</span>
+                    <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
                 <span class="p">)</span>
 
         <span class="c1"># always include name</span>
@@ -560,7 +571,8 @@
 <span class="s2">                    &lt;td class=&#39;sg_value_td&#39;&gt;</span><span class="si">{name}</span><span class="s2">&lt;/td&gt;</span>
 <span class="s2">                  &lt;/tr&gt;</span>
 <span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">entity_type</span><span class="o">=</span><span class="n">linked_entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">linked_entity_link</span><span class="p">,</span>
+                <span class="n">entity_type</span><span class="o">=</span><span class="n">linked_entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">linked_entity_link</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># always show the status</span>
@@ -590,7 +602,8 @@
 <span class="s2">                    &lt;td class=&#39;sg_value_td&#39;&gt;</span><span class="si">{name}</span><span class="s2">&lt;/td&gt;</span>
 <span class="s2">                  &lt;/tr&gt;</span>
 <span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">label</span><span class="o">=</span><span class="n">assignee_label</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">assignee_display</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="n">assignee_label</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">assignee_display</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># due date</span>
@@ -625,7 +638,8 @@
 <span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;</span><span class="si">{name}</span><span class="s2">&lt;/td&gt;</span>
 <span class="s2">              &lt;/tr&gt;</span>
 <span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">entity_type</span><span class="o">=</span><span class="n">entity_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">entity_link</span><span class="p">,</span>
+            <span class="n">entity_type</span><span class="o">=</span><span class="n">entity_type</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">entity_link</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># show a status if one can be determined</span>
@@ -733,15 +747,14 @@
   
  
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-2114792-1', 'auto');
-  ga('send', 'pageview');
-</script>
-
+  <script type="text/javascript">
+    window.wafCCPAForceShow = true;
+    (function(a,b,c,d){
+      a='https://tags.tiqcdn.com/utag/autodesk/micro-basic/prod/utag.js';
+      b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c;d.async=true;
+      a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+    })();
+  </script>
 
 
 </body>

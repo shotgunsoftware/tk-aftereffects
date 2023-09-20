@@ -39,7 +39,7 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         contain simple html for formatting.
         """
 
-        loader_url = "https://developer.shotgridsoftware.com/a4c0a4f1/?title=Loader"
+        loader_url = "https://help.autodesk.com/view/SGDEV/ENU/?contextId=PC_APP_LOADER"
 
         return """
         Publishes the project file to ShotGrid. A <b>Publish</b> entry will be

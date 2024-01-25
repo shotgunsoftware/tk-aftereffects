@@ -22,7 +22,7 @@ configuration:
         type: list
         description:
           Controls the registered commands that show up in the favorites shelf
-          in the ShotGrid panel. This is a list where each item is a dictionary
+          in the Flow Production Tracking panel. This is a list where each item is a dictionary
           with keys 'app_instance' and 'name'. The 'app_instance' key connects
           this entry to a particular app instance defined in the environment
           configuration file. The 'name' is a command name to make a favorite.
@@ -57,8 +57,8 @@ configuration:
 requires_shotgun_fields:
 
 # More verbose description of this item
-display_name: "ShotGrid Engine for After Effects CC"
-description: "ShotGrid Integration for After Effects CC"
+display_name: "Flow Production Tracking Engine for After Effects CC"
+description: "Flow Production Tracking Integration for After Effects CC"
 
 # Required minimum versions for this item to run
 requires_shotgun_version:

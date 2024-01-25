@@ -1267,7 +1267,9 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             # Create the proxy QWidget.
             win32_proxy_win = QtGui.QWidget()
-            window_title = "ShotGrid Parent Widget {0}".format(uuid.uuid4().hex)
+            window_title = "Flow Production Tracking Parent Widget {0}".format(
+                uuid.uuid4().hex
+            )
             win32_proxy_win.setWindowTitle(window_title)
 
             # We have to take different approaches depending on whether
@@ -1615,7 +1617,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         jump_commands.append(
             dict(
                 uid=self.__jump_to_sg_command_id,
-                display_name="Jump to ShotGrid",
+                display_name="Jump to Flow Production Tracking",
                 icon_path=sg_icon,
                 description="Open the current context in a web browser.",
                 type="context_menu",

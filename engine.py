@@ -840,7 +840,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # used. We're just in a temporary state of not allowing context changes,
         # which is useful when an app is doing a lot of After Effects work that
         # might be triggering active document changes that we don't want to
-        # result in SGTK context changes.
+        # result in PTR context changes.
         with self.heartbeat_disabled():
             if self._CONTEXT_CHANGES_DISABLED:
                 self.logger.debug(
@@ -873,7 +873,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                     self.__context_thumb_uid = None
 
                     # We go to the project context if this is a file outside of
-                    # SGTK control.
+                    # PTR control.
                     if self._PROJECT_CONTEXT is None:
                         self._PROJECT_CONTEXT = sgtk.Context(
                             tk=self.context.sgtk,
@@ -1944,7 +1944,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             return entity
 
     def get_entity_url(self, entity):
-        """Helper method to return a SG url for the supplied entity."""
+        """Helper method to return a PTR url for the supplied entity."""
         return "%s/detail/%s/%d" % (self.sgtk.shotgun_url, entity["type"], entity["id"])
 
     def get_panel_link(self, url, text):

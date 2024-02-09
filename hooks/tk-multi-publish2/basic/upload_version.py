@@ -246,7 +246,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         )
         publish_name = path_components["filename"]
 
-        # populate the version data to send to SG
+        # populate the version data to send to PTR
         self.logger.info("Creating Version...")
         version_data = {
             "project": item.context.project,
@@ -290,7 +290,7 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         # Ensure the path is utf-8 encoded to avoid issues with the Shotgun API.
         upload_path = six.ensure_str(upload_path)
 
-        # upload the file to SG
+        # upload the file to PTR
         self.logger.info("Uploading content...")
         self.parent.shotgun.upload(
             "Version", version["id"], upload_path, "sg_uploaded_movie"

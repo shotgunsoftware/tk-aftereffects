@@ -40,8 +40,8 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
         loader_url = "https://help.autodesk.com/view/SGDEV/ENU/?contextId=PC_APP_LOADER"
 
         return """
-        Publishes Render Queue elements to ShotGrid. A <b>Publish</b> entry will be
-        created in ShotGrid which will include a reference to the file's current
+        Publishes Render Queue elements to Flow Production Tracking. A <b>Publish</b> entry will be
+        created in Flow Production Tracking which will include a reference to the file's current
         path on disk. Other users will be able to access the published file via
         the <b><a href='%s'>Loader</a></b> so long as they have access to
         the file's location on disk.

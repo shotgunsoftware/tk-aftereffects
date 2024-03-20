@@ -99,7 +99,7 @@ class ContextFieldsDisplay(HookBaseClass):
         ways::
 
              The name of a queried field such as: "Type", "Name", "Shot",
-             "Asset", or some other text that doesn't hold a value from SG or
+             "Asset", or some other text that doesn't hold a value from PTR or
              doesn't need emphasis:
 
                 `sg_label` - grey label color
@@ -107,7 +107,7 @@ class ContextFieldsDisplay(HookBaseClass):
                     other style for use in table data cells.
 
              The value of a queried field such as: "Character", "Shot01",
-             "Bunny", or some other text that holds a value from SG or needs
+             "Bunny", or some other text that holds a value from PTR or needs
              emphasis:
 
                 `sg_value` - brighter text
@@ -499,7 +499,7 @@ class ContextFieldsDisplay(HookBaseClass):
 
     def _get_entity_sg_link(self, text, entity):
         """
-        Given some text, return html formatted link to the given entity in SG.
+        Given some text, return html formatted link to the given entity in PTR.
         """
 
         url = "%s/detail/%s/%d" % (

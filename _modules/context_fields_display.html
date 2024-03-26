@@ -1,55 +1,34 @@
 
 
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>context_fields_display &mdash; tk-aftereffects v0.4.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>context_fields_display &mdash; tk-aftereffects v0.3.3 documentation</title>
-  
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-    <a href='http://developer.shotgridsoftware.com'>
+    <a href='https://help.autodesk.com/view/SGDEV/ENU/'>
     
         <img style='width: 191px;
                 height: 60px;
@@ -62,43 +41,26 @@
     
 
           
-            <a href="../index.html" class="icon icon-home"> tk-aftereffects
           
-
-          
+          <a href="../index.html" class="icon icon-home">
+            tk-aftereffects
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
 
-          
-
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
     
-            
-            
-              
-            
-            
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">Public Helper Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../hooks.html">Hooks</a></li>
 </ul>
 
-            
-          
 
     <a href='genindex.html'>Alphabetic Index</a>
 
@@ -118,12 +80,12 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.3.3.<br>
+    <b>tk-aftereffects</b> v0.4.0.<br>
     
-        This documentation is part of the ShotGrid Pipeline Toolkit.
+        This documentation is part of the Flow Production Tracking.
     
     For more information, please visit
-    <a class=custom_post_menu href='https://developer.shotgridsoftware.com'>The ShotGrid developer portal.</a>.
+    <a class=custom_post_menu href='https://help.autodesk.com/view/SGDEV/ENU/'>The Flow Production Tracking developer portal.</a>.
     The code associated with this documentation can be found
     <a class=custom_post_menu href='https://github.com/shotgunsoftware/tk-aftereffects'>here</a>.
 
@@ -141,60 +103,26 @@
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">tk-aftereffects</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="index.html">Module code</a> &raquo;</li>
-        
-      <li>context_fields_display</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">context_fields_display</li>
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for context_fields_display</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (c) 2019 Shotgun Software Inc.</span>
 <span class="c1">#</span>
@@ -212,12 +140,12 @@
 
 
 <div class="viewcode-block" id="ContextFieldsDisplay"><a class="viewcode-back" href="../hooks.html#context_fields_display.ContextFieldsDisplay">[docs]</a><span class="k">class</span> <span class="nc">ContextFieldsDisplay</span><span class="p">(</span><span class="n">HookBaseClass</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Used to control the way the current context fields are displayed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ContextFieldsDisplay.get_entity_fields"><a class="viewcode-back" href="../hooks.html#context_fields_display.ContextFieldsDisplay.get_entity_fields">[docs]</a>    <span class="k">def</span> <span class="nf">get_entity_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Given a particular entity type for the current context, return a list of</span>
 <span class="sd">        fields to query for display in the header.</span>
 
@@ -275,7 +203,7 @@
         <span class="k">return</span> <span class="n">fields</span></div>
 
 <div class="viewcode-block" id="ContextFieldsDisplay.get_context_html"><a class="viewcode-back" href="../hooks.html#context_fields_display.ContextFieldsDisplay.get_context_html">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the html used to display the supplied context entity.</span>
 
 <span class="sd">        This method is called once the engine has queried values for the fields</span>
@@ -297,7 +225,7 @@
 <span class="sd">        ways::</span>
 
 <span class="sd">             The name of a queried field such as: &quot;Type&quot;, &quot;Name&quot;, &quot;Shot&quot;,</span>
-<span class="sd">             &quot;Asset&quot;, or some other text that doesn&#39;t hold a value from SG or</span>
+<span class="sd">             &quot;Asset&quot;, or some other text that doesn&#39;t hold a value from PTR or</span>
 <span class="sd">             doesn&#39;t need emphasis:</span>
 
 <span class="sd">                `sg_label` - grey label color</span>
@@ -305,7 +233,7 @@
 <span class="sd">                    other style for use in table data cells.</span>
 
 <span class="sd">             The value of a queried field such as: &quot;Character&quot;, &quot;Shot01&quot;,</span>
-<span class="sd">             &quot;Bunny&quot;, or some other text that holds a value from SG or needs</span>
+<span class="sd">             &quot;Bunny&quot;, or some other text that holds a value from PTR or needs</span>
 <span class="sd">             emphasis:</span>
 
 <span class="sd">                `sg_value` - brighter text</span>
@@ -335,7 +263,7 @@
         <span class="k">return</span> <span class="n">html</span></div>
 
     <span class="k">def</span> <span class="nf">_get_site_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns html for displaying a site context.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns html for displaying a site context.&quot;&quot;&quot;</span>
 
         <span class="n">site_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">sgtk</span><span class="o">.</span><span class="n">shotgun_url</span>
         <span class="n">site_display</span> <span class="o">=</span> <span class="n">site_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;//&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -353,7 +281,7 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_asset_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns html for displaying an asset context.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns html for displaying an asset context.&quot;&quot;&quot;</span>
 
         <span class="n">asset_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">)</span>
 
@@ -411,7 +339,7 @@
         <span class="k">return</span> <span class="n">html</span>
 
     <span class="k">def</span> <span class="nf">_get_shot_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns html for displaying a shot context.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns html for displaying a shot context.&quot;&quot;&quot;</span>
 
         <span class="n">shot_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">)</span>
 
@@ -470,7 +398,7 @@
         <span class="c1"># cut in/out</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_in&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_out&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cut_display</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                    </span><span class="si">{cut_in}</span><span class="s2"> - </span><span class="si">{cut_out}</span><span class="s2"></span>
+<span class="s2">                    </span><span class="si">{cut_in}</span><span class="s2"> - </span><span class="si">{cut_out}</span>
 <span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">cut_in</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_in&quot;</span><span class="p">],</span> <span class="n">cut_out</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_out&quot;</span><span class="p">]</span>
             <span class="p">)</span>
@@ -484,7 +412,7 @@
 
             <span class="n">cut_display</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">                    &lt;small&gt;&lt;span class=&#39;sg_label&#39;&gt;</span><span class="si">{head_in}</span><span class="s2"> | &lt;/span&gt;&lt;/small&gt;</span>
-<span class="s2">                    </span><span class="si">{cut_display}</span><span class="s2"></span>
+<span class="s2">                    </span><span class="si">{cut_display}</span>
 <span class="s2">                    &lt;small&gt;&lt;span class=&#39;sg_label&#39;&gt; | </span><span class="si">{tail_out}</span><span class="s2">&lt;/span&gt;&lt;/small&gt;</span>
 <span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">head_in</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_head_in&quot;</span><span class="p">],</span>
@@ -519,7 +447,7 @@
         <span class="k">return</span> <span class="n">html</span>
 
     <span class="k">def</span> <span class="nf">_get_task_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns html for displaying a task context.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns html for displaying a task context.&quot;&quot;&quot;</span>
 
         <span class="n">task_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">)</span>
 
@@ -623,7 +551,7 @@
         <span class="k">return</span> <span class="n">html</span>
 
     <span class="k">def</span> <span class="nf">_get_entity_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns html for displaying a generic entity context.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns html for displaying a generic entity context.&quot;&quot;&quot;</span>
 
         <span class="c1"># default to name, fall back to code</span>
         <span class="n">entity_display</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">entity</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">))</span>
@@ -696,8 +624,8 @@
         <span class="k">return</span> <span class="n">html</span>
 
     <span class="k">def</span> <span class="nf">_get_entity_sg_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Given some text, return html formatted link to the given entity in SG.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given some text, return html formatted link to the given entity in PTR.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/detail/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
@@ -710,41 +638,27 @@
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2022, Autodesk
+    <p>&#169; Copyright 2024, Autodesk.</p>
+  </div>
 
-    </p>
-  </div> 
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
-
-  
-  
-    
-  
  
 
   <script type="text/javascript">

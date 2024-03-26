@@ -1,55 +1,34 @@
 
 
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>engine &mdash; tk-aftereffects v0.4.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>engine &mdash; tk-aftereffects v0.3.3 documentation</title>
-  
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-    <a href='http://developer.shotgridsoftware.com'>
+    <a href='https://help.autodesk.com/view/SGDEV/ENU/'>
     
         <img style='width: 191px;
                 height: 60px;
@@ -62,43 +41,26 @@
     
 
           
-            <a href="../index.html" class="icon icon-home"> tk-aftereffects
           
-
-          
+          <a href="../index.html" class="icon icon-home">
+            tk-aftereffects
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
 
-          
-
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
     
-            
-            
-              
-            
-            
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">Public Helper Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../hooks.html">Hooks</a></li>
 </ul>
 
-            
-          
 
     <a href='genindex.html'>Alphabetic Index</a>
 
@@ -118,12 +80,12 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.3.3.<br>
+    <b>tk-aftereffects</b> v0.4.0.<br>
     
-        This documentation is part of the ShotGrid Pipeline Toolkit.
+        This documentation is part of the Flow Production Tracking.
     
     For more information, please visit
-    <a class=custom_post_menu href='https://developer.shotgridsoftware.com'>The ShotGrid developer portal.</a>.
+    <a class=custom_post_menu href='https://help.autodesk.com/view/SGDEV/ENU/'>The Flow Production Tracking developer portal.</a>.
     The code associated with this documentation can be found
     <a class=custom_post_menu href='https://github.com/shotgunsoftware/tk-aftereffects'>here</a>.
 
@@ -141,60 +103,26 @@
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">tk-aftereffects</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="index.html">Module code</a> &raquo;</li>
-        
-      <li>engine</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">engine</li>
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for engine</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (c) 2019 Shotgun Software Inc.</span>
 <span class="c1">#</span>
@@ -224,7 +152,7 @@
 
 
 <div class="viewcode-block" id="AfterEffectsEngine"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine">[docs]</a><span class="k">class</span> <span class="nc">AfterEffectsEngine</span><span class="p">(</span><span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">Engine</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An After Effects CC engine for Shotgun Toolkit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -286,7 +214,7 @@
     <span class="c1"># context changing</span>
 
     <span class="k">def</span> <span class="nf">post_context_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old_context</span><span class="p">,</span> <span class="n">new_context</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs after a context change has occurred. This will trigger the</span>
 <span class="sd">        new state to be sent to the Adobe CC host application.</span>
 
@@ -331,7 +259,7 @@
     <span class="c1"># engine initialization</span>
 
     <span class="k">def</span> <span class="nf">pre_app_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets up the engine into an operational state. This method called before</span>
 <span class="sd">        any apps are loaded.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -400,7 +328,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__qt_dialogs</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="nf">post_app_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs after all apps have been initialized.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">event_processor</span><span class="p">:</span>
@@ -441,7 +369,7 @@
             <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SGTK_FILE_TO_OPEN&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">destroy_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called when the engine should tear down itself and all its apps.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Destroying engine...&quot;</span><span class="p">)</span>
@@ -483,7 +411,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">state_requested</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__send_state</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">post_qt_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called externally once a ``QApplication`` has been created and completes</span>
 <span class="sd">        the engine setup process.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -502,7 +430,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__setup_connection_timer</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">register_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Registers a new command with the engine. For Adobe RPC purposes,</span>
 <span class="sd">        a &quot;uid&quot; property is added to the command&#39;s properties.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -516,7 +444,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">host_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns information about the application hosting this engine.</span>
 
 <span class="sd">        :returns: A {&quot;name&quot;: application name, &quot;version&quot;: application version}</span>
@@ -546,7 +474,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">project_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the active project filepath.</span>
 
 <span class="sd">        :returns: The current project path or an empty string</span>
@@ -561,7 +489,7 @@
         <span class="k">return</span> <span class="n">doc_path</span>
 
 <div class="viewcode-block" id="AfterEffectsEngine.save"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save the project in place or to the given file-path</span>
 
 <span class="sd">        :param str path: The target file path. optional.</span>
@@ -580,7 +508,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Saved file to to </span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">new_path</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="AfterEffectsEngine.save_as"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.save_as">[docs]</a>    <span class="k">def</span> <span class="nf">save_as</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Launch a Qt file browser to select a file, then save the supplied</span>
 <span class="sd">        project to that path.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -611,7 +539,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">AdobeItemTypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This returns a constant class that maps constants against</span>
 <span class="sd">        adobe aftereffects internal class names.</span>
 
@@ -622,7 +550,7 @@
         <span class="k">return</span> <span class="n">afx_module</span><span class="o">.</span><span class="n">AdobeItemTypes</span>
 
 <div class="viewcode-block" id="AfterEffectsEngine.is_item_of_type"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.is_item_of_type">[docs]</a>    <span class="k">def</span> <span class="nf">is_item_of_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">adobe_type</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Indicates whether the given item is of the given AdobeItemType.</span>
 
 <span class="sd">        :param item: item to be checked.</span>
@@ -635,7 +563,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">selected_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper getting the currently selected item in the after effects project</span>
 
 <span class="sd">        :returns: The active item</span>
@@ -644,7 +572,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">activeItem</span>
 
 <div class="viewcode-block" id="AfterEffectsEngine.is_adobe_sequence"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.is_adobe_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">is_adobe_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper to query if an adobe-style render path is</span>
 <span class="sd">        describing a sequence.</span>
 
@@ -665,7 +593,7 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="AfterEffectsEngine.check_sequence"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.check_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">check_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">queue_item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper to query if all render files of a given queue item</span>
 <span class="sd">        are actually existing.</span>
 
@@ -681,7 +609,7 @@
         <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="AfterEffectsEngine.iter_collection"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.iter_collection">[docs]</a>    <span class="k">def</span> <span class="nf">iter_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collection_item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper to iter safely through an adobe-collection item</span>
 <span class="sd">        as its index starts at 1, not 0.</span>
 
@@ -700,7 +628,7 @@
             <span class="k">yield</span> <span class="n">collection_item</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="AfterEffectsEngine.get_render_files"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.get_render_files">[docs]</a>    <span class="k">def</span> <span class="nf">get_render_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">queue_item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Yields all render-files and its frame number of a given</span>
 <span class="sd">        after effects render queue item.</span>
 
@@ -733,7 +661,7 @@
             <span class="k">yield</span> <span class="n">test_path</span> <span class="o">%</span> <span class="n">frame_no</span><span class="p">,</span> <span class="n">frame_no</span></div>
 
 <div class="viewcode-block" id="AfterEffectsEngine.import_filepath"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.import_filepath">[docs]</a>    <span class="k">def</span> <span class="nf">import_filepath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper method to import footage into the current comp.</span>
 <span class="sd">        This method contains logic to determine as what the given file-path</span>
 <span class="sd">        may be imported (PROJECT, FOOTAGE, COMP etc.)</span>
@@ -760,7 +688,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__import_file</span><span class="p">(</span><span class="n">import_options</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="AfterEffectsEngine.add_items_to_comp"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.add_items_to_comp">[docs]</a>    <span class="k">def</span> <span class="nf">add_items_to_comp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_collection</span><span class="p">,</span> <span class="n">comp_item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper method that adds the &quot;best-matching&quot; items from a given</span>
 <span class="sd">        adobe.CollectionItem into a given CompItem. Where &quot;best-matching&quot;</span>
 <span class="sd">        means, that the first CompItem found is added alternatively the first</span>
@@ -808,7 +736,7 @@
         <span class="k">return</span> <span class="n">added</span></div>
 
 <div class="viewcode-block" id="AfterEffectsEngine.render_queue_item"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.render_queue_item">[docs]</a>    <span class="k">def</span> <span class="nf">render_queue_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue_item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        renders a given queue_item, by disabling all other queued items</span>
 <span class="sd">        and only enabling the given item. After rendering the state of the</span>
 <span class="sd">        render-queue is reverted.</span>
@@ -859,7 +787,7 @@
         <span class="k">return</span> <span class="n">success</span></div>
 
 <div class="viewcode-block" id="AfterEffectsEngine.find_sequence_range"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine.find_sequence_range">[docs]</a>    <span class="k">def</span> <span class="nf">find_sequence_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parses the file name in an attempt to determine the first and last</span>
 <span class="sd">        frame number of a sequence. This assumes some sort of common convention</span>
 <span class="sd">        for the file names, where the frame number is an integer at the end of</span>
@@ -915,7 +843,7 @@
     <span class="c1"># RPC</span>
 
     <span class="k">def</span> <span class="nf">_check_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Make sure we are still connected to the adobe cc product.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make sure we are still connected to the adobe cc product.&quot;&quot;&quot;</span>
         <span class="c1"># If we&#39;re in a disabled state, then we don&#39;t do anything here. This</span>
         <span class="c1"># is controlled by the heartbeat_disabled context manager provided</span>
         <span class="c1"># by this engine.</span>
@@ -978,7 +906,7 @@
                 <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_emit_log_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called by the engine whenever a new log message is available.</span>
 
 <span class="sd">        All log messages from the toolkit logging namespace will be passed to</span>
@@ -1011,7 +939,7 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_handle_active_document_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">active_document_path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the active document from the host application, determines which</span>
 <span class="sd">        context it belongs to, and changes to that context.</span>
 
@@ -1038,7 +966,7 @@
         <span class="c1"># used. We&#39;re just in a temporary state of not allowing context changes,</span>
         <span class="c1"># which is useful when an app is doing a lot of After Effects work that</span>
         <span class="c1"># might be triggering active document changes that we don&#39;t want to</span>
-        <span class="c1"># result in SGTK context changes.</span>
+        <span class="c1"># result in PTR context changes.</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_disabled</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTEXT_CHANGES_DISABLED</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -1071,7 +999,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">__context_thumb_uid</span> <span class="o">=</span> <span class="kc">None</span>
 
                     <span class="c1"># We go to the project context if this is a file outside of</span>
-                    <span class="c1"># SGTK control.</span>
+                    <span class="c1"># PTR control.</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PROJECT_CONTEXT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_PROJECT_CONTEXT</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span>
                             <span class="n">tk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">sgtk</span><span class="p">,</span>
@@ -1099,7 +1027,7 @@
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_handle_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Handles an RPC engine command execution request.</span>
 
 <span class="sd">        :param int uid: The unique id of the engine command to run.</span>
@@ -1130,7 +1058,7 @@
                             <span class="bp">self</span><span class="o">.</span><span class="n">__qt_dialogs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_handle_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Handles an RPC logging request.</span>
 
 <span class="sd">        :param str level: One of &quot;debug&quot;, &quot;info&quot;, &quot;warning&quot;, or &quot;error&quot;.</span>
@@ -1154,7 +1082,7 @@
             <span class="n">sgtk</span><span class="o">.</span><span class="n">LogManager</span><span class="p">()</span><span class="o">.</span><span class="n">base_file_handler</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_run_tests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs the test suite for the tk-aftereffects bundle.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># If we don&#39;t know what the tests root directory path is</span>
@@ -1217,14 +1145,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">adobe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The handle to the Adobe RPC API.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adobe</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">app_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The runtime app id. This will be a string -- something like</span>
 <span class="sd">        PHSP for After Effects, or AEFT for After Effect.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1232,7 +1160,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">context_change_allowed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Specifies that context changes are allowed by the engine.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span>
@@ -1242,7 +1170,7 @@
 
     <span class="nd">@contextmanager</span>
     <span class="k">def</span> <span class="nf">context_changes_disabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A context manager that disables context changes on enter, and enables</span>
 <span class="sd">        them on exit. This is useful in apps that might be performing operations</span>
 <span class="sd">        that require changes in the active document that don&#39;t want to trigger</span>
@@ -1254,7 +1182,7 @@
 
     <span class="nd">@contextmanager</span>
     <span class="k">def</span> <span class="nf">heartbeat_disabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A context manager that disables the heartbeat and message processing</span>
 <span class="sd">        timer on enter, and restarts it on exit.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1276,7 +1204,7 @@
     <span class="c1"># UI</span>
 
     <span class="k">def</span> <span class="nf">_define_qt_base</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This will be called at initialisation time and will allow</span>
 <span class="sd">        a user to control various aspects of how QT is being used</span>
 <span class="sd">        by Toolkit. The method should return a dictionary with a number</span>
@@ -1306,7 +1234,7 @@
         <span class="k">return</span> <span class="n">base</span>
 
     <span class="k">def</span> <span class="nf">_override_qmessagebox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_message_box</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Redefine the method calls for QMessageBox static methods.</span>
 
 <span class="sd">        These are often called from within apps and because QT is running in a</span>
@@ -1347,7 +1275,7 @@
         <span class="n">q_message_box</span><span class="o">.</span><span class="n">warning</span> <span class="o">=</span> <span class="n">_warning_wrapper</span>
 
     <span class="k">def</span> <span class="nf">__check_for_popups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method will check if a popup dialog from aftereffects was openend</span>
 <span class="sd">        and if so, it will raise the window to the front.</span>
 
@@ -1429,7 +1357,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_POPUP_CACHE</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_win32_get_aftereffects_main_hwnd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Windows specific method to find the main After Effects window</span>
 <span class="sd">        handle (HWND)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1448,7 +1376,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WIN32_AFTEREFFECTS_MAIN_HWND</span>
 
     <span class="k">def</span> <span class="nf">_win32_get_proxy_window</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Windows-specific method to get the proxy window that will &#39;own&#39; all</span>
 <span class="sd">        Toolkit dialogs.  This will be parented to the main After Effects</span>
 <span class="sd">        application.</span>
@@ -1465,7 +1393,9 @@
 
             <span class="c1"># Create the proxy QWidget.</span>
             <span class="n">win32_proxy_win</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
-            <span class="n">window_title</span> <span class="o">=</span> <span class="s2">&quot;ShotGrid Parent Widget </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">)</span>
+            <span class="n">window_title</span> <span class="o">=</span> <span class="s2">&quot;Flow Production Tracking Parent Widget </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
+            <span class="p">)</span>
             <span class="n">win32_proxy_win</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">window_title</span><span class="p">)</span>
 
             <span class="c1"># We have to take different approaches depending on whether</span>
@@ -1536,12 +1466,12 @@
         <span class="k">return</span> <span class="n">win32_proxy_win</span>
 
     <span class="k">def</span> <span class="nf">_get_dialog_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the QWidget parent for all dialogs created through</span>
 <span class="sd">        show_dialog &amp; show_modal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the QWidget parent for all dialogs created through</span>
 <span class="sd">        show_dialog &amp; show_modal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1560,7 +1490,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DIALOG_PARENT</span>
 
     <span class="k">def</span> <span class="nf">show_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="n">widget_class</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Shows a non-modal dialog window in a way suitable for this engine.</span>
 <span class="sd">        The engine will attempt to parent the dialog nicely to the host</span>
 <span class="sd">        application.</span>
@@ -1608,7 +1538,7 @@
         <span class="k">return</span> <span class="n">widget</span>
 
     <span class="k">def</span> <span class="nf">show_modal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="n">widget_class</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Shows a modal dialog window in a way suitable for this engine. The</span>
 <span class="sd">        engine will attempt to integrate it as seamlessly as possible into the</span>
 <span class="sd">        host application. This call is blocking</span>
@@ -1656,7 +1586,7 @@
     <span class="c1"># internal methods</span>
 
     <span class="k">def</span> <span class="nf">__get_command_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a guaranteed unique command id.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_LOCK</span><span class="p">:</span>
@@ -1664,7 +1594,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_COMMAND_UID_COUNTER</span>
 
     <span class="k">def</span> <span class="nf">__get_icon_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">properties</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes the command properties dictionary to find the most appropriate</span>
 <span class="sd">        icon path.</span>
 
@@ -1709,7 +1639,7 @@
         <span class="k">return</span> <span class="n">icon_path</span>
 
     <span class="k">def</span> <span class="nf">__send_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sends information back to javascript representing the current context.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># alert js that the state is about to change. this allows the panel to</span>
@@ -1813,7 +1743,7 @@
         <span class="n">jump_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="nb">dict</span><span class="p">(</span>
                 <span class="n">uid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__jump_to_sg_command_id</span><span class="p">,</span>
-                <span class="n">display_name</span><span class="o">=</span><span class="s2">&quot;Jump to ShotGrid&quot;</span><span class="p">,</span>
+                <span class="n">display_name</span><span class="o">=</span><span class="s2">&quot;Jump to Flow Production Tracking&quot;</span><span class="p">,</span>
                 <span class="n">icon_path</span><span class="o">=</span><span class="n">sg_icon</span><span class="p">,</span>
                 <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Open the current context in a web browser.&quot;</span><span class="p">,</span>
                 <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;context_menu&quot;</span><span class="p">,</span>
@@ -1863,7 +1793,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">send_commands</span><span class="p">(</span><span class="n">all_commands</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__setup_connection_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets up the connection timer that handles monitoring of the live</span>
 <span class="sd">        connection, as well as the triggering of message processing.</span>
 
@@ -1904,7 +1834,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Connection timer created and started.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_jump_to_sg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Jump to shotgun, launch web browser</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">sgtk.platform.qt</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
@@ -1913,7 +1843,7 @@
         <span class="n">QtGui</span><span class="o">.</span><span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QUrl</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_jump_to_fs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Jump from context to FS</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># launch one window for each location on disk</span>
@@ -1939,7 +1869,7 @@
     <span class="c1"># context data methods</span>
 
     <span class="k">def</span> <span class="nf">__add_to_context_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds the given active document path to the context cache, associating</span>
 <span class="sd">        it with the given context object. This will trigger the storing of a</span>
 <span class="sd">        serialized cache as a user setting for use during panel extension</span>
@@ -1968,7 +1898,7 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__get_from_context_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the document path&#39;s associated context object, if one has been cached.</span>
 
 <span class="sd">        :returns: Context object, or None</span>
@@ -1976,7 +1906,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CONTEXT_CACHE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__request_context_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Request fields to show in the context header for the given entity.</span>
 
 <span class="sd">        Always includes the image url to display a thumbnail.</span>
@@ -2020,7 +1950,7 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__on_worker_failure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Asynchronous callback - the worker thread errored.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2032,7 +1962,7 @@
 
             <span class="c1"># send an error message back to the context header.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">send_context_display</span><span class="p">(</span>
-                <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                There was an error retrieving fields for this context. Please</span>
 <span class="sd">                see the logs for the specific error message. If this is a</span>
 <span class="sd">                recurring error and you need further assistance, please</span>
@@ -2054,7 +1984,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to query context thumbnail: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">msg</span><span class="p">,))</span>
 
     <span class="k">def</span> <span class="nf">__on_worker_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">request_type</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Signaled whenever the worker completes something.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2120,7 +2050,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">send_context_thumbnail</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__get_project_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Helper method to return the project id for the current context.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method to return the project id for the current context.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
@@ -2128,7 +2058,7 @@
             <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__get_context_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Helper method to return an entity to display for current context.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method to return an entity to display for current context.&quot;&quot;&quot;</span>
 
         <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span>
 
@@ -2140,11 +2070,11 @@
             <span class="k">return</span> <span class="n">entity</span>
 
     <span class="k">def</span> <span class="nf">get_entity_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Helper method to return a SG url for the supplied entity.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method to return a PTR url for the supplied entity.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/detail/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgtk</span><span class="o">.</span><span class="n">shotgun_url</span><span class="p">,</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">get_panel_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper method to return an html link to display in the panel and</span>
 <span class="sd">        will launch the supplied url in the default browser.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2161,7 +2091,7 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__activate_python</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Do the Os-specific thing to show this process above all others.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2184,7 +2114,7 @@
             <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">__import_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">import_options</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Does the import and gets all new items, by caching the list of existing</span>
 <span class="sd">        items before importing and comparing them to the list of existing items</span>
 <span class="sd">        after importing.</span>
@@ -2214,41 +2144,27 @@
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2022, Autodesk
+    <p>&#169; Copyright 2024, Autodesk.</p>
+  </div>
 
-    </p>
-  </div> 
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
-
-  
-  
-    
-  
  
 
   <script type="text/javascript">

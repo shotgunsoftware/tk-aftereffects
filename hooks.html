@@ -1,56 +1,36 @@
 
 
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Hooks &mdash; tk-aftereffects v0.3.3 documentation</title>
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hooks &mdash; tk-aftereffects v0.4.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Public Helper Methods" href="api.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-    <a href='http://developer.shotgridsoftware.com'>
+    <a href='https://help.autodesk.com/view/SGDEV/ENU/'>
     
         <img style='width: 191px;
                 height: 60px;
@@ -63,47 +43,43 @@
     
 
           
-            <a href="index.html" class="icon icon-home"> tk-aftereffects
           
-
-          
+          <a href="index.html" class="icon icon-home">
+            tk-aftereffects
           </a>
-
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
 
-          
-
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
     
-            
-            
-              
-            
-            
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Public Helper Methods</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Hooks</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#import-footage">Import Footage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#context-fields-display">Context Fields Display</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-footage">Import Footage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import_footage.ImportFootage"><code class="docutils literal notranslate"><span class="pre">ImportFootage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#import_footage.ImportFootage.set_import_options"><code class="docutils literal notranslate"><span class="pre">ImportFootage.set_import_options()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#context-fields-display">Context Fields Display</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#context_fields_display.ContextFieldsDisplay"><code class="docutils literal notranslate"><span class="pre">ContextFieldsDisplay</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#context_fields_display.ContextFieldsDisplay.get_entity_fields"><code class="docutils literal notranslate"><span class="pre">ContextFieldsDisplay.get_entity_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#context_fields_display.ContextFieldsDisplay.get_context_html"><code class="docutils literal notranslate"><span class="pre">ContextFieldsDisplay.get_context_html()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 
-            
-          
 
     <a href='genindex.html'>Alphabetic Index</a>
 
@@ -123,12 +99,12 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.3.3.<br>
+    <b>tk-aftereffects</b> v0.4.0.<br>
     
-        This documentation is part of the ShotGrid Pipeline Toolkit.
+        This documentation is part of the Flow Production Tracking.
     
     For more information, please visit
-    <a class=custom_post_menu href='https://developer.shotgridsoftware.com'>The ShotGrid developer portal.</a>.
+    <a class=custom_post_menu href='https://help.autodesk.com/view/SGDEV/ENU/'>The Flow Production Tracking developer portal.</a>.
     The code associated with this documentation can be found
     <a class=custom_post_menu href='https://github.com/shotgunsoftware/tk-aftereffects'>here</a>.
 
@@ -146,118 +122,78 @@
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">tk-aftereffects</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
-      <li>Hooks</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Hooks</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="hooks">
-<h1>Hooks<a class="headerlink" href="#hooks" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="import-footage">
-<h2>Import Footage<a class="headerlink" href="#import-footage" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="import_footage.ImportFootage">
-<em class="property">class </em><code class="descclassname">import_footage.</code><code class="descname">ImportFootage</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/import_footage.html#ImportFootage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#import_footage.ImportFootage" title="Permalink to this definition">¶</a></dt>
+             
+  <section id="hooks">
+<h1>Hooks<a class="headerlink" href="#hooks" title="Permalink to this heading"></a></h1>
+<section id="import-footage">
+<h2>Import Footage<a class="headerlink" href="#import-footage" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="import_footage.ImportFootage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">import_footage.</span></span><span class="sig-name descname"><span class="pre">ImportFootage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/import_footage.html#ImportFootage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#import_footage.ImportFootage" title="Permalink to this definition"></a></dt>
 <dd><p>Used to control the way the current context fields are displayed.</p>
-<dl class="method">
-<dt id="import_footage.ImportFootage.set_import_options">
-<code class="descname">set_import_options</code><span class="sig-paren">(</span><em>import_options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/import_footage.html#ImportFootage.set_import_options"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#import_footage.ImportFootage.set_import_options" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="import_footage.ImportFootage.set_import_options">
+<span class="sig-name descname"><span class="pre">set_import_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">import_options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/import_footage.html#ImportFootage.set_import_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#import_footage.ImportFootage.set_import_options" title="Permalink to this definition"></a></dt>
 <dd><p>This method is called in case the engines’ import_filepath
 method is called. It is used to set the correct parameters to the
 given <a class="reference external" href="http://docs.aenhancers.com/other/importoptions/">adobe.ImportOptionsObject</a>.</p>
 <p>This method should modify the incoming object with the correct
 settings for the given filepath.</p>
 <p>The filepath can be accesssed by doing <code class="docutils literal notranslate"><span class="pre">import_options.file.fsName</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>import_options</strong> (<a class="reference external" href="http://docs.aenhancers.com/other/importoptions/">adobe.ImportOptionsObject</a>.) – The import options as set by After Effects</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>import_options</strong> (<a class="reference external" href="http://docs.aenhancers.com/other/importoptions/">adobe.ImportOptionsObject</a>.) – The import options as set by After Effects</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="context-fields-display">
-<h2>Context Fields Display<a class="headerlink" href="#context-fields-display" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="context_fields_display.ContextFieldsDisplay">
-<em class="property">class </em><code class="descclassname">context_fields_display.</code><code class="descname">ContextFieldsDisplay</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay" title="Permalink to this definition">¶</a></dt>
+</section>
+<section id="context-fields-display">
+<h2>Context Fields Display<a class="headerlink" href="#context-fields-display" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="context_fields_display.ContextFieldsDisplay">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">context_fields_display.</span></span><span class="sig-name descname"><span class="pre">ContextFieldsDisplay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay" title="Permalink to this definition"></a></dt>
 <dd><p>Used to control the way the current context fields are displayed.</p>
-<dl class="method">
-<dt id="context_fields_display.ContextFieldsDisplay.get_entity_fields">
-<code class="descname">get_entity_fields</code><span class="sig-paren">(</span><em>entity_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay.get_entity_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay.get_entity_fields" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="context_fields_display.ContextFieldsDisplay.get_entity_fields">
+<span class="sig-name descname"><span class="pre">get_entity_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay.get_entity_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay.get_entity_fields" title="Permalink to this definition"></a></dt>
 <dd><p>Given a particular entity type for the current context, return a list of
 fields to query for display in the header.</p>
 <p>Note: the thumbnail (“image” field) query/display is handled by the
 engine and is not required to be returned by this method.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>entity_type</strong> – Shotgun entity type to return fields for</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">list</span></code> of Shotgun fields</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entity_type</strong> – Shotgun entity type to return fields for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">list</span></code> of Shotgun fields</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="context_fields_display.ContextFieldsDisplay.get_context_html">
-<code class="descname">get_context_html</code><span class="sig-paren">(</span><em>entity</em>, <em>sg_globals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay.get_context_html"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay.get_context_html" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="context_fields_display.ContextFieldsDisplay.get_context_html">
+<span class="sig-name descname"><span class="pre">get_context_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sg_globals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/context_fields_display.html#ContextFieldsDisplay.get_context_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#context_fields_display.ContextFieldsDisplay.get_context_html" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the html used to display the supplied context entity.</p>
 <p>This method is called once the engine has queried values for the fields
 returned from the <code class="docutils literal notranslate"><span class="pre">get_entity_fields</span></code> method. The supplied entity will
@@ -266,27 +202,23 @@ be populated with the queried values for those fields.</p>
 that will display next to the entity’s thumbnail. The thumbnail query,
 download, and display is handled by the engine, so the html returned
 here will be inserted to the right of that thumbnail.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>entity</strong> – Shotgun entity to display context fields for.</li>
-<li><strong>sg_globals</strong> – A handle on the shotgun globals api provided via
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity</strong> – Shotgun entity to display context fields for.</p></li>
+<li><p><strong>sg_globals</strong> – A handle on the shotgun globals api provided via
 the shotgunutils framework. This is useful for querying display
-names for fields, statuses, etc.</li>
+names for fields, statuses, etc.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An html <code class="docutils literal notranslate"><span class="pre">str</span></code> that will be displayed in the panel.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An html <code class="docutils literal notranslate"><span class="pre">str</span></code> that will be displayed in the panel.</p>
+</dd>
+</dl>
 <p>Here are some css classes that can be used to display text in various
 ways:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>The name of a queried field such as: &quot;Type&quot;, &quot;Name&quot;, &quot;Shot&quot;,
-&quot;Asset&quot;, or some other text that doesn&#39;t hold a value from SG or
+&quot;Asset&quot;, or some other text that doesn&#39;t hold a value from PTR or
 doesn&#39;t need emphasis:
 
    `sg_label` - grey label color
@@ -294,7 +226,7 @@ doesn&#39;t need emphasis:
        other style for use in table data cells.
 
 The value of a queried field such as: &quot;Character&quot;, &quot;Shot01&quot;,
-&quot;Bunny&quot;, or some other text that holds a value from SG or needs
+&quot;Bunny&quot;, or some other text that holds a value from PTR or needs
 emphasis:
 
    `sg_value` - brighter text
@@ -307,53 +239,34 @@ emphasis:
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="api.html" class="btn btn-neutral float-left" title="Public Helper Methods" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api.html" class="btn btn-neutral float-left" title="Public Helper Methods" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2022, Autodesk
+    <p>&#169; Copyright 2024, Autodesk.</p>
+  </div>
 
-    </p>
-  </div> 
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
-
-  
-  
-    
-  
  
 
   <script type="text/javascript">

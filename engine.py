@@ -1283,10 +1283,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             win32_proxy_win.show()
 
             try:
-                proxy_win_hwnd_found = (
-                    self.__tk_aftereffects.win_32_api.find_windows(
-                        stop_if_found=True, window_text=window_title
-                    )
+                proxy_win_hwnd_found = self.__tk_aftereffects.win_32_api.find_windows(
+                    stop_if_found=True, window_text=window_title
                 )
             finally:
                 win32_proxy_win.hide()
@@ -1554,7 +1552,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         # iterate over all the registered commands and gather the necessary info
         # to display them in adobe
-        for (command_name, command_info) in self.commands.items():
+        for command_name, command_info in self.commands.items():
 
             # commands come with a dict of properties that may or may not
             # contain certain data.
@@ -1567,7 +1565,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
             # check this command's app against the engine's apps.
             if app_instance:
-                for (app_instance_name, app_instance_obj) in self.apps.items():
+                for app_instance_name, app_instance_obj in self.apps.items():
                     if app_instance_obj == app_instance:
                         app_name = app_instance_name
 

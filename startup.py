@@ -131,7 +131,7 @@ class AfterEffectsLauncher(SoftwareLauncher):
                 executable_version = tokens.get("version")
 
                 sw_version = SoftwareVersion(
-                    executable_version, "Adobe After Effects", executable_path, icon_path
+                    executable_version, "After Effects", executable_path, icon_path
                 )
                 supported, reason = self._is_supported(sw_version)
                 if supported:

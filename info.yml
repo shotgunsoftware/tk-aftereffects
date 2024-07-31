@@ -57,8 +57,8 @@ configuration:
 requires_shotgun_fields:
 
 # More verbose description of this item
-display_name: "Flow Production Tracking Engine for After Effects CC"
-description: "Flow Production Tracking Integration for After Effects CC"
+display_name: "Flow Production Tracking Engine for After Effects"
+description: "Flow Production Tracking Integration for After Effects"
 
 # Required minimum versions for this item to run
 requires_shotgun_version:

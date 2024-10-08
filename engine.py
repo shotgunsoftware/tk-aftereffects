@@ -346,7 +346,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             "name": "AfterFX",
             "version": cc_version,
         }
-    
+
     def _initialize_dark_look_and_feel(self):
         """
         Override the base engine method.
@@ -398,7 +398,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         """
 
         with self.context_changes_disabled():
-
             if path is None:
                 self.adobe.app.project.save()
             else:
@@ -823,7 +822,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # If the _adobe attribute is set, then we can forward logging calls
         # back to the js process via rpc.
         if hasattr(self, "_adobe"):
-
             level = self.PY_TO_JS_LOG_LEVEL_MAPPING[record.levelname]
 
             # log the message back to js via rpc
@@ -832,7 +830,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # prior to the _adobe attribute being set, we rely on the js process
         # handling stdout and logging it.
         else:
-
             # we don't use the handler's format method here because the adobe
             # side expects a certain format.
             msg_str = "[%s]: %s" % (record.levelname, record.message)
@@ -1186,7 +1183,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             TODO: Implement an equivalent method on mac
         """
         if sgtk.util.is_windows():
-
             # to get all dialogs from After Effects, we have to query the
             # After Effects process id first. As this code runs inside a
             # separate python process, we use a subprocess for this.
@@ -1253,7 +1249,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             # in case there are open dialogs, but we already raised them,
             # we do nothing.
             if all_hwnds:
-
                 return
             # In case there is no open dialog, we will reset the cache to None
             self._POPUP_CACHE = None
@@ -1581,7 +1576,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # iterate over all the registered commands and gather the necessary info
         # to display them in adobe
         for command_name, command_info in self.commands.items():
-
             # commands come with a dict of properties that may or may not
             # contain certain data.
             properties = command_info.get("properties", {})
@@ -1640,7 +1634,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         )
 
         if self.context.filesystem_locations:
-
             # the icon to use for the command. bundled with the engine
             fs_icon = os.path.join(
                 self.disk_location, "resources", "shotgun_folder.png"
@@ -1739,7 +1732,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         paths = self.context.filesystem_locations
         self.logger.debug("FS paths: %s" % (str(paths),))
         for disk_location in paths:
-
             # run the app
             if sgtk.util.is_macos():
                 cmd = 'open "%s"' % disk_location
@@ -1845,7 +1837,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         # log a message if the worker failed to retrieve the necessary info.
         if uid == self.__context_find_uid:
-
             # clear the find id since we are now processing it
             self.__context_find_uid = None
 
@@ -1864,7 +1855,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             self.logger.error("Failed to query context fields: %s" % (msg,))
 
         elif uid == self.__context_thumb_uid:
-
             # clear the thumb id since we are now processing it
             self.__context_thumb_uid = None
 
@@ -1881,7 +1871,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         # the find query for the context entity with the specified fields
         if uid == self.__context_find_uid:
-
             # clear the find id since we are now processing it
             self.__context_find_uid = None
 
@@ -1927,7 +1916,6 @@ class AfterEffectsEngine(sgtk.platform.Engine):
 
         # thumbnail download. forward the path and a url back to js
         elif uid == self.__context_thumb_uid:
-
             # clear the thumb id since we already processed it
             self.__context_thumb_uid = None
 

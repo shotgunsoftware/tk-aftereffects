@@ -265,10 +265,9 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # that we know about. This will stop memory leaks, and is also prudent
         # since we're severing the socket.io connection that will allow them
         # to function properly.
-        for dialog in self.__qt_dialogs:
-            dialog.hide()
-            dialog.setParent(None)
-            dialog.deleteLater()
+        dialogs_still_opened = self.created_qt_dialogs[:]
+        for dialog in dialogs_still_opened:
+            dialog.close()
 
         # Gracefully stop our data retriever. This call will block until the
         # currently-processing request has completed.

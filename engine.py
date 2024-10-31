@@ -887,7 +887,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                         active_document_path,
                         previous_context=self.context,
                     )
-                    self.__add_to_context_cache(active_document_path, context)
+                    self.add_to_context_cache(active_document_path, context)
                 except Exception:
                     self.logger.debug(
                         "Unable to determine context from path. Setting the Project context."
@@ -1746,20 +1746,10 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             if exit_code != 0:
                 self.logger.error("Failed to launch '%s'!" % cmd)
 
-    def add_to_context_cache(self, path, context):
-        """
-        This method acts as a wrapper around the protected
-        '__add_to_context_cache()' method.
-
-        :param str path: The document path to add to the cache.
-        :param context: The context object to associate with the document.
-        """
-        self.__add_to_context_cache(path, context)
-
     ##########################################################################################
     # context data methods
 
-    def __add_to_context_cache(self, path, context):
+    def add_to_context_cache(self, path, context):
         """
         Adds the given active document path to the context cache, associating
         it with the given context object. This will trigger the storing of a

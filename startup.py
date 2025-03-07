@@ -108,9 +108,7 @@ class AfterEffectsLauncher(SoftwareLauncher):
         platform = (
             "win32"
             if sgtk.util.is_windows()
-            else "darwin"
-            if sgtk.util.is_macos()
-            else None
+            else "darwin" if sgtk.util.is_macos() else None
         )
 
         if platform is None:

@@ -9,6 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import os
+import re
 import tempfile
 
 
@@ -25,8 +26,27 @@ class TestAfterEffectsRPC(TestAdobeRPC):
     def setUpClass(cls):
         TestAdobeRPC.setUpClass()
 
+        # Get AE version major
+        engine = sgtk.platform.current_engine()
+        regex = re.compile(r"(\d+\.?\d*)")
+        match = regex.search(engine.adobe.app.version)
+        version_major = int(float(match[0]))
+
+        engine.logger.info(f"Adobe App version_major: {version_major}")
+
+        if version_major < 23:
+            cls.project_filename = "simpleproject-v16.aep"
+        elif version_major < 24:
+            cls.project_filename = "simpleproject-v23.aep"
+        elif version_major < 25:
+            cls.project_filename = "simpleproject-v24.aep"
+        else:
+            cls.project_filename = "simpleproject-v25.aep"
+
+        engine.logger.info(f"Loading project file: {cls.project_filename}")
+
     def setUp(self):
-        self.project_path = os.path.join(self.resources, "simpleproject.aep")
+        self.project_path = os.path.join(self.resources, self.project_filename)
         self.engine = sgtk.platform.current_engine()
         self.project = self.engine.adobe.File(self.project_path)
         self.engine.adobe.app.open(self.project)

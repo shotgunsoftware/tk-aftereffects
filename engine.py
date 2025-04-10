@@ -84,6 +84,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         22: "2022",
         23: "2023",
         24: "2024",
+        25: "2025",
     }
 
     __IS_SEQUENCE_REGEX = re.compile("[\[]?([#@]+|[%]0\dd)[\]]?")

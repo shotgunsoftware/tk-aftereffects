@@ -325,26 +325,33 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         Returns information about the application hosting this engine.
 
         :returns: A {"name": application name, "version": application version}
-                  dictionary. eg: {"name": "AfterFX", "version": "2017.1.1"}
+                  dictionary. eg:
+                  {"name": "Adobe After Effects", "version": "2024"}
         """
+
+        info = {"name": "Adobe After Effects", "version": "unknown"}
+
         if not self.adobe:
             # Don't error out if the bridge was not yet started
-            return {"name": "AfterFX", "version": "unknown"}
+            return info
 
-        version = self.adobe.app.version
-        # app.aftereffects.AfterEffectsVersion just returns 18.1.1 which is not what users see in the UI
-        # extract a more meaningful version from the systemInformation property
-        # which gives something like:
-        # Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....
-        # and use it instead if available.
-        regex = re.compile(r"(\d+\.?\d*)")
-        match = regex.search(sgutils.ensure_str(version))
-        major = int(float(match[0]))
-        cc_version = self.__CC_VERSION_MAPPING.get(major, version)
-        return {
-            "name": "AfterFX",
-            "version": cc_version,
-        }
+        # After Effects SDK does not provide the app name :(
+
+        info["version"] = self.adobe.app.version
+
+        # app.version just returns 24.6.3x5 which is not what users see in the
+        # UI and use it instead if available.
+        m = re.search(
+            r"(?P<major>\d+)\.?(?P<minor>\d*)",
+            str(info["version"]),
+        )
+        if m:
+            major = int(m.group("major"))
+            if major in self.__CC_VERSION_MAPPING:
+                info["version"] = self.__CC_VERSION_MAPPING[major]
+                info["version2"] = version
+
+        return info
 
     def _initialize_dark_look_and_feel(self):
         """

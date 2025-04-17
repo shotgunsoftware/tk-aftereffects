@@ -85,6 +85,8 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         23: "2023",
         24: "2024",
         25: "2025",
+        # FIXME - this mechanism creates unknown versions when users launch new
+        # versions of AE that are not defined here yet...
     }
 
     __IS_SEQUENCE_REGEX = re.compile("[\[]?([#@]+|[%]0\dd)[\]]?")

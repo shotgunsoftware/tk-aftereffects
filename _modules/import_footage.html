@@ -5,10 +5,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>import_footage &mdash; tk-aftereffects v0.4.5 documentation</title>
+  <title>import_footage &mdash; tk-aftereffects v0.4.6 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -80,7 +81,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.4.5.<br>
+    <b>tk-aftereffects</b> v0.4.6.<br>
     
         This documentation is part of the Flow Production Tracking.
     
@@ -124,15 +125,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for import_footage</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">sgtk</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sgtk</span>
 
 
 <span class="n">HookBaseClass</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">get_hook_baseclass</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="ImportFootage"><a class="viewcode-back" href="../hooks.html#import_footage.ImportFootage">[docs]</a><span class="k">class</span> <span class="nc">ImportFootage</span><span class="p">(</span><span class="n">HookBaseClass</span><span class="p">):</span>
+<div class="viewcode-block" id="ImportFootage"><a class="viewcode-back" href="../hooks.html#import_footage.ImportFootage">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ImportFootage</span><span class="p">(</span><span class="n">HookBaseClass</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Used to control the way the current context fields are displayed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -140,7 +141,7 @@
     <span class="n">__DEFAULT_IMPORT_TYPES</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_default_import_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_default_import_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__DEFAULT_IMPORT_TYPES</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># the following dict allows to set default values</span>
             <span class="c1"># for specific file types</span>
@@ -150,7 +151,7 @@
             <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__DEFAULT_IMPORT_TYPES</span>
 
-    <span class="k">def</span> <span class="nf">__get_import_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">import_options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_import_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">import_options</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper to determine, what import type the given import candidate</span>
 <span class="sd">        needs. Assuming an *.aep file was given this method will return a</span>
@@ -186,7 +187,7 @@
                 <span class="k">return</span> <span class="n">each_type</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="ImportFootage.set_import_options"><a class="viewcode-back" href="../hooks.html#import_footage.ImportFootage.set_import_options">[docs]</a>    <span class="k">def</span> <span class="nf">set_import_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">import_options</span><span class="p">):</span>
+<div class="viewcode-block" id="ImportFootage.set_import_options"><a class="viewcode-back" href="../hooks.html#import_footage.ImportFootage.set_import_options">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_import_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">import_options</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method is called in case the engines&#39; import_filepath</span>
 <span class="sd">        method is called. It is used to set the correct parameters to the</span>
@@ -221,7 +222,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Autodesk.</p>
+    <p>&#169; Copyright 2025, Autodesk.</p>
   </div>
 
    

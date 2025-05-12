@@ -5,10 +5,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>context_fields_display &mdash; tk-aftereffects v0.4.5 documentation</title>
+  <title>context_fields_display &mdash; tk-aftereffects v0.4.6 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -80,7 +81,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.4.5.<br>
+    <b>tk-aftereffects</b> v0.4.6.<br>
     
         This documentation is part of the Flow Production Tracking.
     
@@ -133,18 +134,18 @@
 <span class="c1"># By accessing, using, copying or modifying this work you indicate your</span>
 <span class="c1"># agreement to the Shotgun Pipeline Toolkit Source Code License. All rights</span>
 <span class="c1"># not expressly granted therein are reserved by Shotgun Software Inc.</span>
-<span class="kn">import</span> <span class="nn">sgtk</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sgtk</span>
 
 
 <span class="n">HookBaseClass</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">get_hook_baseclass</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="ContextFieldsDisplay"><a class="viewcode-back" href="../hooks.html#context_fields_display.ContextFieldsDisplay">[docs]</a><span class="k">class</span> <span class="nc">ContextFieldsDisplay</span><span class="p">(</span><span class="n">HookBaseClass</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextFieldsDisplay"><a class="viewcode-back" href="../hooks.html#context_fields_display.ContextFieldsDisplay">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ContextFieldsDisplay</span><span class="p">(</span><span class="n">HookBaseClass</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Used to control the way the current context fields are displayed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ContextFieldsDisplay.get_entity_fields"><a class="viewcode-back" href="../hooks.html#context_fields_display.ContextFieldsDisplay.get_entity_fields">[docs]</a>    <span class="k">def</span> <span class="nf">get_entity_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextFieldsDisplay.get_entity_fields"><a class="viewcode-back" href="../hooks.html#context_fields_display.ContextFieldsDisplay.get_entity_fields">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_entity_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity_type</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Given a particular entity type for the current context, return a list of</span>
 <span class="sd">        fields to query for display in the header.</span>
@@ -202,7 +203,7 @@
 
         <span class="k">return</span> <span class="n">fields</span></div>
 
-<div class="viewcode-block" id="ContextFieldsDisplay.get_context_html"><a class="viewcode-back" href="../hooks.html#context_fields_display.ContextFieldsDisplay.get_context_html">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
+<div class="viewcode-block" id="ContextFieldsDisplay.get_context_html"><a class="viewcode-back" href="../hooks.html#context_fields_display.ContextFieldsDisplay.get_context_html">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_context_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the html used to display the supplied context entity.</span>
 
@@ -262,7 +263,7 @@
 
         <span class="k">return</span> <span class="n">html</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_site_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_site_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns html for displaying a site context.&quot;&quot;&quot;</span>
 
         <span class="n">site_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">sgtk</span><span class="o">.</span><span class="n">shotgun_url</span>
@@ -280,7 +281,7 @@
             <span class="n">name</span><span class="o">=</span><span class="n">site_link</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_asset_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_asset_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns html for displaying an asset context.&quot;&quot;&quot;</span>
 
         <span class="n">asset_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">)</span>
@@ -338,7 +339,7 @@
 
         <span class="k">return</span> <span class="n">html</span>
 
-    <span class="k">def</span> <span class="nf">_get_shot_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_shot_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns html for displaying a shot context.&quot;&quot;&quot;</span>
 
         <span class="n">shot_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">)</span>
@@ -446,7 +447,7 @@
 
         <span class="k">return</span> <span class="n">html</span>
 
-    <span class="k">def</span> <span class="nf">_get_task_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_task_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns html for displaying a task context.&quot;&quot;&quot;</span>
 
         <span class="n">task_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entity_sg_link</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">],</span> <span class="n">entity</span><span class="p">)</span>
@@ -550,7 +551,7 @@
 
         <span class="k">return</span> <span class="n">html</span>
 
-    <span class="k">def</span> <span class="nf">_get_entity_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_entity_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">sg_globals</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns html for displaying a generic entity context.&quot;&quot;&quot;</span>
 
         <span class="c1"># default to name, fall back to code</span>
@@ -623,7 +624,7 @@
 
         <span class="k">return</span> <span class="n">html</span>
 
-    <span class="k">def</span> <span class="nf">_get_entity_sg_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_entity_sg_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Given some text, return html formatted link to the given entity in PTR.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -644,7 +645,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Autodesk.</p>
+    <p>&#169; Copyright 2025, Autodesk.</p>
   </div>
 
    

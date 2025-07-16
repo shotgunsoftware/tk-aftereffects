@@ -15,14 +15,7 @@ import os
 import re
 import glob
 
-
 import sgtk
-
-try:
-    from tank_vendor import sgutils
-except ImportError:
-    from tank_vendor import six as sgutils
-
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -168,10 +161,7 @@ class AfterEffectsActions(HookBaseClass):
             "Parameters: %s. Publish Data: %s" % (name, params, sg_publish_data)
         )
 
-        # resolve path
-        # toolkit uses utf-8 encoded strings internally and the After Effects API expects unicode
-        # so convert the path to ensure filenames containing complex characters are supported
-        path = sgutils.ensure_text(self.get_publish_path(sg_publish_data))
+        path = self.get_publish_path(sg_publish_data)
 
         if self.parent.engine.is_adobe_sequence(path):
             frame_range = self.parent.engine.find_sequence_range(path)

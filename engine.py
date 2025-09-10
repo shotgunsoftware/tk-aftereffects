@@ -23,11 +23,6 @@ from contextlib import contextmanager
 import sgtk
 from sgtk.util.filesystem import ensure_folder_exists
 
-try:
-    from tank_vendor import sgutils
-except ImportError:
-    from tank_vendor import six as sgutils
-
 
 class AfterEffectsEngine(sgtk.platform.Engine):
     """
@@ -341,7 +336,10 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....
         # and use it instead if available.
         regex = re.compile(r"(\d+\.?\d*)")
-        match = regex.search(sgutils.ensure_str(version))
+        version = (
+            version.decode("utf-8") if isinstance(version, bytes) else str(version)
+        )
+        match = regex.search(version)
         major = int(float(match[0]))
         cc_version = self.__CC_VERSION_MAPPING.get(major, version)
         return {
@@ -861,7 +859,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         # possibly get a file path/name that contains unicode, and we don't
         # want to deal with that later on.
         if active_document_path is not None:
-            active_document_path = sgutils.ensure_str(active_document_path)
+            active_document_path = str(active_document_path)
 
         # This will be True if the context_changes_disabled context manager is
         # used. We're just in a temporary state of not allowing context changes,

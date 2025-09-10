@@ -15,11 +15,6 @@ import sys
 
 import sgtk
 
-try:
-    from tank_vendor import sgutils
-except ImportError:
-    from tank_vendor import six as sgutils
-
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
@@ -291,7 +286,11 @@ class AfterEffectsUploadVersionPlugin(HookBaseClass):
         item.properties["sg_version_data"] = version
 
         # Ensure the path is utf-8 encoded to avoid issues with the Shotgun API.
-        upload_path = sgutils.ensure_str(upload_path)
+        upload_path = (
+            upload_path.decode("utf-8")
+            if isinstance(upload_path, bytes)
+            else str(upload_path)
+        )
 
         # upload the file to PTR
         self.logger.info("Uploading content...")

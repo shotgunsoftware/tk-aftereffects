@@ -16,4 +16,4 @@ This repository is a part of the Flow Production Tracking Toolkit.
 - For information about Flow Production Tracking in general, click here: https://help.autodesk.com/view/SGSUB/ENU/
 
 ## Have a Question?
-Don't hesitate to contact us! You can find us on https://knowledge.autodesk.com/contact-support
+Don't hesitate to contact us! You can find us on https://www.autodesk.com/support

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>engine &mdash; tk-aftereffects v0.4.6 documentation</title>
+  <title>engine &mdash; tk-aftereffects v0.4.7 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
@@ -81,7 +81,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.4.6.<br>
+    <b>tk-aftereffects</b> v0.4.7.<br>
     
         This documentation is part of the Flow Production Tracking.
     
@@ -149,11 +149,6 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">sgtk</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sgtk.util.filesystem</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_folder_exists</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">tank_vendor</span><span class="w"> </span><span class="kn">import</span> <span class="n">sgutils</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">tank_vendor</span><span class="w"> </span><span class="kn">import</span> <span class="n">six</span> <span class="k">as</span> <span class="n">sgutils</span>
 
 
 <div class="viewcode-block" id="AfterEffectsEngine"><a class="viewcode-back" href="../api.html#engine.AfterEffectsEngine">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AfterEffectsEngine</span><span class="p">(</span><span class="n">sgtk</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">Engine</span><span class="p">):</span>
@@ -468,7 +463,10 @@
         <span class="c1"># Adobe After Effects Version: 2017.1.1 20170425.r.252 2017/04/25:23:00:00 CL 1113967  x64\rNumber of .....</span>
         <span class="c1"># and use it instead if available.</span>
         <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\d+\.?\d*)&quot;</span><span class="p">)</span>
-        <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">sgutils</span><span class="o">.</span><span class="n">ensure_str</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">version</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
         <span class="n">major</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
         <span class="n">cc_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__CC_VERSION_MAPPING</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">major</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span>
@@ -988,7 +986,7 @@
         <span class="c1"># possibly get a file path/name that contains unicode, and we don&#39;t</span>
         <span class="c1"># want to deal with that later on.</span>
         <span class="k">if</span> <span class="n">active_document_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">active_document_path</span> <span class="o">=</span> <span class="n">sgutils</span><span class="o">.</span><span class="n">ensure_str</span><span class="p">(</span><span class="n">active_document_path</span><span class="p">)</span>
+            <span class="n">active_document_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">active_document_path</span><span class="p">)</span>
 
         <span class="c1"># This will be True if the context_changes_disabled context manager is</span>
         <span class="c1"># used. We&#39;re just in a temporary state of not allowing context changes,</span>

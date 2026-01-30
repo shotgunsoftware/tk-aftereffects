@@ -1120,13 +1120,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         if not base:
             raise ImportError("Unable to find a QT Python module")
 
-        QtCore = base["qt_core"]
         QtGui = base["qt_gui"]
-
-        # tell QT4 to interpret C strings as utf-8
-        # note: this will be ignored on QT5 via our shim
-        utf8 = QtCore.QTextCodec.codecForName("utf-8")
-        QtCore.QTextCodec.setCodecForCStrings(utf8)
 
         # override message boxes
         self._override_qmessagebox(QtGui.QMessageBox)

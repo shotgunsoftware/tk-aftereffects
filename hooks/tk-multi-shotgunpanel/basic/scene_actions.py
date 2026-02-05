@@ -11,6 +11,7 @@
 """
 Hook that loads defines all the available actions, broken down by publish type.
 """
+
 import re
 import glob
 import os

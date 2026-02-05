@@ -16,7 +16,6 @@ import shutil
 import sgtk
 from sgtk.util.filesystem import ensure_folder_exists
 
-
 HookBaseClass = sgtk.get_hook_baseclass()
 
 

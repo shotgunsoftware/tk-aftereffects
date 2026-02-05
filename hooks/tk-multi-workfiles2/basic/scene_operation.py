@@ -9,7 +9,6 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 import sgtk
 
-
 HookClass = sgtk.get_hook_baseclass()
 
 

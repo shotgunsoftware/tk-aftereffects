@@ -1835,17 +1835,13 @@ class AfterEffectsEngine(sgtk.platform.Engine):
             self.__context_find_uid = None
 
             # send an error message back to the context header.
-            self.adobe.send_context_display(
-                """
+            self.adobe.send_context_display("""
                 There was an error retrieving fields for this context. Please
                 see the logs for the specific error message. If this is a
                 recurring error and you need further assistance, please
                 contact our support team via <a href='{url}'>
                 {url}</a>.
-                """.format(
-                    url=sgtk.support_url
-                )
-            )
+                """.format(url=sgtk.support_url))
             self.logger.error("Failed to query context fields: %s" % (msg,))
 
         elif uid == self.__context_thumb_uid:
@@ -1972,9 +1968,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
                 tell application "System Events"
                   set frontmost of the first process whose unix id is {pid} to true
                 end tell
-                """.format(
-                pid=os.getpid()
-            )
+                """.format(pid=os.getpid())
 
             # force this python process to the front
             cmd = ["osascript", "-e", osx_activate_script]

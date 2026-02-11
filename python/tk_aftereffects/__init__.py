@@ -11,7 +11,6 @@
 import sys
 import sgtk
 
-
 adobe_bridge = sgtk.platform.import_framework(
     "tk-framework-adobe", "tk_framework_adobe.adobe_bridge"
 )

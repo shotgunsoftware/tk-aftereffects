@@ -34,14 +34,14 @@ class TestAfterEffectsRPC(TestAdobeRPC):
 
         engine.logger.info(f"Adobe App version_major: {version_major}")
 
-        if version_major < 23:
-            cls.project_filename = "simpleproject-v16.aep"
-        elif version_major < 24:
+        if version_major < 24:
             cls.project_filename = "simpleproject-v23.aep"
         elif version_major < 25:
             cls.project_filename = "simpleproject-v24.aep"
-        else:
+        elif version_major < 26:
             cls.project_filename = "simpleproject-v25.aep"
+        else:
+            cls.project_filename = "simpleproject-v26.aep"
 
         engine.logger.info(f"Loading project file: {cls.project_filename}")
 

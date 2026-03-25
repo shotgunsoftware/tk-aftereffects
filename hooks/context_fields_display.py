@@ -9,7 +9,6 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 import sgtk
 
-
 HookBaseClass = sgtk.get_hook_baseclass()
 
 
@@ -203,9 +202,7 @@ class ContextFieldsDisplay(HookBaseClass):
                   <td class='sg_label_td'>Desc:</td>
                   <td class='sg_value_td'>{desc}</td>
                 </tr>
-                """.format(
-                desc=entity["description"]
-            )
+                """.format(desc=entity["description"])
 
         # close up the table
         html += "</table>"
@@ -273,9 +270,7 @@ class ContextFieldsDisplay(HookBaseClass):
         if entity["sg_cut_in"] is not None and entity["sg_cut_out"] is not None:
             cut_display = """
                     {cut_in} - {cut_out}
-                """.format(
-                cut_in=entity["sg_cut_in"], cut_out=entity["sg_cut_out"]
-            )
+                """.format(cut_in=entity["sg_cut_in"], cut_out=entity["sg_cut_out"])
 
         # include head/tail if set
         if (
@@ -311,9 +306,7 @@ class ContextFieldsDisplay(HookBaseClass):
                   <td class='sg_label_td'>Desc:</td>
                   <td class='sg_value_td'>{desc}</td>
                 </tr>
-                """.format(
-                desc=entity["description"]
-            )
+                """.format(desc=entity["description"])
 
         # close up the table
         html += "</table>"
@@ -352,9 +345,7 @@ class ContextFieldsDisplay(HookBaseClass):
                 <td class='sg_label_td'>Task:</td>
                 <td class='sg_value_td'>{name}</td>
               </tr>
-            """.format(
-            name=task_display
-        )
+            """.format(name=task_display)
 
         # entity
         if entity["entity"]:
@@ -383,9 +374,7 @@ class ContextFieldsDisplay(HookBaseClass):
                 <td class='sg_label_td'>Status:</td>
                 <td class='sg_value_td'>{status}</td>
               </tr>
-            """.format(
-            status=status
-        )
+            """.format(status=status)
 
         # artist
         if entity["task_assignees"]:
@@ -488,9 +477,7 @@ class ContextFieldsDisplay(HookBaseClass):
                   <td class='sg_label_td'>Desc:</td>
                   <td class='sg_value_td'>{desc}</td>
                 </tr>
-                """.format(
-                desc=desc
-            )
+                """.format(desc=desc)
 
         # close up the table
         html += "</table>"

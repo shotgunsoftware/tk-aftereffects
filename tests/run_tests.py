@@ -8,7 +8,6 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-import io
 import unittest
 import rpc_tests
 
@@ -19,5 +18,6 @@ def run_tests(engine):
     suite = rpc_tests.get_tests_by_app_id(engine.app_id, engine.adobe)
 
     engine.logger.debug("Running test suite...")
+    unittest.TextTestRunner().run(suite)
 
     engine.logger.debug("Testing finished.")

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>context_fields_display &mdash; tk-aftereffects v0.4.7 documentation</title>
+  <title>context_fields_display &mdash; tk-aftereffects v0.4.8 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
@@ -81,7 +81,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.4.7.<br>
+    <b>tk-aftereffects</b> v0.4.8.<br>
     
         This documentation is part of the Flow Production Tracking.
     
@@ -135,7 +135,6 @@
 <span class="c1"># agreement to the Shotgun Pipeline Toolkit Source Code License. All rights</span>
 <span class="c1"># not expressly granted therein are reserved by Shotgun Software Inc.</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sgtk</span>
-
 
 <span class="n">HookBaseClass</span> <span class="o">=</span> <span class="n">sgtk</span><span class="o">.</span><span class="n">get_hook_baseclass</span><span class="p">()</span>
 
@@ -330,9 +329,7 @@
 <span class="s2">                  &lt;td class=&#39;sg_label_td&#39;&gt;Desc:&lt;/td&gt;</span>
 <span class="s2">                  &lt;td class=&#39;sg_value_td&#39;&gt;</span><span class="si">{desc}</span><span class="s2">&lt;/td&gt;</span>
 <span class="s2">                &lt;/tr&gt;</span>
-<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">desc</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">])</span>
 
         <span class="c1"># close up the table</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/table&gt;&quot;</span>
@@ -400,9 +397,7 @@
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_in&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_out&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cut_display</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">                    </span><span class="si">{cut_in}</span><span class="s2"> - </span><span class="si">{cut_out}</span>
-<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">cut_in</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_in&quot;</span><span class="p">],</span> <span class="n">cut_out</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_out&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cut_in</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_in&quot;</span><span class="p">],</span> <span class="n">cut_out</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;sg_cut_out&quot;</span><span class="p">])</span>
 
         <span class="c1"># include head/tail if set</span>
         <span class="k">if</span> <span class="p">(</span>
@@ -438,9 +433,7 @@
 <span class="s2">                  &lt;td class=&#39;sg_label_td&#39;&gt;Desc:&lt;/td&gt;</span>
 <span class="s2">                  &lt;td class=&#39;sg_value_td&#39;&gt;</span><span class="si">{desc}</span><span class="s2">&lt;/td&gt;</span>
 <span class="s2">                &lt;/tr&gt;</span>
-<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">desc</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">])</span>
 
         <span class="c1"># close up the table</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/table&gt;&quot;</span>
@@ -479,9 +472,7 @@
 <span class="s2">                &lt;td class=&#39;sg_label_td&#39;&gt;Task:&lt;/td&gt;</span>
 <span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;</span><span class="si">{name}</span><span class="s2">&lt;/td&gt;</span>
 <span class="s2">              &lt;/tr&gt;</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">task_display</span>
-        <span class="p">)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">task_display</span><span class="p">)</span>
 
         <span class="c1"># entity</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity&quot;</span><span class="p">]:</span>
@@ -510,9 +501,7 @@
 <span class="s2">                &lt;td class=&#39;sg_label_td&#39;&gt;Status:&lt;/td&gt;</span>
 <span class="s2">                &lt;td class=&#39;sg_value_td&#39;&gt;</span><span class="si">{status}</span><span class="s2">&lt;/td&gt;</span>
 <span class="s2">              &lt;/tr&gt;</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">status</span><span class="o">=</span><span class="n">status</span>
-        <span class="p">)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">)</span>
 
         <span class="c1"># artist</span>
         <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;task_assignees&quot;</span><span class="p">]:</span>
@@ -615,9 +604,7 @@
 <span class="s2">                  &lt;td class=&#39;sg_label_td&#39;&gt;Desc:&lt;/td&gt;</span>
 <span class="s2">                  &lt;td class=&#39;sg_value_td&#39;&gt;</span><span class="si">{desc}</span><span class="s2">&lt;/td&gt;</span>
 <span class="s2">                &lt;/tr&gt;</span>
-<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">desc</span><span class="o">=</span><span class="n">desc</span>
-            <span class="p">)</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
 
         <span class="c1"># close up the table</span>
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/table&gt;&quot;</span>
@@ -645,7 +632,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Autodesk.</p>
+    <p>&#169; Copyright 2026, Autodesk.</p>
   </div>
 
    

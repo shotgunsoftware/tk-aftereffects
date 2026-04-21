@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>engine &mdash; tk-aftereffects v0.4.7 documentation</title>
+  <title>engine &mdash; tk-aftereffects v0.4.8 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
@@ -81,7 +81,7 @@
                              text-decoration: underline; }
     </style>
 
-    <b>tk-aftereffects</b> v0.4.7.<br>
+    <b>tk-aftereffects</b> v0.4.8.<br>
     
         This documentation is part of the Flow Production Tracking.
     
@@ -207,6 +207,7 @@
         <span class="mi">23</span><span class="p">:</span> <span class="s2">&quot;2023&quot;</span><span class="p">,</span>
         <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;2024&quot;</span><span class="p">,</span>
         <span class="mi">25</span><span class="p">:</span> <span class="s2">&quot;2025&quot;</span><span class="p">,</span>
+        <span class="mi">26</span><span class="p">:</span> <span class="s2">&quot;2026&quot;</span><span class="p">,</span>
         <span class="c1"># FIXME - this mechanism creates unknown versions when users launch new</span>
         <span class="c1"># versions of AE that are not defined here yet...</span>
     <span class="p">}</span>
@@ -1247,13 +1248,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">base</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Unable to find a QT Python module&quot;</span><span class="p">)</span>
 
-        <span class="n">QtCore</span> <span class="o">=</span> <span class="n">base</span><span class="p">[</span><span class="s2">&quot;qt_core&quot;</span><span class="p">]</span>
         <span class="n">QtGui</span> <span class="o">=</span> <span class="n">base</span><span class="p">[</span><span class="s2">&quot;qt_gui&quot;</span><span class="p">]</span>
-
-        <span class="c1"># tell QT4 to interpret C strings as utf-8</span>
-        <span class="c1"># note: this will be ignored on QT5 via our shim</span>
-        <span class="n">utf8</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QTextCodec</span><span class="o">.</span><span class="n">codecForName</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-        <span class="n">QtCore</span><span class="o">.</span><span class="n">QTextCodec</span><span class="o">.</span><span class="n">setCodecForCStrings</span><span class="p">(</span><span class="n">utf8</span><span class="p">)</span>
 
         <span class="c1"># override message boxes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_override_qmessagebox</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">)</span>
@@ -1968,17 +1963,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__context_find_uid</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="c1"># send an error message back to the context header.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">send_context_display</span><span class="p">(</span>
-<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                There was an error retrieving fields for this context. Please</span>
-<span class="sd">                see the logs for the specific error message. If this is a</span>
-<span class="sd">                recurring error and you need further assistance, please</span>
-<span class="sd">                contact our support team via &lt;a href=&#39;{url}&#39;&gt;</span>
-<span class="sd">                {url}&lt;/a&gt;.</span>
-<span class="sd">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">url</span><span class="o">=</span><span class="n">sgtk</span><span class="o">.</span><span class="n">support_url</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adobe</span><span class="o">.</span><span class="n">send_context_display</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                There was an error retrieving fields for this context. Please</span>
+<span class="s2">                see the logs for the specific error message. If this is a</span>
+<span class="s2">                recurring error and you need further assistance, please</span>
+<span class="s2">                contact our support team via &lt;a href=&#39;</span><span class="si">{url}</span><span class="s2">&#39;&gt;</span>
+<span class="s2">                </span><span class="si">{url}</span><span class="s2">&lt;/a&gt;.</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">sgtk</span><span class="o">.</span><span class="n">support_url</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to query context fields: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">msg</span><span class="p">,))</span>
 
         <span class="k">elif</span> <span class="n">uid</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">__context_thumb_uid</span><span class="p">:</span>
@@ -2105,9 +2096,7 @@
 <span class="s2">                tell application &quot;System Events&quot;</span>
 <span class="s2">                  set frontmost of the first process whose unix id is </span><span class="si">{pid}</span><span class="s2"> to true</span>
 <span class="s2">                end tell</span>
-<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">pid</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
-            <span class="p">)</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
 
             <span class="c1"># force this python process to the front</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;osascript&quot;</span><span class="p">,</span> <span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="n">osx_activate_script</span><span class="p">]</span>
@@ -2154,7 +2143,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Autodesk.</p>
+    <p>&#169; Copyright 2026, Autodesk.</p>
   </div>
 
    

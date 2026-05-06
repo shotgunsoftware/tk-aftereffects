@@ -256,6 +256,9 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         if self._PROXY_WIN_HWND and sgtk.util.is_windows():
             self.__tk_aftereffects.win_32_api.SetParent(self._PROXY_WIN_HWND, 0)
 
+        # Clear the cached dialog parent to prevent stale references
+        AfterEffectsEngine._DIALOG_PARENT = None
+
         # No longer poll for new messages from this engine.
         if self._CHECK_CONNECTION_TIMER:
             self._CHECK_CONNECTION_TIMER.stop()
@@ -1349,23 +1352,36 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         Get the QWidget parent for all dialogs created through
         show_dialog & show_modal.
         """
+        from sgtk.platform.qt import QtGui, QtCore
 
-        """
-        Get the QWidget parent for all dialogs created through
-        show_dialog & show_modal.
-        """
-        # determine the parent widget to use:
-        from sgtk.platform.qt import QtGui
+        # On macOS, After Effects doesn't have a stable main Qt window.
+        # Returning None is safer as it avoids parenting to transient or internal windows
+        # that might be deleted, causing "Internal C++ object already deleted" errors.
+        if not sgtk.util.is_windows():
+            self.logger.debug("Non-Windows platform detected, returning None as dialog parent.")
+            return None
 
+        # For Windows, we use a persistent proxy window.
         if not self._DIALOG_PARENT:
             if sgtk.util.is_windows():
                 # for windows, we create a proxy window parented to the
                 # main application window that we can then set as the owner
                 # for all Toolkit dialogs
                 self._DIALOG_PARENT = self._win32_get_proxy_window()
-            else:
-                self._DIALOG_PARENT = QtGui.QApplication.activeWindow()
 
+        # Even on Windows, verify the cached parent is still valid
+        if self._DIALOG_PARENT:
+            try:
+                # This will raise a RuntimeError if the C++ object is deleted
+                self._DIALOG_PARENT.windowTitle()
+            except RuntimeError:
+                self.logger.debug("Clearing invalid _DIALOG_PARENT")
+                self._DIALOG_PARENT = None
+                # Re-run logic if it was Windows to try and recreate
+                if sgtk.util.is_windows():
+                    self._DIALOG_PARENT = self._win32_get_proxy_window()
+
+        self.logger.debug("Resolved dialog parent: %s" % (self._DIALOG_PARENT,))
         return self._DIALOG_PARENT
 
     def show_dialog(self, title, bundle, widget_class, *args, **kwargs):

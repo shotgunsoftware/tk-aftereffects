@@ -71,7 +71,7 @@ class AfterEffectsUploadProjectPlugin(HookBaseClass):
         """
 
         # inherit the settings from the base publish plugin
-        base_settings = super(AfterEffectsUploadProjectPlugin, self).settings or {}
+        base_settings = super().settings or {}
 
         return base_settings
 

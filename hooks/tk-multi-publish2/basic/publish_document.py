@@ -103,7 +103,7 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         """
 
         # inherit the settings from the base publish plugin
-        base_settings = super(AfterEffectsProjectPublishPlugin, self).settings or {}
+        base_settings = super().settings or {}
 
         # settings specific to this class
         aftereffects_publish_settings = {
@@ -279,7 +279,7 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         item.properties["path"] = path
 
         # run the base class validation
-        return super(AfterEffectsProjectPublishPlugin, self).validate(settings, item)
+        return super().validate(settings, item)
 
     def publish(self, settings, item):
         """
@@ -304,7 +304,7 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         item.properties["publish_type"] = "After Effects Project"
 
         # let the base class register the publish
-        super(AfterEffectsProjectPublishPlugin, self).publish(settings, item)
+        super().publish(settings, item)
 
         published_renderings = item.properties.get("published_renderings", [])
         published_renderings.insert(0, item.properties.get("sg_publish_data"))
@@ -321,7 +321,7 @@ class AfterEffectsProjectPublishPlugin(HookBaseClass):
         """
 
         # do the base class finalization
-        super(AfterEffectsProjectPublishPlugin, self).finalize(settings, item)
+        super().finalize(settings, item)
 
         path = item.properties["path"]
 

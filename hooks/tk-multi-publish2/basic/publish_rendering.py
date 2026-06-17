@@ -72,7 +72,7 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
         """
 
         # inherit the settings from the base publish plugin
-        base_settings = super(AfterEffectsRenderPublishPlugin, self).settings or {}
+        base_settings = super().settings or {}
 
         return base_settings
 
@@ -135,7 +135,7 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
             return False
 
         # run the base class validation
-        return super(AfterEffectsRenderPublishPlugin, self).validate(settings, item)
+        return super().validate(settings, item)
 
     def publish(self, settings, item):
         """
@@ -159,7 +159,7 @@ class AfterEffectsRenderPublishPlugin(HookBaseClass):
                     match.group(0), "%0{}d".format(len(match.group(1)))
                 )
             item.properties["path"] = re.sub(r"[\[\]]", "", each_path)
-            super(AfterEffectsRenderPublishPlugin, self).publish(settings, item)
+            super().publish(settings, item)
             published_renderings.append(item.properties.get("sg_publish_data"))
 
     def __is_acceptable(self, settings, item):

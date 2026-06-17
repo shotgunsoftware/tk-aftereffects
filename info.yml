@@ -63,6 +63,7 @@ description: "Flow Production Tracking Integration for After Effects"
 # Required minimum versions for this item to run
 requires_shotgun_version:
 requires_core_version: "v0.19.18"
+minimum_python_version: "3.9"
 
 frameworks:
   - {"name": "tk-framework-shotgunutils", "version": "v5.x.x"}

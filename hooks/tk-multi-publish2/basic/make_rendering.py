@@ -74,7 +74,7 @@ class AfterEffectsRenderPlugin(HookBaseClass):
         """
 
         # inherit the settings from the base publish plugin
-        base_settings = super(AfterEffectsRenderPlugin, self).settings or {}
+        base_settings = super().settings or {}
 
         return base_settings
 
@@ -137,7 +137,7 @@ class AfterEffectsRenderPlugin(HookBaseClass):
             return False
 
         # run the base class validation
-        return super(AfterEffectsRenderPlugin, self).validate(settings, item)
+        return super().validate(settings, item)
 
     def publish(self, settings, item):
         """

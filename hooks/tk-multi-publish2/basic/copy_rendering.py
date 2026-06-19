@@ -83,7 +83,7 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
         """
 
         # inherit the settings from the base publish plugin
-        base_settings = super(AfterEffectsCopyRenderPlugin, self).settings or {}
+        base_settings = super().settings or {}
 
         # settings specific to this class
         aftereffects_publish_settings = {
@@ -206,7 +206,7 @@ class AfterEffectsCopyRenderPlugin(HookBaseClass):
             return False
 
         # run the base class validation
-        return super(AfterEffectsCopyRenderPlugin, self).validate(settings, item)
+        return super().validate(settings, item)
 
     def publish(self, settings, item):
         """

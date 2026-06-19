@@ -40,7 +40,7 @@ class AfterEffectsSceneCollector(HookBaseClass):
         """
 
         # grab any base class settings
-        collector_settings = super(AfterEffectsSceneCollector, self).settings or {}
+        collector_settings = super().settings or {}
 
         # settings specific to this collector
         aftereffects_session_settings = {

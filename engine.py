@@ -312,7 +312,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         """
         properties = properties or dict()
         properties["uid"] = self.__get_command_uid()
-        return super(AfterEffectsEngine, self).register_command(
+        return super().register_command(
             name,
             callback,
             properties,
@@ -1117,7 +1117,7 @@ class AfterEffectsEngine(sgtk.platform.Engine):
         :returns: dict
         """
         # Just call the base implementation and monkey patch QMessageBox.
-        base = super(AfterEffectsEngine, self)._define_qt_base()
+        base = super()._define_qt_base()
         if not base:
             raise ImportError("Unable to find a QT Python module")
 
